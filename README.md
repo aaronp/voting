@@ -9,11 +9,24 @@ its blake3 hash (a KERI SAID). Anyone holding `tally.json` can verify all of it 
 it. This repo is the app. Your polls can live in their own repo and be loaded with `?src=` (see
 [Publishing your own polls](#publishing-your-own-polls)).
 
+- **Two kinds of poll**, each with a "How this poll works" card saying what it guarantees, what it doesn't, and what it's for:
+  - **Open ballot**: votes are in plain text, so anyone can recount. For accountable votes (boards, delegates, roll calls).
+  - **Sealed ballot**: each vote is sealed (Pedersen commitments) with its opening encrypted to the organiser. The file
+    shows who voted but not how; the organiser's tally publishes totals that anyone can check against the seals.
+    Private from the public, not from the tallier.
 - **Dashboard**: every poll and draft, with whether it verifies, filtered by what needs your vote.
-- **Editor**: draft a poll and fill in the mint table (subject, weight, public keys), then **Mint** to fix it.
-- **Poll**: vote as any subject whose key this browser holds (plain or quadratic), see the **Results**, and read the
-  **Ledger**: the subjects, every entry with its hash link and signature check, the totals, and a **Verified** badge or
-  a list of what's broken.
+- **Editor**: draft a poll, choose its kind, and fill in the mint table (subject, weight, public keys, or **+ Add test
+  accounts**), then **Mint** to fix it.
+- **Poll**: choose **who you are** (a subject whose key this browser holds), then:
+  - **Vote** within your weight (plain or quadratic);
+  - **Tree**: every entry as a leaf of a Merkle tree (tree, fisheye, carousel or radial; groups of 2, 4, 10 or 16), with
+    **Find my vote** (your path to the root and the sibling hashes that prove it's counted), the signed root, and
+    **tamper mode**: edit any entry or hash in memory and watch exactly what breaks (nothing is saved);
+  - **Ledger**: the subjects and every entry with its hash link and signature check, and a **Verified** badge or a list
+    of what's broken;
+  - **Results**, counted from verified votes (sealed polls: after the organiser's **Tally and close**).
+- **Test accounts**: create subjects by name or **Generate N**, with keys kept in this browser. This stands in for real
+  sign-in, where each subject is a single-use AID with its key in the voter's wallet.
 - **Sign it for real…**: shows the exact bytes an entry signs and how to sign them with `ssh-keygen`, outside Tally.
 - **Open…**: drop a `.json` file, choose one, or open one from a URL (GitHub file links work). **Download** saves `tally.json`.
 - Four themes: Graph paper, Night shift, Blueprint and Warm ledger.
@@ -31,7 +44,9 @@ The address bar always shows where you are, so any view can be bookmarked or sha
 | _(none)_ | The dashboard: the polls saved in this browser, or none on a first visit |
 | `?filter=todo\|voted\|drafts`, `?q=`, `?sort=votes` | The dashboard, filtered, searched or sorted |
 | `?filter=closed` | Also: closed polls |
-| `?poll=<id>` | A poll, by its mint's SAID. Add `&tab=ledger` or `&tab=results` |
+| `?poll=<id>` | A poll, by its mint's SAID. Add `&tab=tree`, `&tab=ledger` or `&tab=results` |
+| `?poll=<id>&tab=tree&layout=fisheye&group=4` | The tree as `tree` (default), `fisheye`, `carousel` or `radial`, in groups of `2`, `4`, `10` (default) or `16` |
+| `?page=accounts` | The test accounts page |
 | `?edit=<id>` | The editor for a draft |
 | `?src=<url>` | That JSON file (absolute, or relative to the page). It isn't autosaved, so it never overwrites your saved polls. |
 | `?theme=` | `paper` (default), `night`, `blueprint` or `warm`. This wins over the theme saved in the browser. |
@@ -89,8 +104,9 @@ make vendor   # rebuild vendor/noble.js from the pinned @noble packages
 | --- | --- |
 | `Tally.dc.html` | The app: an `<x-dc>` template plus its logic class (state, keyring, view model) |
 | `ledger.js` | The ledger, with no DOM: CESR, canonical form, SAIDs, signatures, entries, `verify`, the file format |
-| `vendor/noble.js` | blake3 and ed25519 from `@noble/hashes` and `@noble/curves` 2.0.1, bundled by `make vendor` |
-| `support.js` | The runtime that renders the template in a browser (loads React from a CDN) |
+| `vendor/noble.js` | blake3, HKDF, SHA-256, ed25519, ristretto255 and X25519 from `@noble/hashes` and `@noble/curves` 2.0.1, bundled by `make vendor` |
+| `BallotCard.dc.html` | The flippable entry card in the tree views |
+| `support.js` | The runtime that renders the templates in a browser (loads React from a CDN) |
 | `schema.md` | The file format and verification rules |
 | `examples/harbor-commons/` | A cloneable data-only repo that points back at this app, with real signed polls (`make example`) |
 | `scripts/make-example.ts` | Generates that example |

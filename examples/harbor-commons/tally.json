@@ -4,89 +4,89 @@
       {
         "v": "tally/1",
         "t": "mint",
-        "d": "EAKY9lxesPwMlQTqN0M8cM5kpTV2tSOsZl8llLwnGtbJ",
+        "d": "EKlugCg8eY8Tv1MKLPCPosJWqMHNu4-UUkO6Qhyzqn3C",
         "title": "Convert the Elm St. lot into a community garden?",
         "desc": "The city has offered the vacant lot on a 10-year lease. A yes vote commits the association to seasonal upkeep.",
         "options": [ "Yes, build the garden", "No, keep it as parking", "Defer to the spring meeting" ],
         "quadratic": true,
-        "organiser": { "id": "Harbor Commons board", "keys": [ "DOZjSx8NySCjJj8mhPW7CoBqYBWKHXpfvR7Nh2ORip9A" ] },
+        "organiser": { "id": "Harbor Commons board", "keys": [ "DG7EG5OS1VDZC1aqH0oQ7qw2a623eEnLW8nhfuv0N_Hs" ] },
         "subjects": [
-          { "id": "Sam Rivera", "keys": [ "DE1DhJZ5vBxV5lDDyArmv40_JnaeNRPtuU2OBqfkJRsR" ], "weight": 9 },
-          { "id": "Maya Chen", "keys": [ "DK9VCNKKWx2PjetsjjD9xOSbxf2Apcc_C01xNl_zgsXS" ], "weight": 17 },
-          { "id": "Jonas Albers", "keys": [ "DNB4j8FKh1AGcCkFQj6o8WDmq3IVF3y3sJs2v9ui6Kp-" ], "weight": 5 },
-          { "id": "Priya Raman", "keys": [ "DIw415RXtwtGQ5OH9ejCppTWs-ccFXa3QZMhSD-D7Owm" ], "weight": 12 },
-          { "id": "Theo Brandt", "keys": [ "DC2Xl-pMJY97t_jkZKvRrEbMZB0pdriEwzANDHrUDoM7" ], "weight": 8 },
-          { "id": "Ada Okoro", "keys": [ "DOTyHQ8CQKQm386f_du4d9ymVnH-np_5ym0HaNq7tin4" ], "weight": 16 },
-          { "id": "Luis Ferreira", "keys": [ "DNPW83OIfKwt8cCWNs0uoxWGhgwWi-M2L31n-1YMNWX2" ], "weight": 6 },
-          { "id": "Hana Sato", "keys": [ "DDc92ZOQNJ0RJuFr1C5JsJ8yt9HBJTIyO9DXv_68KHNd" ], "weight": 9 },
-          { "id": "Omar Haddad", "keys": [ "DJxIqoLETnUm_dfHOtLGESkWaQUK5ZhcEP5L3e_WVt62" ], "weight": 13 },
-          { "id": "Ines Duarte", "keys": [ "DLZlyuBEtP4wZf7tSSswRQrZfdvEuXh-syKDkRw2H1x0" ], "weight": 4 }
+          { "id": "Sam Rivera", "keys": [ "DJADjCQXJhmRZ_G7-cII_AGGCkLl8pSW7l6m7Wkono_3" ], "weight": 9 },
+          { "id": "Maya Chen", "keys": [ "DEdsnjUaR2-37Co0y25p3ofQycJ5_WUJEs6J_mrhqt98" ], "weight": 17 },
+          { "id": "Jonas Albers", "keys": [ "DJQaPP1RwY8VEV0Myxa3vBbnqNHm-r2CDggwf8XP9zhe" ], "weight": 5 },
+          { "id": "Priya Raman", "keys": [ "DD-YI33a5cSHn252qpbzioKQ27v55RBii1iYwTXTW3uZ" ], "weight": 12 },
+          { "id": "Theo Brandt", "keys": [ "DDriFOnnFAAwaTALGICfp3aYpW1CVEFxjPhqFWbc3OfM" ], "weight": 8 },
+          { "id": "Ada Okoro", "keys": [ "DNBzU_AarwpwtGSZo0OweBHKDdWGmUqjTMiBOp3-Jr2V" ], "weight": 16 },
+          { "id": "Luis Ferreira", "keys": [ "DD-SHjWNzPtPehMmsSsx0FKUKFwe_Rh-nFLszg7MnAZ8" ], "weight": 6 },
+          { "id": "Hana Sato", "keys": [ "DI_TuS26LbNwZqziU3Fi8a6k5ixG5ZcikJP4WV0gCNIl" ], "weight": 9 },
+          { "id": "Omar Haddad", "keys": [ "DHhRU8ZEoCWSpb1TFQxXZwH2ezazy2XPXZFMINcA1X5X" ], "weight": 13 },
+          { "id": "Ines Duarte", "keys": [ "DP7oNeuG84OJ5BcNNwqxx2u0EjSjc-NKL0wNGZevJlj7" ], "weight": 4 }
         ],
         "total": 99,
         "dt": "2026-10-20T09:00:00.000Z",
-        "sig": "0BDGUHRV3tode1WVSkCA0nktEe1VmKrq1W4ZNF52aRTiWxfXjT1htjdlLmb7lnFj7d2eaN0vtgeQLW5AzLANBfMF"
+        "sig": "0BCwtks324CPmRKdXv86UaqjXZVZhSIJsADplySopLUan9g28e_a4tcQ1Ua6gQn1OLiGBAPx6oEBS1UHywcqZygD"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EH5-Y2tRhW2FvlHGq7oIpBjzEvUrQuu872-zIGlfZk6U",
-        "p": "EAKY9lxesPwMlQTqN0M8cM5kpTV2tSOsZl8llLwnGtbJ",
+        "d": "EIn75e4Subr2gTRt-1cJiKY7uEH4Cx2IKbyTBwwZmbhE",
+        "p": "EKlugCg8eY8Tv1MKLPCPosJWqMHNu4-UUkO6Qhyzqn3C",
         "subject": "Maya Chen",
         "alloc": { "0": 4, "2": 1 },
         "dt": "2026-10-20T09:01:00.000Z",
-        "key": "DK9VCNKKWx2PjetsjjD9xOSbxf2Apcc_C01xNl_zgsXS",
-        "sig": "0BCeRI3MKl6RTznUn6WQEh46ZRyAqr-jWplif3Xj2tOczuwsiOk-Ie-ne8ssmcVzHyFnSUggrbs4SASoMBUxjz8F"
+        "key": "DEdsnjUaR2-37Co0y25p3ofQycJ5_WUJEs6J_mrhqt98",
+        "sig": "0BA514ouFFLOZ6phRgp8iJ4hGdRdaJAzlezwg5WzAI-TBRY8J47LHMSsaHTOIZR4nG2s7EdrCvp0lMEvO6j-KdYN"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EKJlzhAUUxQp_FNo7RGUEM70mQ-9Xp9iWfBCbgM36P89",
-        "p": "EH5-Y2tRhW2FvlHGq7oIpBjzEvUrQuu872-zIGlfZk6U",
+        "d": "EIxoBtsi1oSirA02kjbk5dQZRetcDqpOt3ZTQRb_B04s",
+        "p": "EIn75e4Subr2gTRt-1cJiKY7uEH4Cx2IKbyTBwwZmbhE",
         "subject": "Priya Raman",
         "alloc": { "0": 3, "1": 1 },
         "dt": "2026-10-20T09:02:00.000Z",
-        "key": "DIw415RXtwtGQ5OH9ejCppTWs-ccFXa3QZMhSD-D7Owm",
-        "sig": "0BASDUUbHSqh7V-Vq1UOsuZlZyyDifQHv9PDfZnat5KdTKnmtVzANlogFEddbmzHnNw395MRBIs-iZ_7wwhNpoUF"
+        "key": "DD-YI33a5cSHn252qpbzioKQ27v55RBii1iYwTXTW3uZ",
+        "sig": "0BAlNrgYXPS1mWmak0u3Cru1l6qo2L96d6Wm3AHTejmTxb1UZwM7EC5PriInY7EGSZu_6AT9AJHIin3d1YB-Z_4A"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EPcf9HdxH9FJsnJqHxYszZJoLv1Y3-JH0i5lGILbNWs1",
-        "p": "EKJlzhAUUxQp_FNo7RGUEM70mQ-9Xp9iWfBCbgM36P89",
+        "d": "EIyl40skkywCXypLNaeRrlOJ5HzJ-cP3h5jFLy8MS0yX",
+        "p": "EIxoBtsi1oSirA02kjbk5dQZRetcDqpOt3ZTQRb_B04s",
         "subject": "Theo Brandt",
         "alloc": { "1": 2, "2": 2 },
         "dt": "2026-10-20T09:03:00.000Z",
-        "key": "DC2Xl-pMJY97t_jkZKvRrEbMZB0pdriEwzANDHrUDoM7",
-        "sig": "0BDgxa2kAzpTvXAhaHbYgZ6NvIfvhHo-RmMQcca9E12cgozrW5-PWcKdjZpdvDShdF4-5RFaFEQkk-4w1qz0ESYA"
+        "key": "DDriFOnnFAAwaTALGICfp3aYpW1CVEFxjPhqFWbc3OfM",
+        "sig": "0BABF0xRl2oDOIjhEFOGWV1cb5h3__cin8LNBbNEikGt-4NCRg_6IqGw6rSUTeWjJ1oxzPrCUDe6ed0xNqZMNOgD"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "ELTWqmMgpQHt7ZE6nii21D5fy2VEwQVOco7LtLieRsvm",
-        "p": "EPcf9HdxH9FJsnJqHxYszZJoLv1Y3-JH0i5lGILbNWs1",
+        "d": "EBwfMkXk_b9--jnPc742bOljd931edLGFEpvlHSjj358",
+        "p": "EIyl40skkywCXypLNaeRrlOJ5HzJ-cP3h5jFLy8MS0yX",
         "subject": "Ada Okoro",
         "alloc": { "0": 4 },
         "dt": "2026-10-20T09:04:00.000Z",
-        "key": "DOTyHQ8CQKQm386f_du4d9ymVnH-np_5ym0HaNq7tin4",
-        "sig": "0BA82e_BD0QRL2z56wWWJH25WkQCsfviQ24oCEkpcECzGY44UgUWrKIdXWfmwaaRQ-VhPhDDrljQ9KPDZIPx7rAN"
+        "key": "DNBzU_AarwpwtGSZo0OweBHKDdWGmUqjTMiBOp3-Jr2V",
+        "sig": "0BCs1dMDzDByPUTv74kWc-7P7nmLoLlfYxmN-O7l5cbeEJSKNo-1rRWptUCkoBOAAJM90q1KSfy-KAnyIkxaV7EK"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EFzxxEhKCBETJv-mCFHYk3QEBLjPbcRoyoNqSiFBSqqS",
-        "p": "ELTWqmMgpQHt7ZE6nii21D5fy2VEwQVOco7LtLieRsvm",
+        "d": "EKKaL_ZjJKDUtDet2wILGd1_ACHd7RkdE5HngCLPDAWU",
+        "p": "EBwfMkXk_b9--jnPc742bOljd931edLGFEpvlHSjj358",
         "subject": "Hana Sato",
         "alloc": { "2": 3 },
         "dt": "2026-10-20T09:05:00.000Z",
-        "key": "DDc92ZOQNJ0RJuFr1C5JsJ8yt9HBJTIyO9DXv_68KHNd",
-        "sig": "0BDsMER4g3_b2yS3Ci_UL7LUTgtfPIyIcC3i6hAyFnHX8xi_r4JHaZ_y7zvM-pak4uK9E24sjUHGmrY_e-MVARIE"
+        "key": "DI_TuS26LbNwZqziU3Fi8a6k5ixG5ZcikJP4WV0gCNIl",
+        "sig": "0BAjya6jr62akQa5e9jHQeo_66OjRLorPYjc74c2xe0_6RjmEsrcwMcfsYAqak4EsiHQ7o2bveSgj-hkCwb6hJAC"
       }
     ],
     [
       {
         "v": "tally/1",
         "t": "mint",
-        "d": "ELe8-OZAI8BEV82qxxaq5t8y6KlNzDZPksPO8-F9ZWxE",
+        "d": "EGtpisRRxX0pkTjsfy37cepbFs2HFIbJjw4bsI6T3KBo",
         "title": "Which Q4 project gets the discretionary budget?",
         "desc": "One project will be funded from the remaining $18,000.",
         "options": [
@@ -96,320 +96,577 @@
           "Quarterly park cleanup"
         ],
         "quadratic": true,
-        "organiser": { "id": "Harbor Commons board", "keys": [ "DAzw4BrfeRJ19gq13cPzzyPE0CC6t4fpPfI_82ixGS3f" ] },
+        "organiser": { "id": "Harbor Commons board", "keys": [ "DPz1NynyJ7qUThWMf7a3ZHHxkHMgeVDa5D8iAfEIX0Ac" ] },
         "subjects": [
-          { "id": "Sam Rivera", "keys": [ "DEacgCg-M9tYDkO0oDUPukSA7Khio61otz-BoTUIzltR" ], "weight": 9 },
-          { "id": "Maya Chen", "keys": [ "DEtjGGAALM3Ngoq38D7K4R4WkdTWOcgW9yWRz9Uty0gQ" ], "weight": 17 },
-          { "id": "Jonas Albers", "keys": [ "DBLEMkMGHYq7laPZwVvDk4mKVOeOxJzssQf-mYinKp6D" ], "weight": 5 },
-          { "id": "Priya Raman", "keys": [ "DGO-ulyJo7sPRKHas3XboUT9CPJjDBSPz09BwBy58u6y" ], "weight": 12 },
-          { "id": "Theo Brandt", "keys": [ "DFehH8SobCI4S7Jv9ymC25HbiNQsd5gv_7zctftRC5sU" ], "weight": 8 },
-          { "id": "Ada Okoro", "keys": [ "DJTE9EX_rEaaVD7OS1JIZlAPNFr_CRm6Rif76JQgU5U-" ], "weight": 16 },
-          { "id": "Luis Ferreira", "keys": [ "DHa0Em5IjeI2Rq_q_yYkp8_pZGfGrwJKqw6NfjpGdfZh" ], "weight": 6 },
-          { "id": "Hana Sato", "keys": [ "DIfFlp47XsSwW--i-DtMdnyjEunFwck3VMBc76Cu_mes" ], "weight": 9 },
-          { "id": "Omar Haddad", "keys": [ "DINMNSEBqa26AzZryLRMI7Vn6MlYyI4y0d50bGi44Dtv" ], "weight": 13 },
-          { "id": "Ines Duarte", "keys": [ "DNkMZnz5MlDDDbjgy5lrYWoRfg03NFSbfyPY7IhUAi8q" ], "weight": 4 }
+          { "id": "Sam Rivera", "keys": [ "DMfGbA2slA_CgRZVJ4Ah8Oq_piprX3WCbCCo1n4QQb2o" ], "weight": 9 },
+          { "id": "Maya Chen", "keys": [ "DGEPmwMoyodfXflk9V98HXYRGmD1D8551mrKy3wophkp" ], "weight": 17 },
+          { "id": "Jonas Albers", "keys": [ "DNj92QZ-x338Qj9ips0GhnMkn5TSDhEDQA413XrCLBeF" ], "weight": 5 },
+          { "id": "Priya Raman", "keys": [ "DAp0rJxBvvlkYsLTlNnLaL3pXy-g9ZnV0pFgjqszCIOj" ], "weight": 12 },
+          { "id": "Theo Brandt", "keys": [ "DK6Y8Z1EIFgO_Vm1pSXwmdL_ohjy0tTR3hLG1dwpb9K8" ], "weight": 8 },
+          { "id": "Ada Okoro", "keys": [ "DPGWSYKN5TbI42CVP08ujZXs378q1tk48lGtI2yVAuy3" ], "weight": 16 },
+          { "id": "Luis Ferreira", "keys": [ "DIsJ_p3GPCyltNBFRp9Jmetgff9EF_XQksZGmfaFyRLt" ], "weight": 6 },
+          { "id": "Hana Sato", "keys": [ "DEVmmAOENmo3kjKwU-hNzjQFWRgdlx9YBP3dMpGPLs_F" ], "weight": 9 },
+          { "id": "Omar Haddad", "keys": [ "DPdMorMrAY3Zq8zBXMIhX7DedOiDTK-nyX5aCQ9TmLFo" ], "weight": 13 },
+          { "id": "Ines Duarte", "keys": [ "DNYE1fx8jI3ObC11oSLp4WD6Pzdwb0KUzmWYgIR9X19l" ], "weight": 4 }
         ],
         "total": 99,
         "dt": "2026-10-20T09:06:00.000Z",
-        "sig": "0BD2SV5aInx2qKCPmeN_UJh7h57MBXVUsu8wehek09pCWn20xNZgxZfWfxdmCboUGx2OC4sAX3V_eG1apj6xNEcD"
+        "sig": "0BAbQDNjGO6UhhJp-mJxfXxqYvJnBDG3BzbOYfukDDO1wbDTaDDk6tqicyLG1Vt0z0OGCSeNBxqoGCzP9Ks5i6sB"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EKAyxsFzX7ogr01vP3pyjxzNaxlnzSKbALaiDPq8rTKh",
-        "p": "ELe8-OZAI8BEV82qxxaq5t8y6KlNzDZPksPO8-F9ZWxE",
+        "d": "EL0sXUD26ByoNoEmkHsHslzgM0eZT2h2j4aK6vqjZkQ5",
+        "p": "EGtpisRRxX0pkTjsfy37cepbFs2HFIbJjw4bsI6T3KBo",
         "subject": "Maya Chen",
         "alloc": { "0": 2, "2": 3 },
         "dt": "2026-10-20T09:07:00.000Z",
-        "key": "DEtjGGAALM3Ngoq38D7K4R4WkdTWOcgW9yWRz9Uty0gQ",
-        "sig": "0BB4Wq_c6j2yTwVnxfo9Xaxxeq4_hyhbk0lxwiDAeVfwk738RYNE77SOwqTodxMYMw1NzE0H7IBOdwrW8Om7BK0C"
+        "key": "DGEPmwMoyodfXflk9V98HXYRGmD1D8551mrKy3wophkp",
+        "sig": "0BBQuMrC6brUt0I2762x2tp4a9wuEVumY1k3k56TW8aZmFlebAdDVbnne72B33pFVgyfV7CpjMQPjRUBSkJQ2h0D"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EFnRyVcE3mcgM7YR7VOSASMraW5mfLx-fu4Ho9JY5IJU",
-        "p": "EKAyxsFzX7ogr01vP3pyjxzNaxlnzSKbALaiDPq8rTKh",
+        "d": "EPcSvwq5Xbdne0_vzEhDdhE7TcPvwm980jPczt9fSu1k",
+        "p": "EL0sXUD26ByoNoEmkHsHslzgM0eZT2h2j4aK6vqjZkQ5",
         "subject": "Jonas Albers",
         "alloc": { "1": 2, "3": 1 },
         "dt": "2026-10-20T09:08:00.000Z",
-        "key": "DBLEMkMGHYq7laPZwVvDk4mKVOeOxJzssQf-mYinKp6D",
-        "sig": "0BCAK3w5rd_zuudTAPSZ0efSvxjLnhqPOjyt8mg6F4b4JJMv0zAFPYHWc3KuHsEVALWRy2TQwvIGX34J6edMI5UH"
+        "key": "DNj92QZ-x338Qj9ips0GhnMkn5TSDhEDQA413XrCLBeF",
+        "sig": "0BAwYdeoC5U202Dml5sbr38dI8LwyVlGsflk8zu11FVbAqXQimc0iW94PKA_LylHtCUzYTg8cIUVjSztlz-rYt8B"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EEtpUeNYq69vfcKKirTXTv-C5bj7MaUEJY_Ff7sI6WsW",
-        "p": "EFnRyVcE3mcgM7YR7VOSASMraW5mfLx-fu4Ho9JY5IJU",
+        "d": "EBo6s4VJ-JNzx5eS3eEBcPXaq7UcazV5_fXeCfqSwOv6",
+        "p": "EPcSvwq5Xbdne0_vzEhDdhE7TcPvwm980jPczt9fSu1k",
         "subject": "Luis Ferreira",
         "alloc": { "2": 2, "3": 1 },
         "dt": "2026-10-20T09:09:00.000Z",
-        "key": "DHa0Em5IjeI2Rq_q_yYkp8_pZGfGrwJKqw6NfjpGdfZh",
-        "sig": "0BD0f4H8PZIqQzVrZDKIyYcSi3QWFcUW2EeCf2pUTd1jUc7elILE1En64iNFbnVXStwGa3SG7qne9SwWTI2QidgK"
+        "key": "DIsJ_p3GPCyltNBFRp9Jmetgff9EF_XQksZGmfaFyRLt",
+        "sig": "0BBKok2NLn8e9V4oHs9xtyYeqkh2oScPIwG-jVLNcER13M-0dqJY-Hi9SUKPpQ_rzsConuBVqMMDlqfcZQEpn3AK"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EHd_qBwq0DoEWWHxlDrZrhorR64ReXIHci-Ne2aRniAN",
-        "p": "EEtpUeNYq69vfcKKirTXTv-C5bj7MaUEJY_Ff7sI6WsW",
+        "d": "EC3j3EYEWxE-mMq8PTb0MnM8MJ7r6NRI_lUMMLm_Aksi",
+        "p": "EBo6s4VJ-JNzx5eS3eEBcPXaq7UcazV5_fXeCfqSwOv6",
         "subject": "Omar Haddad",
         "alloc": { "0": 3, "1": 2 },
         "dt": "2026-10-20T09:10:00.000Z",
-        "key": "DINMNSEBqa26AzZryLRMI7Vn6MlYyI4y0d50bGi44Dtv",
-        "sig": "0BDJz68KX3QCTBBE7EKABGi4mRtGl4qE2iWAKnzY4AzyYO3HDhYYnRHznKIqH-6I5zPkBfa3H9NZtMxy4GA7dSQP"
+        "key": "DPdMorMrAY3Zq8zBXMIhX7DedOiDTK-nyX5aCQ9TmLFo",
+        "sig": "0BBD-6-BOWKn4L-EBJ8SCz9s6pwpVA_QY_jaotWIq5ieoAFDZmHxhjkv4MLLZBLgjWsD8q_ppQpkHOzAwX-HI_0A"
       }
     ],
     [
       {
         "v": "tally/1",
         "t": "mint",
-        "d": "ENMgngWiOEZakG1AQ-lg6jR5rOh-j2k_yMeNaXe-QzcN",
+        "d": "ELXStvB-CIRAHUNDY56AeR_lz9cHBnWmdAv8B3PwjmCh",
         "title": "Pilot a four-day work week in Q1",
         "desc": "A 12-week pilot for all full-time staff, reviewed at the end of March.",
         "options": [ "Yes, run the pilot", "No" ],
         "quadratic": false,
-        "organiser": { "id": "Harbor Commons board", "keys": [ "DDL4FimdBc3rcIkaO_Kz3rvisKKuLegwvX5Hn0QvLhWx" ] },
+        "organiser": { "id": "Harbor Commons board", "keys": [ "DDOEKMWQRKvzfA6_TDIIWzWJnoXzuNwk6qa7AiAYH0xd" ] },
         "subjects": [
-          { "id": "Sam Rivera", "keys": [ "DH6FuZHieKJ0ztZyDbdq3iHwSC6V3Vyww3lIHrWJ7VfN" ], "weight": 9 },
-          { "id": "Maya Chen", "keys": [ "DK_39Lcx76XAD_QsChHlxVWaVWLAOer5EaXFe0tO2zc-" ], "weight": 17 },
-          { "id": "Jonas Albers", "keys": [ "DHexQy835D1fBhqQW-FXArZemoCpRXfqV6pjCNmRwMKx" ], "weight": 5 },
-          { "id": "Priya Raman", "keys": [ "DIJ8HwMpl89gDBWB_9XCC8dGfc-y1RFKcWy9gKD3qP6c" ], "weight": 12 },
-          { "id": "Theo Brandt", "keys": [ "DPQ-S91seTmvIIEKnQNmGFwI61-SpcajCkhAuTt10SKj" ], "weight": 8 },
-          { "id": "Ada Okoro", "keys": [ "DC44yZz-E0Jf2yl-zEoQVVTy2OJl4r2ErbpTDASJf2r8" ], "weight": 16 },
-          { "id": "Luis Ferreira", "keys": [ "DFHP0Fsxvxeqt5TRtTHIf1BlJIfx8dIwmj5v6T0T6jXt" ], "weight": 6 },
-          { "id": "Hana Sato", "keys": [ "DHiv-NEzwBmWtVn6jc5aKc8v4vtFHNwoeym1pZERZ5yC" ], "weight": 9 },
-          { "id": "Omar Haddad", "keys": [ "DPausPXxC8QKAGwpAgqvI_oCCQdmovdYmpdhpL_REWLX" ], "weight": 13 },
-          { "id": "Ines Duarte", "keys": [ "DA4orvGnn5J9ysmTFMb9dbVpfs6YD34QIq7usqmXQBCK" ], "weight": 4 }
+          { "id": "Sam Rivera", "keys": [ "DMcnhqJ_gCisa3BKgsnPhdZgXHNWx5sxQUUj9CHno1D8" ], "weight": 9 },
+          { "id": "Maya Chen", "keys": [ "DJHbZOGQcAOpymE1qCqSuIpQzVsnoqE4gIEM8TMoxDOc" ], "weight": 17 },
+          { "id": "Jonas Albers", "keys": [ "DDSnjMOotKYgD7wipvbIqe-JDnpoSVk-FBrqcFZHj9qj" ], "weight": 5 },
+          { "id": "Priya Raman", "keys": [ "DIKXneqE8vWu8SEZ0upjJioAt6oMtoSkBBkIa8FTgWt7" ], "weight": 12 },
+          { "id": "Theo Brandt", "keys": [ "DArOeQr7tdz9eJiqfNgbsZa3x1_S3fC7wmZ9S4cB8qKv" ], "weight": 8 },
+          { "id": "Ada Okoro", "keys": [ "DISu49U_8num8FjU_2xvF8FtYj9f0SmhJ4tJnHDSj5C8" ], "weight": 16 },
+          { "id": "Luis Ferreira", "keys": [ "DC_P9hnNCpSkEet-tHRoRRYCNwjAWAthSjmbLl40AxhN" ], "weight": 6 },
+          { "id": "Hana Sato", "keys": [ "DG_-8m-sssVkWln_j-C50i9jxqiYxYfG--O-BQmiPirf" ], "weight": 9 },
+          { "id": "Omar Haddad", "keys": [ "DKg4xwGL8nupe25gFrsdmABCWRjstSMZAjUkAHrSYD--" ], "weight": 13 },
+          { "id": "Ines Duarte", "keys": [ "DGwYN4YNmKJjGvXq86NUwoY_g5RojPLPWMZfaQzFQJbt" ], "weight": 4 }
         ],
         "total": 99,
         "dt": "2026-10-20T09:11:00.000Z",
-        "sig": "0BAzttfOHpcjySNXcvG2_IyVig6dCFCrC3lwHNiTmLDya53TIXSbkn1BpeBCg4FPx4EDpU4yr34T0_BT3nZvXj0B"
+        "sig": "0BCH3zrZ5MltGBdf9UOm3tD-y85riCWLp-kvUrBlajdmgiw6Xe5wQT_TUA_sEvrQVO5uXszS2_KAdPxLMxtpR8IM"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "ELcYa8ZPoSXxbRDRFzJNAjEAaVGhISbUnuDQalBI_ILN",
-        "p": "ENMgngWiOEZakG1AQ-lg6jR5rOh-j2k_yMeNaXe-QzcN",
+        "d": "EG4dEAvHUAdsO2yT6b3EuMyyHxQIsdQPD4IyvPGS82Ji",
+        "p": "ELXStvB-CIRAHUNDY56AeR_lz9cHBnWmdAv8B3PwjmCh",
         "subject": "Sam Rivera",
         "alloc": { "0": 9 },
         "dt": "2026-10-20T09:12:00.000Z",
-        "key": "DH6FuZHieKJ0ztZyDbdq3iHwSC6V3Vyww3lIHrWJ7VfN",
-        "sig": "0BATD3d6EOhYQ6sepQpcX5EVvsuJY_rbvqbQhEVlAiatLBTOvp2TtfeOkZasQKSp9wcRJ5Q97dJOxaYtTf-PIYcK"
+        "key": "DMcnhqJ_gCisa3BKgsnPhdZgXHNWx5sxQUUj9CHno1D8",
+        "sig": "0BA-WDtzLiVjz0g2DIVAkQdkwP8eqLACK8VgPqnwovmLyqipzaFAKLyp7rvnI0Tfsn7LqFM9Q79D6uRWWOeL-Z0M"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EELa40SO0XSo-pVMTIjN7uoI9BtdrEqYN6vF3MKinNEm",
-        "p": "ELcYa8ZPoSXxbRDRFzJNAjEAaVGhISbUnuDQalBI_ILN",
+        "d": "ENloqfi71DqKe6m6kN9wtFGgh9mkInd8JzJXw2V85Ber",
+        "p": "EG4dEAvHUAdsO2yT6b3EuMyyHxQIsdQPD4IyvPGS82Ji",
         "subject": "Jonas Albers",
         "alloc": { "1": 5 },
         "dt": "2026-10-20T09:13:00.000Z",
-        "key": "DHexQy835D1fBhqQW-FXArZemoCpRXfqV6pjCNmRwMKx",
-        "sig": "0BBrOTMFi_eDLSMMs52-tKr6rQileEVEO4JIq8jtNfmlOkNLzGFMt7L8T3ogo7k5ThGoDk-3D4HjMUEp21jWE94N"
+        "key": "DDSnjMOotKYgD7wipvbIqe-JDnpoSVk-FBrqcFZHj9qj",
+        "sig": "0BCjHKpwG1J2UZu4E6m1holV5lnb52ldQkogSMM9vPBkWS6vzj7vOorcJRkCXY5Nec5gObu9LC7dxJC5SCqmVZsM"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EIfEUJ56w4hVuv103xeu3RJOm4Ny449IFzgV0Z__z-YM",
-        "p": "EELa40SO0XSo-pVMTIjN7uoI9BtdrEqYN6vF3MKinNEm",
+        "d": "ENbAc0nQvfmbqkYaubjyJNab2hJP9vKQH1uDf8SFmica",
+        "p": "ENloqfi71DqKe6m6kN9wtFGgh9mkInd8JzJXw2V85Ber",
         "subject": "Ada Okoro",
         "alloc": { "0": 10, "1": 6 },
         "dt": "2026-10-20T09:14:00.000Z",
-        "key": "DC44yZz-E0Jf2yl-zEoQVVTy2OJl4r2ErbpTDASJf2r8",
-        "sig": "0BBxkYrGekdwxB0OUP-yP3Z15TdcDm1un0wYyIR7ud0X-QffMwZCGUEHk3rFoUyLNzm7TfxcDDkHpflboet0oQUA"
+        "key": "DISu49U_8num8FjU_2xvF8FtYj9f0SmhJ4tJnHDSj5C8",
+        "sig": "0BDjCFqC4D4u2yQ-a3XsAr0r59sON8OOEPtRD5RgF7FbWFaL4T0467DNSWYKVwxUr9svC9EZaCWOLgnGr6tni84O"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EFoor9-dOOZziOHEmjBQZJe8ywnjJWkUCp0LGECT0I3Y",
-        "p": "EIfEUJ56w4hVuv103xeu3RJOm4Ny449IFzgV0Z__z-YM",
+        "d": "EMJJTKaTWf7dtqjbzbWIi17_dx0OUiyAuKEgIOhCXmrg",
+        "p": "ENbAc0nQvfmbqkYaubjyJNab2hJP9vKQH1uDf8SFmica",
         "subject": "Omar Haddad",
         "alloc": { "0": 13 },
         "dt": "2026-10-20T09:15:00.000Z",
-        "key": "DPausPXxC8QKAGwpAgqvI_oCCQdmovdYmpdhpL_REWLX",
-        "sig": "0BCp_bnuMzRamuLSO4AINwcOpa4BXyshgUYmyKMxE6PhGx4bGz8UFkfpVW_nS59vhLMKpTuHkWRGZdUzDOwKHp0O"
+        "key": "DKg4xwGL8nupe25gFrsdmABCWRjstSMZAjUkAHrSYD--",
+        "sig": "0BAc95hH3wLmoJ0bMdh9xw_U4Fo2jhaN_AG0nyhpJxIEjKcLkcMrVJilu4hGf8f-cNYMIvebuCalTDgKsb5F2x4A"
       }
     ],
     [
       {
         "v": "tally/1",
         "t": "mint",
-        "d": "EF7A7QTMWXwkSPunneFEDetuoUt_093OriW8qC0VUTTP",
+        "d": "EGgJMGsNYsWOmEcSX75yUlj-ikVFVznBFVhqm5YaxZWS",
         "title": "Name the new co-op café",
         "desc": "Shortlisted from 40 member suggestions.",
         "options": [ "Common Grounds", "The Pour House", "Elm & Ember" ],
         "quadratic": true,
-        "organiser": { "id": "Harbor Commons board", "keys": [ "DEEvst012iK6BY_701RzdLanYLGGgtceihnTRnEmIXv2" ] },
+        "organiser": { "id": "Harbor Commons board", "keys": [ "DNT10a5JmhxcME4kaMWIyl3nc1yG2ePUXjr5GBw5REQZ" ] },
         "subjects": [
-          { "id": "Sam Rivera", "keys": [ "DD_iVyiN2Jhm7kxBHFmYorF-ahVT3SoNl1_bKXDVdAmw" ], "weight": 9 },
-          { "id": "Maya Chen", "keys": [ "DJxDS3DdqU8k9VTcz3M4IDbY4qsBbrmqqMkXh9tCowfB" ], "weight": 17 },
-          { "id": "Jonas Albers", "keys": [ "DJ28_wVTZpxPPDo3vhX3Ax9kOIvW1irgi34SFppwh7_Z" ], "weight": 5 },
-          { "id": "Priya Raman", "keys": [ "DLiNaTWVNI0ue-L0v3jlPOYgjT_7G0weBfvdlANpfCtx" ], "weight": 12 },
-          { "id": "Theo Brandt", "keys": [ "DCl8tHQoXhf4p_S_Cg9BpEN0ai5_wPox-NK1OCapXeVe" ], "weight": 8 },
-          { "id": "Ada Okoro", "keys": [ "DOObMV9IUfIBuuWpJs1TnaKfzdd87SMKz3F8_h3YvxDL" ], "weight": 16 },
-          { "id": "Luis Ferreira", "keys": [ "DFT9hgS2AswwJWlc8jDyOjFX9la99LCavy5dphb4eirv" ], "weight": 6 },
-          { "id": "Hana Sato", "keys": [ "DFmpO-KmcpFdOp5d2MAZ-V_vDhIt-rKhLqRAu3ImsqXV" ], "weight": 9 },
-          { "id": "Omar Haddad", "keys": [ "DKfCoNUgx9U--HuOUSumbqAP2tM6UeYQt9zY8OJd0gJD" ], "weight": 13 },
-          { "id": "Ines Duarte", "keys": [ "DJhJb7Htp0zF45Yi-Uh-_CFlO5aWCqgPoWLjiK0iYtsW" ], "weight": 4 }
+          { "id": "Sam Rivera", "keys": [ "DKfU2aRt48cew185OCQz0KMUzgSmEHwH_zyEdFMKWcjo" ], "weight": 9 },
+          { "id": "Maya Chen", "keys": [ "DGXI4YzRRm8v-Tew5hj9a_DMLjHAlsnSqxcdP8YMf6qw" ], "weight": 17 },
+          { "id": "Jonas Albers", "keys": [ "DErIAedwW_lVjF0vAMI1oq7uOsikstgaYf6QSwD5Cdus" ], "weight": 5 },
+          { "id": "Priya Raman", "keys": [ "DGrKBCngKFq_cC3VqyJhgST_HSS94eUzcuJ1JrIqT8bA" ], "weight": 12 },
+          { "id": "Theo Brandt", "keys": [ "DKLMmkQaQhTz3ShHFT8IuyVXqIl7obj-6R0LHJTNTATN" ], "weight": 8 },
+          { "id": "Ada Okoro", "keys": [ "DNHto8rFP5SldtvrcaLictLEqO6j3iEfcPm-CDVBFuia" ], "weight": 16 },
+          { "id": "Luis Ferreira", "keys": [ "DFRjffKwqwmKQqIibXkSuAfJGvuA5a8dHve7M7Y5rSLd" ], "weight": 6 },
+          { "id": "Hana Sato", "keys": [ "DDV-R5WBZoKWeourgzUvDIvPLHPYlF4qxF3ioKGxsZ-l" ], "weight": 9 },
+          { "id": "Omar Haddad", "keys": [ "DIW_T7uGBFxBVv2_493aR9KC_OVYIfY9sfdXtwt9bL2_" ], "weight": 13 },
+          { "id": "Ines Duarte", "keys": [ "DM-Z2oApUCI_U2P8QXVNbxSlEoRSpw8M7x0MSUdf2c7A" ], "weight": 4 }
         ],
         "total": 99,
         "dt": "2026-10-20T09:16:00.000Z",
-        "sig": "0BBT511Ha_n6dlOPDks_z7zWGDHHb3QbgO9eEAmzOuDzqtmNe07zzwWS5Y2KEpbLHl4VJsqCZUV1Li6GRfiNG4AH"
+        "sig": "0BCLR2cJLCSJu1QLW5FBHNb13HKeu59ni8mkOBacESdNoQNZ9gKj6CJY-POyQhh6Z96V_cq347sW61S9QOM_c1ED"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EPVHrjHfPIChJfum4awekqwLF-hPgC872mJzybkWLyac",
-        "p": "EF7A7QTMWXwkSPunneFEDetuoUt_093OriW8qC0VUTTP",
+        "d": "EMvtrYz4us2ZmTsnjosy4dor6McWTf9clLaunha7KQJG",
+        "p": "EGgJMGsNYsWOmEcSX75yUlj-ikVFVznBFVhqm5YaxZWS",
         "subject": "Priya Raman",
         "alloc": { "0": 1, "2": 3 },
         "dt": "2026-10-20T09:17:00.000Z",
-        "key": "DLiNaTWVNI0ue-L0v3jlPOYgjT_7G0weBfvdlANpfCtx",
-        "sig": "0BDMj0Ux-MYqXCey8KfmD8AiuLNjFJkiThL-LCA3C6lBccF5qmgff0iw250W2MxU6B3hY5F-k0NHXrWsWd-W0jwM"
+        "key": "DGrKBCngKFq_cC3VqyJhgST_HSS94eUzcuJ1JrIqT8bA",
+        "sig": "0BBqQ_ajjKbF6rDsvzw1D9J13Qng6EDXi-DOkjb5wcSZui0-NGUaTpbvZWbcQ1S-4S6kxbZ62L_2tBKgnTVo0eYE"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EIL3-c1IqaVsOuxqVm-s54BMbgKTR93X81ICLThOeIFc",
-        "p": "EPVHrjHfPIChJfum4awekqwLF-hPgC872mJzybkWLyac",
+        "d": "EOZEondAFFe8wXiEcskXPqGtEc2Wm0ZyyLzGM_dqC-wl",
+        "p": "EMvtrYz4us2ZmTsnjosy4dor6McWTf9clLaunha7KQJG",
         "subject": "Luis Ferreira",
         "alloc": { "1": 2 },
         "dt": "2026-10-20T09:18:00.000Z",
-        "key": "DFT9hgS2AswwJWlc8jDyOjFX9la99LCavy5dphb4eirv",
-        "sig": "0BBlrKccfTbo1JXt2fpeRvyRXQHVMDaQMnJPy9iIqapd-z0u8x1SXP3JDdNJ-STpiimLSHzjPyKklH6JP_oH5MAF"
+        "key": "DFRjffKwqwmKQqIibXkSuAfJGvuA5a8dHve7M7Y5rSLd",
+        "sig": "0BD5eGAq-jLyXmw8lyGGcuPw9IhKeLy3aSWxvPXi6a615yO-iqK8Tu3ntRyQbj2K745eBn9bu7qmX2edHMKbLwkB"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "ED0imJyQa8LbO3huNYQS5-mI3TEjD-XSHYyhKwAoenm1",
-        "p": "EIL3-c1IqaVsOuxqVm-s54BMbgKTR93X81ICLThOeIFc",
+        "d": "EGJ3hdv3Ki_sYkw9RBHE8ZDyuBfbRtPTgo4tDH1wHsQ6",
+        "p": "EOZEondAFFe8wXiEcskXPqGtEc2Wm0ZyyLzGM_dqC-wl",
         "subject": "Ines Duarte",
         "alloc": { "2": 2 },
         "dt": "2026-10-20T09:19:00.000Z",
-        "key": "DJhJb7Htp0zF45Yi-Uh-_CFlO5aWCqgPoWLjiK0iYtsW",
-        "sig": "0BClZYLQUCBA1wWXUNZRgSdvUR_SoVvHJZGi6ZNEM6Ae9V23KjD-eC-RAuCr8VXjHy7s22TqJgNfLr8D3OF4ocQG"
+        "key": "DM-Z2oApUCI_U2P8QXVNbxSlEoRSpw8M7x0MSUdf2c7A",
+        "sig": "0BCiCsVKAZ_7b6e7sg80xoytror5oBWPVG0AIFQuL-uc_8ZGHiH1k5Lscjd4JftjxreL7SWmjnsmsi-0hhui3rUD"
       }
     ],
     [
       {
         "v": "tally/1",
         "t": "mint",
-        "d": "EEKI4ChNnuiQjXtu51X3vCWm2MKnQ-wM_LUG9vaiFZPl",
+        "d": "EE89cRpS3ai8tTA6YIE4pzw0J__lii9YdKYeUau7HHVY",
         "title": "Move the monthly all-hands to Thursdays",
         "desc": "Tuesdays conflict with the regional ops call for half the team.",
         "options": [ "Thursdays", "Keep Tuesdays" ],
         "quadratic": false,
-        "organiser": { "id": "Harbor Commons board", "keys": [ "DBjnPy_9X_k4OrXTeC64yGBOpyHfKowza_SgpdGPKcus" ] },
+        "organiser": { "id": "Harbor Commons board", "keys": [ "DOKpwSqTYWHJTEm7s1vUN1BR8t26WBMkYtCVkRYoRanv" ] },
         "subjects": [
-          { "id": "Sam Rivera", "keys": [ "DJzdyvS9pfxiTDS0NlEMV0HJCeDf6UeLxRRq7PZlsVg9" ], "weight": 9 },
-          { "id": "Maya Chen", "keys": [ "DOsd5U1zJ0Rp9CL83eyn--nHVQWaIgiBFBmT1NyPRFBt" ], "weight": 17 },
-          { "id": "Jonas Albers", "keys": [ "DGTuo6djGJX0KgtKkqc8kH3FiLIm3ZGri07NgpkflaeC" ], "weight": 5 },
-          { "id": "Priya Raman", "keys": [ "DBIMw8s0j4qDT5K2TZtWldCSP4rE0HoHvRRq0zLsP-Gw" ], "weight": 12 },
-          { "id": "Theo Brandt", "keys": [ "DAa2BOBaSDo9S3gXdQipW2VHBV2y_1CEv2hLNqKo3Rl5" ], "weight": 8 },
-          { "id": "Ada Okoro", "keys": [ "DArotUZ9Ym0BahlLLtXiJkk39GIVvzNZbYtYy3t6cmQy" ], "weight": 16 },
-          { "id": "Luis Ferreira", "keys": [ "DC72am3LaDcXJ4i14YJdPL_tdND8n_bd7lOiMa9NiY9n" ], "weight": 6 },
-          { "id": "Hana Sato", "keys": [ "DKsuWPeTQ3iSTCjhSksBWDfZbx0jfAffEKb-k8UvgWrv" ], "weight": 9 },
-          { "id": "Omar Haddad", "keys": [ "DBJ9yEKyvHplj8BNPWyaEnpdOFcBFlCIxh5-uBbsexkm" ], "weight": 13 },
-          { "id": "Ines Duarte", "keys": [ "DON3lhqeZLsxf4nc_bSBo5hvPaQ2O22d5Tdvjbe3K-UE" ], "weight": 4 }
+          { "id": "Sam Rivera", "keys": [ "DGNH8QeqRhjtILmlM0GdZFRHbE3kWFUYtVo7hUlyfA9W" ], "weight": 9 },
+          { "id": "Maya Chen", "keys": [ "DCKZPIoXgyWUrgW6SnbDwAgiRTA_58fx29nUjDBpwUEQ" ], "weight": 17 },
+          { "id": "Jonas Albers", "keys": [ "DEH6feQvopbzwn8vhIUv76U4WVy9RNbL239KO3lAeeIb" ], "weight": 5 },
+          { "id": "Priya Raman", "keys": [ "DPwg37cZUyM_WRlQ5oc1M9cxCkRN47iYUQ58XxcfhMj5" ], "weight": 12 },
+          { "id": "Theo Brandt", "keys": [ "DPxuS787DuY1UWt9ry8a7D2zMAfCmnrtp-5csdXY5yq3" ], "weight": 8 },
+          { "id": "Ada Okoro", "keys": [ "DKEjt3E9-69488BGy6p8GQyZX0xXShGWrIZsOjHmXI2t" ], "weight": 16 },
+          { "id": "Luis Ferreira", "keys": [ "DJ-ZrbKQdllZla65NTdPatx-UqQJAMnUdPHzjtl5K6h-" ], "weight": 6 },
+          { "id": "Hana Sato", "keys": [ "DKao2eaDlUho1gc6RoVt1wAdzuhT_QVcjWX30GLM-uEz" ], "weight": 9 },
+          { "id": "Omar Haddad", "keys": [ "DLUZcZVJoEIN2fbjY_c3yR69q00Etptnw8xBDR6s8Vo1" ], "weight": 13 },
+          { "id": "Ines Duarte", "keys": [ "DK6ZeqaqBEcJvZ8isEYvDqRuP20r6KvcYnWkAFO_kwMW" ], "weight": 4 }
         ],
         "total": 99,
         "dt": "2026-10-20T09:20:00.000Z",
-        "sig": "0BBGFPuItCMWES1nkoRK2iD4BN4TtWG6ZMkReseFbPS9EYUsMyTt40cCN4xZs2XxJd_LXMqXzGee9DLlK16vmAkF"
+        "sig": "0BAMo7e4Sudy6u7360PyIWFmvJ5pHsbMPScIoNd5rN7J03t6YOPCDNYcMxysu9JaJmJjzY_q4Z_pDoWRfiqlRaMK"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EDj5En4BkF-6n7cwmDoj7k8qYvkQNx7JIJxSDoz7lDr3",
-        "p": "EEKI4ChNnuiQjXtu51X3vCWm2MKnQ-wM_LUG9vaiFZPl",
+        "d": "EA0LvVp62G-Y8K0wdMaww42eBddColCruTLiiMCX-wJY",
+        "p": "EE89cRpS3ai8tTA6YIE4pzw0J__lii9YdKYeUau7HHVY",
         "subject": "Sam Rivera",
         "alloc": { "0": 9 },
         "dt": "2026-10-20T09:21:00.000Z",
-        "key": "DJzdyvS9pfxiTDS0NlEMV0HJCeDf6UeLxRRq7PZlsVg9",
-        "sig": "0BBB299WDi4JragypsoEK5hvn-ybMLMeOy0_3PL0Olb6QgjcdPMIt17XU60_8mU2SLelwajEKVovQ80pizfQwwkP"
+        "key": "DGNH8QeqRhjtILmlM0GdZFRHbE3kWFUYtVo7hUlyfA9W",
+        "sig": "0BDL4y0nTJsfw3xKZTtvsrjZAm6cNkW3pIjUidnwjCBODA65kqILBKrcFw3nDia45d7QOU8DHtEaNQgASe5wK5wG"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EHTOjTQaYsDbCS_etkiMmlE2_q6g0vy9ib75dWwBRHuN",
-        "p": "EDj5En4BkF-6n7cwmDoj7k8qYvkQNx7JIJxSDoz7lDr3",
+        "d": "EL5s_kFsXRb8zxCKwmoGttN3xMaOpNqR7H-RO3A1_pIL",
+        "p": "EA0LvVp62G-Y8K0wdMaww42eBddColCruTLiiMCX-wJY",
         "subject": "Maya Chen",
         "alloc": { "0": 17 },
         "dt": "2026-10-20T09:22:00.000Z",
-        "key": "DOsd5U1zJ0Rp9CL83eyn--nHVQWaIgiBFBmT1NyPRFBt",
-        "sig": "0BAc9-3MO5vkVYS-pcGAXZNj3hw0R-iu6qwlk503lsL8IAcMM0GMko35FHi9aCNw32T1cCVIPaFl9B1ogcvJESkP"
+        "key": "DCKZPIoXgyWUrgW6SnbDwAgiRTA_58fx29nUjDBpwUEQ",
+        "sig": "0BCA_9SMRNBzSJWlOkVoCggqjafh95-X-vOYkhJTZwBhTJp0Z5vgiKIsgAE80RzF81C5KIuCOj5409ljYwOMP8gF"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EN_Ka07VT0CxpAzUtWnjgKb4UsuhygIoBLSm6kx57lYW",
-        "p": "EHTOjTQaYsDbCS_etkiMmlE2_q6g0vy9ib75dWwBRHuN",
+        "d": "ELThGnpgAbdTdV8azs0xkiwG9zk5EoEspPu3-ogwCYfy",
+        "p": "EL5s_kFsXRb8zxCKwmoGttN3xMaOpNqR7H-RO3A1_pIL",
         "subject": "Jonas Albers",
         "alloc": { "1": 5 },
         "dt": "2026-10-20T09:23:00.000Z",
-        "key": "DGTuo6djGJX0KgtKkqc8kH3FiLIm3ZGri07NgpkflaeC",
-        "sig": "0BDxvpnTYKLwzZwfZZMjMxIeRkZuZkOBsPrhqkR3Q1zYVcl8KGTXC-5ZzfUBfJDiBPnyM5_-nFOuYzi6mtyV5JMK"
+        "key": "DEH6feQvopbzwn8vhIUv76U4WVy9RNbL239KO3lAeeIb",
+        "sig": "0BBGkEa0f65Ksbmrxr1XzOCNncrDEVRkc-8Fbn5C18zkIl_plqN-fcRc_UoxD1U4Hz4PTyz-845ItPqft2w5jxUP"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EGtqM2pBjsCdKNRSkdkvC5aUIvLFncMn-kJWTyV7EH1M",
-        "p": "EN_Ka07VT0CxpAzUtWnjgKb4UsuhygIoBLSm6kx57lYW",
+        "d": "EE9Zg6PcQ9ZPW2WcJUf_3chKjoQ_7xXeQAI0TirvJ-UA",
+        "p": "ELThGnpgAbdTdV8azs0xkiwG9zk5EoEspPu3-ogwCYfy",
         "subject": "Priya Raman",
         "alloc": { "0": 12 },
         "dt": "2026-10-20T09:24:00.000Z",
-        "key": "DBIMw8s0j4qDT5K2TZtWldCSP4rE0HoHvRRq0zLsP-Gw",
-        "sig": "0BAWoQwT2WGRccS83kaRiyWimE4kEQHxqUn1u9s2SqVx5yTpHQC692vuoUVWeC1BV5j-fnVUvleRd46M3RaUTFYI"
+        "key": "DPwg37cZUyM_WRlQ5oc1M9cxCkRN47iYUQ58XxcfhMj5",
+        "sig": "0BBsFyup5uWUdDnyiiauNnx_Q3Uq2JBQ8_SlYg4FQic0_UZMAeOE8EtEH2CU_rZh43bz8rZfGNiJT4DakAWlk10P"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EP1x_2-hQ9z9QgaedEQFJY7nCHVGeTjY61NItOFy6bhe",
-        "p": "EGtqM2pBjsCdKNRSkdkvC5aUIvLFncMn-kJWTyV7EH1M",
+        "d": "EK-2GGsbjkth0sYPObEL5wf-BdoIB2CUVe3tynCLZp9h",
+        "p": "EE9Zg6PcQ9ZPW2WcJUf_3chKjoQ_7xXeQAI0TirvJ-UA",
         "subject": "Theo Brandt",
         "alloc": { "1": 8 },
         "dt": "2026-10-20T09:25:00.000Z",
-        "key": "DAa2BOBaSDo9S3gXdQipW2VHBV2y_1CEv2hLNqKo3Rl5",
-        "sig": "0BDOgRUKiAbp_nze6hhkfp0MbCf6KND6U390FJvcMt4nqKecXgnNYjS3ao57pjyjDqsh8ZNV2cB_QVQ_twItNZsL"
+        "key": "DPxuS787DuY1UWt9ry8a7D2zMAfCmnrtp-5csdXY5yq3",
+        "sig": "0BAR_N26EV1Wbazibe77yH55MxCI7KCijRPIkVB84QeuXvvtcz0CtUtiUF8z76hYBj7Fer2OwPzO-IW4FNbUzLUK"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EDiktpE7DZQS7sdtQs33rdcEZRJcER_mk-Ts4gml6g1Z",
-        "p": "EP1x_2-hQ9z9QgaedEQFJY7nCHVGeTjY61NItOFy6bhe",
+        "d": "EHX4lghU0Xj8B4OdJ1yN2qgc_OAWLghoAk-J4wl2cbw6",
+        "p": "EK-2GGsbjkth0sYPObEL5wf-BdoIB2CUVe3tynCLZp9h",
         "subject": "Ada Okoro",
         "alloc": { "0": 16 },
         "dt": "2026-10-20T09:26:00.000Z",
-        "key": "DArotUZ9Ym0BahlLLtXiJkk39GIVvzNZbYtYy3t6cmQy",
-        "sig": "0BBjIhBVBNBG3ipfpc9INhVTZG4Hbc6NzMtRGJlaOVlmREnav4KQ_OSKF1gPZ9DZOX8GtIgPQfFe3MGH4TaOd7cP"
+        "key": "DKEjt3E9-69488BGy6p8GQyZX0xXShGWrIZsOjHmXI2t",
+        "sig": "0BAy58oUc-H5xYKfx1tJoRcD1jUwIElCyNjtBRAf1MpU7QRG_JWi6Hi4ql-p78tEPgmnDDAOkuGgNy24bAFqyMgI"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EKV-vxhok1USoVEck8w-N20Z_fh_H54LyOhgK34N3Ft8",
-        "p": "EDiktpE7DZQS7sdtQs33rdcEZRJcER_mk-Ts4gml6g1Z",
+        "d": "EMcPISjdcccwdkOIOvRHl8AfP1qjwKWjTeOEmNsuRWkB",
+        "p": "EHX4lghU0Xj8B4OdJ1yN2qgc_OAWLghoAk-J4wl2cbw6",
         "subject": "Hana Sato",
         "alloc": { "0": 4, "1": 5 },
         "dt": "2026-10-20T09:27:00.000Z",
-        "key": "DKsuWPeTQ3iSTCjhSksBWDfZbx0jfAffEKb-k8UvgWrv",
-        "sig": "0BCzDARh6r4-ojE87QoHe5cytq1BgeVZnH_wK-Xx13L9O9dRU6SM14b-TBiN7q4c2c09EoSnsNZH9O_XUezykF0H"
+        "key": "DKao2eaDlUho1gc6RoVt1wAdzuhT_QVcjWX30GLM-uEz",
+        "sig": "0BBNlLEyBSgwxvKFobqz8wEF_AAbaGZm_CnCv7hhxt64BwRgvivS1TtbRXrkn7uprx6LhDCcYljbGIC9DpmgMI0L"
       },
       {
         "v": "tally/1",
         "t": "vote",
-        "d": "EE8Zfrq_5lCGsy4CkdU1Iz1kfbSBQnBMGzgxHZXrmp_B",
-        "p": "EKV-vxhok1USoVEck8w-N20Z_fh_H54LyOhgK34N3Ft8",
+        "d": "EIUO-NUutt6jniKmKXWJv_NHgPkQKVLLmb-WEaSuv9aD",
+        "p": "EMcPISjdcccwdkOIOvRHl8AfP1qjwKWjTeOEmNsuRWkB",
         "subject": "Ines Duarte",
         "alloc": { "1": 4 },
         "dt": "2026-10-20T09:28:00.000Z",
-        "key": "DON3lhqeZLsxf4nc_bSBo5hvPaQ2O22d5Tdvjbe3K-UE",
-        "sig": "0BBwXeAuvvp1w8-n9vDkIgERWKjp2r_BF0L-FGiP9AY-E52hxVqZc4fL0jli4wt8l8f9uv9e0KkQNT8PFftdRYcC"
+        "key": "DK6ZeqaqBEcJvZ8isEYvDqRuP20r6KvcYnWkAFO_kwMW",
+        "sig": "0BAYgLAI35uBpCIbGXG6E4MwMGbVOayTY3knJBkGJgZKiNsJkXlz3fWrORHWWKZaL_8Qhf9jcykWCx4lVvQtlpMJ"
       },
       {
         "v": "tally/1",
         "t": "close",
-        "d": "EL6evTEI_5a83cwduKzpeUFG5IgNzy4mWC3nLgcfyRCE",
-        "p": "EE8Zfrq_5lCGsy4CkdU1Iz1kfbSBQnBMGzgxHZXrmp_B",
+        "d": "EDSWQzyVlrzEoW2sDFRbm7Ui0IDDOFAnfp5heUACKknp",
+        "p": "EIUO-NUutt6jniKmKXWJv_NHgPkQKVLLmb-WEaSuv9aD",
+        "root": "ECKIunAkW9xrN_FxuTX4XZQrIbdasrDWmSP28wj7m2Zd",
+        "group": 10,
         "dt": "2026-10-20T09:29:00.000Z",
-        "sig": "0BCEakNQhcYTGUOeaBqOznkSINkNA5ACv57afwxiaEUxB0N33met8uosaiFciNOpRWm3r3vKi723R4b9v39U4FEO"
+        "sig": "0BDpJa0K1EZ0t6hhlwnETeXi2WumghAWHzzWFhQuhy5Ar7A9AlxQkD-9RMEq-p-t6yfKAAWQNcsZ1frYd5xtZ4QO"
+      }
+    ],
+    [
+      {
+        "v": "tally/1",
+        "t": "mint",
+        "d": "EFV9b5-_cly5HlwEGhjEBcFNV9PBgYIVkJwhSDmdHaXB",
+        "title": "Elect the association treasurer",
+        "desc": "A secret ballot: the board tallies, everyone can check the totals.",
+        "options": [ "Priya Raman", "Omar Haddad", "Ines Duarte" ],
+        "quadratic": false,
+        "kind": "sealed",
+        "organiser": {
+          "id": "Harbor Commons board",
+          "keys": [ "DEDztEDTkI7nexh2AAvVx95lBBa0eZrYkHsSXwb7F6HY" ],
+          "enc": "CHh8JhcM7TST0xQnmy-Ykig3slpRH7r-Fkvc7k6g8x0b"
+        },
+        "subjects": [
+          { "id": "Sam Rivera", "keys": [ "DMQk_9Vru7upKViJBIjkk1LU5e5GaXB95kgmb1zSu-Kk" ], "weight": 9 },
+          { "id": "Maya Chen", "keys": [ "DOtlE2RdDf2mdCBT_Dx5mCzfFDcnpbVRr0JItLuTL6D0" ], "weight": 17 },
+          { "id": "Jonas Albers", "keys": [ "DH-xmUd1W-IoxWlIWGyOOdbcIY7dVWkf2T3elpMC4EdV" ], "weight": 5 },
+          { "id": "Priya Raman", "keys": [ "DNyGb67vYVu-0jsKOlHBv_HVbBsb5k3-g7ASlAu67nee" ], "weight": 12 },
+          { "id": "Theo Brandt", "keys": [ "DP_E6PoodEtMNYZT3jmo6diNQgCeXU1lkAq0oI58Rtzj" ], "weight": 8 },
+          { "id": "Ada Okoro", "keys": [ "DMuL2T_JivO5_q0pTZdb_Nf_IIX9gVh7UZ67c6tvsm7t" ], "weight": 16 },
+          { "id": "Luis Ferreira", "keys": [ "DICExd_nSehDS1FW0UiAwoHIRBzKSpsYdQDu1Xz1DvAD" ], "weight": 6 },
+          { "id": "Hana Sato", "keys": [ "DGjNgrl-cShzox7SXbZgwDU9wbqlwpSNRYzgMEUNfqvY" ], "weight": 9 },
+          { "id": "Omar Haddad", "keys": [ "DHcZADXfBRpWO-aljKoTtYswcbOrTt_hHbeKHz78aLhj" ], "weight": 13 },
+          { "id": "Ines Duarte", "keys": [ "DDKKTfwV7HH7SVYDNDEJbWYI0XJnn92VGF_s240Q9sm_" ], "weight": 4 }
+        ],
+        "total": 99,
+        "dt": "2026-10-20T09:30:00.000Z",
+        "sig": "0BAFq5lKUe7YxBkM54va5Pq5BndglhErBBBiShvUn1ONUUMnt3r0dVT8bmJp9rYw0RksW3kvX48OBaRj3ERiDvMM"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EN_KGKm49ICDx1TccqIbdfj76E4Fsv1o1nahw7gepovG",
+        "p": "EFV9b5-_cly5HlwEGhjEBcFNV9PBgYIVkJwhSDmdHaXB",
+        "subject": "Sam Rivera",
+        "seals": [
+          "8e210dd1762870890ee2031e2ebde098a8e83ee5f8b67f8a87eef21ff0174b3e",
+          "5a57dd3397dfbf1d5b05ea922220eb9b26986087c80c04363f6dcb4392ec2915",
+          "325fe3e3138d741bf85ca284a415ba21b97e2981123cb938723abb94aeb0c768"
+        ],
+        "opening": "A-5GWQp4CtYXFjo5IuwIQgTGxASZ8PJTrLH6uRXPOlkPk2vNHJsnuKZ17awS8CCG5ognaKJy28M-Q9QtQqRezQbXybjzbr2xIkn9bAE5Zu6HuIj4INTxDFbFw5zxR5LZGD_FkRZTnl3jKshKdfYNKlZ9wAp7x0Ox8n-P8C3Havxfh0tFxMqEg3XBePSPu1Eeslzva53NiMkikiEe64KWuC5GQYw_YQ9IJVt50spSYZSyfbO44RQFCvjRAxpiY7D6hZPqeq-IYvI7pFUseQcmuZgp7lL-wrCKNKXju9SmVcLUDmcxMNAbu2fdmUBhM9tE8brJmnJW1fUme--YfS0RNLYHnh8j_8iZZzdagKHFCrrkUAMlNUndR__szefcOwtMYgpbhzrOx-bDqIG6_ceSUvkv6SLITHoWBLZYyEFCTGodh2mjnw",
+        "dt": "2026-10-20T09:31:00.000Z",
+        "key": "DMQk_9Vru7upKViJBIjkk1LU5e5GaXB95kgmb1zSu-Kk",
+        "sig": "0BA0L2oZFQYK1xH19xY3Gw6e6U9GkWqyC15h_hxpN0onigGVyuQ3LnVNbe7erx_ztEWuoRgHRqiZ_3PoKZ4JRm0I"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EDD2qQiXkVuRNAb7EKX8OV6O4XgvfAJrBYHbyx6JYv6y",
+        "p": "EN_KGKm49ICDx1TccqIbdfj76E4Fsv1o1nahw7gepovG",
+        "subject": "Maya Chen",
+        "seals": [
+          "d0dff40a19b23be2525fc3b3923e485a3ee517d6c51d27a0bd253d00e6f8d755",
+          "7e263999eeef61981de91b38412a34d2ebf209bb5d7b0ee6f8818e37b51a7318",
+          "cc088e1e61304c4e47ec899959f3a6b662807f2ac85c268342c7385820b16a73"
+        ],
+        "opening": "8CWZc9eH15cH5ACtKdCOyqHYut8Xc0VRVrmRb2xvHQb44fBNpAxVyfzeUQjvHJ7PejP9C2BdxH_VPf4JIZQnqm9HU4dyPZZbQWil0n2b0hSSnBR9h9oUaVY7lMtG22MoMY4DnBM7H22z_BZqhknoevONcy6Nh-jskg8Ti3CAUz88Wt8uKBzrnKIeENAZpThAQghWbHc5O2TtpwOO-DFji712awiGV3WPV0iJQjdhItHzxojllRU5Nl3BrR3ycYQPry965_loV6-2vR18uFHWE5k4TIcua9qHdgOAyt4OMvPek2EI6CCYBcDWDwXTbXOmTdjGZUKlzTgaDk83JjzLagyfjoI_tE2y-0K4pMCUkjMl9tYGb3nx3abTkRvTdR4lYvCTyGKLlz3PoZitNaYypqSeCTpFkRhUQVx8sVW5Og5qg4bAaMHh",
+        "dt": "2026-10-20T09:32:00.000Z",
+        "key": "DOtlE2RdDf2mdCBT_Dx5mCzfFDcnpbVRr0JItLuTL6D0",
+        "sig": "0BCxTpvOxSYW8KZal1Lsmn2v_LGNL77iWkyKtrbbYFTFsSFPQI4jNQSzBp6qbuORTiV8QAoot7W32VPGYavoPo4P"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EKAraCRjl1cQT0qstIXk6sfleAbezxyOg0S9zZsx_fyY",
+        "p": "EDD2qQiXkVuRNAb7EKX8OV6O4XgvfAJrBYHbyx6JYv6y",
+        "subject": "Jonas Albers",
+        "seals": [
+          "b0822bf593669e14b5b676b94628e68505c05082f0ea653f5fc82591d87c794a",
+          "70adf6a3dc7b5cb7322dc69e0c1fd2d29d811df5b3b3caa231d503e53d572323",
+          "7a347587078ea2025a0bba9e00f966c908fab6d62016e7cc84e21fdd06cad631"
+        ],
+        "opening": "OA0TiLANwTskHWYR8RfJTfAXl4RE79MrWppszU_iEGdJAvCrjclEzojQ7Sz7Uaetn4kNi8bF6mfSr8LJHukvUp4IWJt7VQHzHYNdTPypzXBzYHpxFb7I4ODY3_wtGeULMmq-bw6olpCgvKja2xCPON9Zkcd8Q4Pu7kkwjkh75R6OYkdNYA6pqOGcMRmStywhrCHIQZxU_6hIdyMWhck2R0Hu_yYYe6i2GwWbTeDhLHvIV3wP_shdYzsKbCHETEvqk1PtF0MDSghSND8nMUXd1JaTqwI_L6fylYYNdS6HSLYL9AeeUQg84-S4HbzSFbtyMqlO0k_QRAYUE9kdQlcVhXJyoY9czy6-ugxxIOV-cTv4Cd81wN9-ODGu68YGtB4L559HB3q5RCMaocrKcQufjRJ9bWmtIlwJLysV9QyvaxdlwQw4Scg",
+        "dt": "2026-10-20T09:33:00.000Z",
+        "key": "DH-xmUd1W-IoxWlIWGyOOdbcIY7dVWkf2T3elpMC4EdV",
+        "sig": "0BAyhkGxia1us89nJNBE-0eNjbBMKQbDitPdaW-BJYrMXDPnuEbAGZnCiETYYj-BHAidkYz1bZj1suSQ26qT27gI"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EBdtbzJaT5tBALdaU6BeXXxMzrKnQ9-27myqcZDehPRG",
+        "p": "EKAraCRjl1cQT0qstIXk6sfleAbezxyOg0S9zZsx_fyY",
+        "subject": "Theo Brandt",
+        "seals": [
+          "a289e71b8bc5a647a7d814b14aa28960504a4af2d0c715cb1cd8318baf32807a",
+          "6ad257d3950eb0fe5b99928297c8a852fbb030517c624519ea464d5e2cc12444",
+          "8668fb56c20866273b80a3708870d463813262c4ca8a6a2d343b491971edb531"
+        ],
+        "opening": "Y9YEvLi0ubCsbsweoRQEk0tBR6V0g2WNx1kI7wP0Ew4m4HJW_syyYelGJ_aUkJHR1wCtyGVilccyMqibYjwlnuDkpZQSmFJV9UhUYH_IWDVqtdNIYcwuID9VdsGxb0hP3WYZYezxeqwpVnTAugkZg81xPhiC7XmwcA6FetloB_hiwxEL8SA1qNK42wq0grmFebrLNkwmE0RadZLKAQGU0sDzTne3ssP4gYlWZkjWjLbaXj4kRZQRIeBWSnRTebGb5HC1ayNn1jPfSWEuuWU1E2FwMvd4eJvOnMvIkWx_J-EoH6H93TcjE9zipdbV30Es9i7ErIa9VsueKgyR9XGlwtqflQmotH0A5v0XEp9cUjKCps7y9MiZOG7XdBxjZiZNAzjPnju6BmfaJIXAwS_DCzTsXRYVTZxGclEQXJoFlI2_csir5tg",
+        "dt": "2026-10-20T09:34:00.000Z",
+        "key": "DP_E6PoodEtMNYZT3jmo6diNQgCeXU1lkAq0oI58Rtzj",
+        "sig": "0BBDf_0rI21kAuYwrl_k5tc_UJsjMouoKySvoNkZZfbg42rsEpeMwOsftKQHjCLwxtcdqzip05gllo2PN7QE_A8M"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EJfw14PgclMgoYCwCW3ZAfbiJR8DWJAEJbIFKQ0QqXTV",
+        "p": "EBdtbzJaT5tBALdaU6BeXXxMzrKnQ9-27myqcZDehPRG",
+        "subject": "Ada Okoro",
+        "seals": [
+          "123051a140851e0dc60374b6cd776d809d100504c26d26b6a1e6ab224147d328",
+          "741e8a4f37e236f59b93ca1423c2aafeb0546fcfc75d1e3b563662bf32f97531",
+          "cc1711f91f29592a1416ef4f8ccdde06d92a76b423437f56a2b14a58e7a2f72d"
+        ],
+        "opening": "_DJ9MTHtbZ_buS9zuxl92LXQ_qmAAYVkRXvTJgA3I2RHWU7HlnPFYovNQ9pbB9PY9S8WAwTQdEzxVU6YAssmturTaTmkyPnFYhJBqQF_fzsuovMOTNSNktYZv-i0AB5AOydJ8Llw6RrfshPRFbgBWORCE4G4MHEygkehDY2ek2nnatMg-5P4ojnIr_31fDAwhxhyBu7p_UeLtPcAgD85nv_9svMAl7c3rB7qkT8InZVMQQl51NSMzUZQGHgxu1WxVx_N3ImX_XkxVXWnzWkJuvxZBztdLdV_kbFNzGronCE4UgQ-Tr3d6lQvbgR1mGV9dcbz8BEYpoWjJ0jZ80_ySsb0FJGL4WyH-V_EKiENk-mzsVLAl_dwlPr8jrieM52f5osIMjV7RY5CxbZ3iSIdly66gwK8TilokgVKFFIgIP2EsmjM46OL",
+        "dt": "2026-10-20T09:35:00.000Z",
+        "key": "DMuL2T_JivO5_q0pTZdb_Nf_IIX9gVh7UZ67c6tvsm7t",
+        "sig": "0BAKUxJk4mOTvVCvvQKRC_beoFUtSUnDjFjxi3g4Fe6SSGJw7JXbw5wX5CJ1Mmt3AKhy4pxk3q4Rk5cdZ-r18PsB"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EHTJ2th0j5YjZYdG51SQMLXf952N8AERzlui9aZCeT87",
+        "p": "EJfw14PgclMgoYCwCW3ZAfbiJR8DWJAEJbIFKQ0QqXTV",
+        "subject": "Luis Ferreira",
+        "seals": [
+          "ee45b288e90f8078348defbcac66b329d006be46ec6c1c6edca9a9a1e5474056",
+          "c00e2f73d1f8cc914b4a9e31d482bb61f1de8e4be80e5c272853421d1d7cfe18",
+          "d8af0d6b9e46c10480fc21d0996148f800fe9380cad7109b16fbe3496572240d"
+        ],
+        "opening": "lihWOMRXDfP4Km3B6IDpxaj5bT5mO-kXHnmvUghNB3GZ-u_16pUDwwsb6L1ZXwl7XGz2D8xt4-CJUljeijZk5W6Gx9-T0l3u2nyxpH3Ir4YQ6AGuXiosnS2gYsuk-79XI9211zS-vLL358fFSlkBX7kC75IHdkR-qHDrX5fu_tnoaOlCoBzW1m9S18xbYOhz2t2sr5MpuDnj47RP62VME6NKpqzdkn90ubHAJSVzSvRSaw4BcS5Q7OabVqMc0H7LjXKj3j_tSyVfmjXtWqji28pKq5GpG09Tc1o-3d5f7fW8E7x2gx8ORZd7PxjDD9DW1s0EHU--tjGUB4tA7wF21nlyshbHxZjYsjO-BbUcHn88bme_csPwDft_axcXpLAlkmYTFtJjN1GEPc8iiWTIFpQQrw19b7MrsJVgDwCXeBjErMT62y8",
+        "dt": "2026-10-20T09:36:00.000Z",
+        "key": "DICExd_nSehDS1FW0UiAwoHIRBzKSpsYdQDu1Xz1DvAD",
+        "sig": "0BDL2xiX4rGxOUaYPxXwHlJtjW1KHRHJeYh6JavFQOtcOz2-GITf0qaVDmV3FqLhSgX7QVu9aNPTOFz9EP-hYTYB"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EK3EtO-_OO20ylS904AQAdiqrap6ffEeOFhJ7ukGP1YF",
+        "p": "EHTJ2th0j5YjZYdG51SQMLXf952N8AERzlui9aZCeT87",
+        "subject": "Omar Haddad",
+        "seals": [
+          "46fbf7d3a0f560c4c87408d8d58dbbf5e4c18cbd3bdf47debef995aab60c2666",
+          "6aeb8279a09e513a1242e28cf4a97d2d72b6f2f9d8c3596f1e00a7077a8cda66",
+          "12d0353e888a5764a286cb9675915a1bc1e614d03df7b1164b6f8edfadcc6a53"
+        ],
+        "opening": "g8C8MROGlnYOmRrBR23yAdj7oQeBDfTVF9vDaavt1AKFM1YV0t9zYsdqftczXaJLIUHZyLEA7e7WgHZKrSorBiM4RBFaLyfMXPcKQhwol1C8OUPVnMVIXVE5E0_KLfes8cB9QTrsH09zZXmRpNPkiipDzU7N-QPsDE_UailbfxA84jLIE9WFjRujqMjNDPDoAwrJ-lhEmku_XvDi2I-M1nL720-GqhWXmwmX9DLZFZCnnKTL0w6jZL2necu1SgU0BA4GnndXXy_ciwbF5G67kFgRiPtkymxPbiY_QtDyyFEQkluhnJiotQxz4AKwK-4rUbO5rzmzPHe--LTQll7ngl7VDJbHV6Ih50zXe-6zdG4Xkd681jlM6Jynni4RMFqh3p6ajGYV4Cain3PL8Z7N2STH4ZGcGx311GCyeVNSieNiuEU2H_s",
+        "dt": "2026-10-20T09:37:00.000Z",
+        "key": "DHcZADXfBRpWO-aljKoTtYswcbOrTt_hHbeKHz78aLhj",
+        "sig": "0BAzylLmQAxk1XhWfJRMW6bWLo7t3NXQbhh6lwlQ22-f2TPX1q2Kqxr0TPh6-URoez8bp_mRYgdk9BJTUlcRWgwJ"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EJ6YiGLp-KucheJcoQy9uDVqrkHHkE95CjOeNvily6rd",
+        "p": "EK3EtO-_OO20ylS904AQAdiqrap6ffEeOFhJ7ukGP1YF",
+        "subject": "Ines Duarte",
+        "seals": [
+          "e8c7e1fa1108ddf2a77d904097c9184f02fc04c44f36380a71dbb29d256d2127",
+          "5c6f9cbd10b874952eab5cd37e5306771484c5dcc21d86c5bbda52ab98865e4a",
+          "5620b45a0dc7933470937a9c01b0e9dc505dfcab1b7e2bc5c153497c8771277f"
+        ],
+        "opening": "CrIbPs8Fq9sp4v4HMlRlGjFrxEo3lK85NcK23fBJkE8vE0GN2FQI6_ED5vTc-h9Kp7fGCiVNHBUC3JuMQrgZf-uDmx4iHL5akPut-6UXoINLVWqzAyttt0ziiR6sYyNqE9RgPppiitMoTrKsBNomqCuJM5swPzpKn4DkgA6BW_rH6VT2PdJtOglQo1jbFl1zsm-grwApTr_FxDgflaQ1FUuKwYuDp6_FyHBloBoOgZp7hlUn1n_SQPOQm3wz8ebt8p6fmce0pLv3fWFnMRtIjAoNRa7XsEEK9ifKIp8WOujByjahQ58MeBJv2ftQzDHvC3d3Q1Rx-rvHTAPfygC3msMRm8AgqtDnWwKIZmoxXz6AYThBF_4-kB7B5sUm4oPMUmrtyGB3B2e_o3edYcabmebYWF3yzM9jClPqiFuECkQax9XoFg",
+        "dt": "2026-10-20T09:38:00.000Z",
+        "key": "DDKKTfwV7HH7SVYDNDEJbWYI0XJnn92VGF_s240Q9sm_",
+        "sig": "0BCfk7Yb32PhLlKJBsQ7KVAYufDP5E81jFtmiTtNIB_dc6oKJqpBWfOBB5LacPBgbD9QakAtab0JVA7KxNeSCjoC"
+      },
+      {
+        "v": "tally/1",
+        "t": "tally",
+        "d": "EBaWd35LEF6cbPRSCUbEDlQpoDWRMeDVSURA9ShWOvXj",
+        "p": "EJ6YiGLp-KucheJcoQy9uDVqrkHHkE95CjOeNvily6rd",
+        "totals": [ 28, 39, 11 ],
+        "blinds": [
+          "3657665563069479560205424345490113495417604963286215113198901474904616646568",
+          "211272247897521964552395123161346283166450737261528271742713405257584252569",
+          "2250951575248783313503129291247282248917037309375387896628391330159206877603"
+        ],
+        "used": 78,
+        "excluded": [],
+        "root": "ENL-z6uXVsnlIJGfEb1ZuUNJyRP4Vp6hH69LzzB8iScZ",
+        "group": 10,
+        "dt": "2026-10-20T09:39:00.000Z",
+        "sig": "0BA9PCzTBl4MryFbQRXNAx8aIsR6gQHbaHCza8izi_kFpklDEwbLT6gt3ft6DsC5LVjMLTBSTl6Wqt13KDYuu_4M"
+      }
+    ],
+    [
+      {
+        "v": "tally/1",
+        "t": "mint",
+        "d": "EM_GWrP2p3qcdcKmgUvv_Ieug2f1j6gAZRgFluM6wRFX",
+        "title": "Raise annual dues to $120?",
+        "desc": "Sealed until the board tallies at the end of the month.",
+        "options": [ "Yes", "No" ],
+        "quadratic": true,
+        "kind": "sealed",
+        "organiser": {
+          "id": "Harbor Commons board",
+          "keys": [ "DHr6gd9sYfhbRJYoEY0HMcE40FLDTsVzPHcvQ-P_scI7" ],
+          "enc": "CHwAer2oJ5vmTa7w5Yky-LpF44h_JSeeHtjMh2HZOk4l"
+        },
+        "subjects": [
+          { "id": "Sam Rivera", "keys": [ "DLnuGsgSuxLGZ8RUqxDd2Wz4zFDCV-Rb0cdVu7dkOqGb" ], "weight": 9 },
+          { "id": "Maya Chen", "keys": [ "DEvwPPPdppn5hQtwkZS4fC_evNUdzn652H9-wiWesZiO" ], "weight": 17 },
+          { "id": "Jonas Albers", "keys": [ "DDx_Rn38S4hbTm4BCgFS5_ESRrXpEasMweSlJW40w9N2" ], "weight": 5 },
+          { "id": "Priya Raman", "keys": [ "DNCLia6BFnWEBQLHDqp051Gvqoii-_qKHxLW3ew2SeWt" ], "weight": 12 },
+          { "id": "Theo Brandt", "keys": [ "DK-j9DPuv5qNReGQ9FodFb5J1CoIoOKPnEh7OIA9m_SN" ], "weight": 8 },
+          { "id": "Ada Okoro", "keys": [ "DAI3_a_4rgCRur-QObU1EN2RU8NvbBBK_CoKAjAKgKSs" ], "weight": 16 },
+          { "id": "Luis Ferreira", "keys": [ "DIF-7MHgUDdFC8c2Rkh1YLIbSpg6G-m1kqtgWiaSYLPA" ], "weight": 6 },
+          { "id": "Hana Sato", "keys": [ "DDUTgI02Ci4rd1G5f88J6P2I5b-bzOmNd1u6eyP9K1-p" ], "weight": 9 },
+          { "id": "Omar Haddad", "keys": [ "DC1brWuWHYruP8e-QvZpI35bIil-FCeBDrcvDr3rSBTp" ], "weight": 13 },
+          { "id": "Ines Duarte", "keys": [ "DKaS0SuU5dFCqb0Pp9IC7KM0tYmSS2PKMKdw0I_j-GBL" ], "weight": 4 }
+        ],
+        "total": 99,
+        "dt": "2026-10-20T09:40:00.000Z",
+        "sig": "0BDoueZozgwpwID2o2Ri6N1CvIsg97NNv-Nr67OS0tFEVd3DRtMVQFrqmKdtiHV25xiogZ3decvCNuygSFE2uRkN"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EB1RiP1-OqYfBP-Y1AshxTuzIMz6PzQH0ePoBgtHxW6l",
+        "p": "EM_GWrP2p3qcdcKmgUvv_Ieug2f1j6gAZRgFluM6wRFX",
+        "subject": "Maya Chen",
+        "seals": [
+          "be438703ca64d0240cd2413ee2cde751ebe68ff12afeac8c6c7add6f1401c30c",
+          "3ca719a76ba7b5ebc7ea2ea5fe40676d7aeae926d2218707acc3ab5830c5a047"
+        ],
+        "opening": "rKxJX5SIXay3AmpK7hgD-MRgYyHI_x3V2fs8GlAozQNpb7CqYow7uelYKG_N6VRVYRgga7g0PL8ajYrzyZkAR6jkOGSAw2namVQo7a_i7n_7xVQSZBrmfNl7PrypdsewCJ_vOVucyoG4_Z7zVZzQmYgfLPT4gx8DLn_0d9vhnEDFBe1zfd60I0NkLNSMdp6BTk_A9_4OFYNv_0hxPrZRC-3mYAA5jyDhamIaLWV2trGGl1FVpFmKbprPF3QomdxV7kztRAhkVBQCs4mLxep49syaAOekm_84HY7Y8v3UwQ_KvdVOb-XOiaoch5gPMrP0U4bVkjg",
+        "dt": "2026-10-20T09:41:00.000Z",
+        "key": "DEvwPPPdppn5hQtwkZS4fC_evNUdzn652H9-wiWesZiO",
+        "sig": "0BCTs09d5bqbxEuT1D0tDKFncT87aYnMb-HpredrfzVp9XzRABwsI3Nb9caneZz2PDxE-gpJScT_-U13-RiNsV8L"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EOP2En2LCRaqJU7XUxWIfL002lvB94HqdZntbdbYkaVj",
+        "p": "EB1RiP1-OqYfBP-Y1AshxTuzIMz6PzQH0ePoBgtHxW6l",
+        "subject": "Priya Raman",
+        "seals": [
+          "129a21fb9aa30ae95a01a2e38d9b3df58180e855f782544e228d2afc7bd15e36",
+          "d6855f429794925d2ba1175f638ca5b4cca3f486a12c92e387a70a61ae71797e"
+        ],
+        "opening": "oeyC03CywOTvBGZuBay4JaeixTw2mNUiUZOpS7DQUSWgJr-QgQ6z9MPt99dSgh_vZTeirGad94avA197dOH9Y0fFJyfNH4Xa-Ls0aR2bnnv0Ig8xKuX5MeVHq2OElf9W_BxJVmUJBQtBZdr3ohNKFV13elN881LX0nLwG4w_TlCsxiEwp-Hokw6oDUH0FueoyqIwo2YX7tSSHQEhFxx8pT5AttGA1b4wbcSF0cMOSlstkFUuEjvzz7UUG1Yvnaf7KMC8imUmCJ3sBUrHcPNIQr_58zYuD3q0Sr7W1-JZ5Z47gW6surrcBb22K9jocXtQAOh_2oc",
+        "dt": "2026-10-20T09:42:00.000Z",
+        "key": "DNCLia6BFnWEBQLHDqp051Gvqoii-_qKHxLW3ew2SeWt",
+        "sig": "0BAbap0yENJPCuDOjV3JdBq_IeNpWCwzP6n7BWCj98ECjZfG4PDaMf_-oQ2DrIbJm_Vp9UGWCHw6OqgP-LaZy_MG"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "EMHPO4Yo14M1Tv6p45u2DQ8lwvIS1qcXT7zrCAJgSpP5",
+        "p": "EOP2En2LCRaqJU7XUxWIfL002lvB94HqdZntbdbYkaVj",
+        "subject": "Hana Sato",
+        "seals": [
+          "346b242aa8c57718b2dcdb3c2d944525956268e802b25d97cf39c0d35e1b4f63",
+          "84f3673add8545900cf9916ce80ac4efe64d38a96f270bfc070be6a89a0ea07d"
+        ],
+        "opening": "Ggq6EmATKFJ4PE4t1waQwijVRBgBhMwpw-bzLkXDPATfh0wWGoOdGhhtXvLX-XueZnZzsMNrQXK824e0fKrAZgG5ZXHwQvHhM2KNYzkX4hEYqyAgY672nFGEEllaxlGTt9zE8OHjVXyIxWcK4P_hoEdG-KxoQywH-fzE3J-X1JoZSGDJX-FvAcFHVL2JFH23fbVrWAbRevgEuZ1tK6t4Klc4nvwru54nopOeOMR1cSNRZ64kQZMEnll8vo04P1nqzeAERAslYyqpjKen_abY0xU-r_yEEa5kkNx0LTd5tQ0YGO14KmokoJmPzq0hCjfOV10fKw",
+        "dt": "2026-10-20T09:43:00.000Z",
+        "key": "DDUTgI02Ci4rd1G5f88J6P2I5b-bzOmNd1u6eyP9K1-p",
+        "sig": "0BBZrRnVz5XpveCmrwpFoks4FzWwL-W_YuuWm-1ZJ3XfSom5y7yzp7mKBFGIyKygjGBbCQxGyPr1v_cRs-v7ProN"
       }
     ]
   ],

@@ -16,6 +16,16 @@ function poll(title: string, desc: string, options: string[], quadratic: boolean
   return chain;
 }
 
+// A sealed poll: allocations are sealed, and the organiser's tally (if tallied) publishes totals anyone can check.
+async function sealedPoll(title: string, desc: string, options: string[], quadratic: boolean, votes: [number, Record<string, number>][], tally: boolean) {
+  const org = L.newKeypair(), enc = L.newEncKeypair(), keys = people.map(() => L.newKeypair());
+  const chain: any[] = [L.makeMint({ title, desc, options, quadratic, kind: "sealed", organiser: { id: "Harbor Commons board", keys: [org.pub], enc: enc.pub },
+    subjects: people.map(([id, weight], i) => ({ id, keys: [keys[i].pub], weight })), dt: dt() }, org.secret)];
+  for (const [i, alloc] of votes) chain.push((await L.makeSealedVote(chain, { subject: people[i][0], alloc, key: keys[i].pub, dt: dt() }, keys[i].secret)).entry);
+  if (tally) chain.push(await L.makeTally(chain, { secret: org.secret, encSecret: enc.secret }, dt()));
+  return chain;
+}
+
 const doc = {
   polls: [
     poll("Convert the Elm St. lot into a community garden?", "The city has offered the vacant lot on a 10-year lease. A yes vote commits the association to seasonal upkeep.",
@@ -30,6 +40,10 @@ const doc = {
       [[3, { 2: 3, 0: 1 }], [6, { 1: 2 }], [9, { 2: 2 }]]),
     poll("Move the monthly all-hands to Thursdays", "Tuesdays conflict with the regional ops call for half the team.", ["Thursdays", "Keep Tuesdays"], false,
       [[0, { 0: 9 }], [1, { 0: 17 }], [2, { 1: 5 }], [3, { 0: 12 }], [4, { 1: 8 }], [5, { 0: 16 }], [7, { 0: 4, 1: 5 }], [9, { 1: 4 }]], true),
+    await sealedPoll("Elect the association treasurer", "A secret ballot: the board tallies, everyone can check the totals.", ["Priya Raman", "Omar Haddad", "Ines Duarte"], false,
+      [[0, { 0: 9 }], [1, { 1: 10, 0: 7 }], [2, { 2: 5 }], [4, { 0: 8 }], [5, { 1: 16 }], [6, { 2: 6 }], [8, { 1: 13 }], [9, { 0: 4 }]], true),
+    await sealedPoll("Raise annual dues to $120?", "Sealed until the board tallies at the end of the month.", ["Yes", "No"], true,
+      [[1, { 0: 3, 1: 2 }], [3, { 1: 3 }], [7, { 0: 3 }]], false),
   ],
   drafts: [{ id: "neighborhood-fund", title: "Allocate the $50k neighborhood fund", desc: "", options: ["Playground repairs", "Tree planting", "Small business grants"],
     quadratic: true, organiser: "Harbor Commons board", subjects: people.map(([id, weight]) => ({ id, keys: [], weight })) }],

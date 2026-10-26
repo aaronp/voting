@@ -295,3 +295,12 @@ test("open polls are unchanged", () => {
   expect(L.serializeFile(L.parseFile(text))).toBe(text);
   expect(L.verify(L.parseFile(text).polls[0])).toMatchObject({ ok: true, sealed: false });
 });
+
+test("the example has a tallied sealed poll and signed roots", async () => {
+  const doc = L.parseFile(await Bun.file(import.meta.dir + "/examples/harbor-commons/tally.json").text());
+  const sealed = doc.polls.filter((c: any) => c[0].kind === "sealed");
+  expect(sealed.some((c: any) => c.at(-1).t === "tally" && L.verify(c).ok)).toBe(true);
+  expect(sealed.some((c: any) => L.verify(c).status === "live")).toBe(true);
+  for (const c of doc.polls) { expect(L.verify(c).ok).toBe(true); for (const e of c) if (e.t === "close" || e.t === "tally") expect(e.root).toBe(L.rootOf(c.slice(0, c.indexOf(e)))); }
+  for (const c of sealed) for (const e of c) if (e.t === "vote") expect(e.alloc).toBeUndefined();
+});

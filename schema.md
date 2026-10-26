@@ -65,7 +65,8 @@ Every entry has `"v": "tally/1"`, its type `t`, its own hash `d` and a signature
 | `title`, `desc` | Text |
 | `options` | List of option labels |
 | `quadratic` | `true`: n votes on one option cost n² |
-| `organiser` | `{ "id": text, "keys": [Ed25519 key, …] }`. The mint is signed by one of these keys. |
+| `kind` | Absent (or `"open"`) for an open ballot; `"sealed"` for a sealed ballot |
+| `organiser` | `{ "id": text, "keys": [Ed25519 key, …], "enc": X25519 key }`. The mint is signed by one of `keys`. `enc` (CESR code `C`) is required for a sealed ballot: votes encrypt their openings to it. |
 | `subjects` | `[{ "id": text, "keys": [Ed25519 key, …], "weight": whole number ≥ 1 }]`: at least one subject, each with at least one key. Ids are unique (AIDs in real use, names in the demo). |
 | `total` | Must equal the sum of the weights |
 | `dt` | ISO-8601 time |
@@ -83,9 +84,33 @@ Every entry has `"v": "tally/1"`, its type `t`, its own hash `d` and a signature
 The cost is the sum of the votes, or the sum of their squares if the mint is `quadratic`. It must be between 1 and the
 subject's weight; spending less than the full weight is allowed (the rest abstains).
 
-### close (optional, last)
+A **sealed** vote carries `seals` and `opening` instead of `alloc`:
 
-`p` and `dt`, signed by an organiser key. No votes may follow it.
+| Field | Value |
+| --- | --- |
+| `seals` | One Pedersen commitment per option, `G·v + H·r` on ristretto255 as 64 hex characters (`G` the base point, `H` hash-to-curve of `conf-ledger:H:v1`) |
+| `opening` | The values and blinds, `{ "values": [...], "blinds": ["<decimal>", …] }`, encrypted to `organiser.enc` (X25519 + HKDF-SHA256 + AES-GCM; base64url of ephemeral key ‖ nonce ‖ ciphertext) |
+
+The voter's browser also keeps its own opening, so it can show the voter their sealed choice. Nothing in the file shows
+how a subject voted.
+
+### close (optional, last; open ballots only)
+
+`p`, `root`, `group` and `dt`, signed by an organiser key. No votes may follow it. `root` is the Merkle root (below)
+of every entry before the close, in groups of `group` (always 10). Older closes without `root` are still valid.
+
+### tally (last; sealed ballots only)
+
+| Field | Value |
+| --- | --- |
+| `p` | The previous entry's `d` |
+| `totals` | Votes per option, from the ballots counted |
+| `blinds` | Per option, the sum of the counted ballots' blinds (decimal) |
+| `used` | Tokens spent by the ballots counted |
+| `excluded` | `[{ "index": entry number, "reason": text }]`: ballots the organiser could not count (`does not open`, `opening is malformed`, `seals don't match`, `costs N, holds W`) |
+| `root`, `group`, `dt` | As for close |
+
+Signed by an organiser key. It ends a sealed poll; a plain close is not allowed on one.
 
 ## Hashes, keys and signatures
 
@@ -100,6 +125,13 @@ subject's weight; spending less than the full weight is allowed (the rest abstai
 - **Keys**: Ed25519 public keys, CESR code `D` (44 characters).
 - **Signatures** (`sig`): Ed25519 over the canonical form with `d` filled in, CESR code `0B` (88 characters). Any one of
   the signer's listed keys may sign.
+
+## Merkle tree and the signed root
+
+Leaves are the entries' SAIDs in chain order. Each node is the SAID-style hash (blake3-256, CESR `E`) of its children's
+hashes joined; groups are `k` wide (the signed root uses 10; the app can draw 2, 4, 10 or 16), a short last group hashes
+whatever children it has, and even one leaf gets a parent. The close or tally entry signs the root over the entries
+before it, so changing any entry changes the root and breaks that signature.
 
 ## Verification rules
 
@@ -117,14 +149,27 @@ subject's weight; spending less than the full weight is allowed (the rest abstai
 | `double` | A subject votes a second time |
 | `options` | An allocation key isn't a plain option number (`0`, `1`, …) of an existing option |
 | `cost` | An allocation costs less than 1 or more than the subject's weight |
-| `close` | An entry comes after the close |
+| `close` | An entry comes after the close or tally; a sealed poll has a close, or an open poll has a tally |
+| `root` | A close or tally's `root` isn't the Merkle root of the entries before it |
+| `tally` | For some option, the sum of the counted ballots' seals isn't `seal(totals[i], blinds[i])` |
 
-Results count only votes that pass every rule. A failed vote still uses up its subject's one vote.
+Results count only votes that pass every rule. A failed vote still uses up its subject's one vote. In a sealed poll,
+`options` also requires one seal per option and an opening (and no `alloc`), `cost` is checked by the tallier instead
+of by everyone, and results come only from a valid tally.
+
+## What each kind guarantees
+
+| | Open ballot | Sealed ballot |
+| --- | --- | --- |
+| Guarantees | Only minted keys can vote, once each, within their weight. Any change to any entry breaks a hash or a signature. Anyone can recount the result from the file. | Only minted keys can vote, once each. Any change to any entry breaks a hash or a signature. The published totals provably equal the sum of the sealed ballots counted. |
+| Doesn't | Hide how any subject voted. Privacy rests only on nobody knowing who is behind a subject's AID. | Hide votes from the tallier. Anyone can see which ballots were excluded, but must trust the tallier that each exclusion was right. |
+| For | Accountable votes: boards, delegates, roll calls. | Member or community votes where neighbours shouldn't see each other's choices, run by a trusted organiser. |
+| Later | | Trustees instead of one tallier. Proofs that each sealed ballot is within its weight. |
 
 ## Drafts
 
 ```json
-{ "id": "neighborhood-fund", "title": "…", "desc": "", "options": ["…"], "quadratic": false,
+{ "id": "neighborhood-fund", "title": "…", "desc": "", "options": ["…"], "quadratic": false, "kind": "sealed",
   "organiser": "Harbor Commons board", "subjects": [{ "id": "alice", "keys": [], "weight": 4 }] }
 ```
 
@@ -133,10 +178,12 @@ the draft, generates any missing keys (demo), signs the mint and moves it from `
 
 ## Private keys
 
-Never in `tally.json`. In the demo, keys generated in the browser are kept in its storage (`tally:keys:v1`). In real
-use, subjects sign with their own wallets; the app's "Sign it for real" window shows the exact bytes to sign.
+Never in `tally.json`. In the demo, keys generated in the browser are kept in its storage (`tally:keys:v1`, with test
+accounts in `tally:accounts:v1` and a voter's own sealed openings in `tally:openings:v1`). In real use, subjects sign
+with their own wallets; the app's "Sign it for real" window shows the exact bytes to sign.
 
 ## Complete example
 
-`examples/harbor-commons/tally.json`: five polls (quadratic and plain, one closed) for ten subjects, and one draft.
+`examples/harbor-commons/tally.json`: five open polls (quadratic and plain, one closed with a signed root), a sealed
+poll the board has tallied, a sealed poll still open, ten subjects, and one draft.
 Regenerate it with `make example` (fresh keys each time; the private keys are discarded).
