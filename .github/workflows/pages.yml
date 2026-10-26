@@ -1,0 +1,37 @@
+# Tests, then publishes the app to GitHub Pages with the examples beside it
+# (no Jekyll, so the example .json files are served raw for the app to fetch).
+# One-time setup: Settings → Pages → Source: "GitHub Actions".
+# The github-pages environment must allow your branch (see README).
+name: Pages
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun test
+      - name: Assemble the site
+        run: |
+          mkdir _site
+          cp Tally.dc.html _site/index.html
+          cp -R BallotCard.dc.html support.js examples schema.md _site/
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

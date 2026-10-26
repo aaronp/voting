@@ -1,0 +1,11 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Harbor Commons polls</title>
+<script>
+  // The app lives in its own repo; this repo only holds the data.
+  // Extra query params are passed through.
+  const VIEWER = 'https://aaronp.github.io/voting/';
+  const src = new URL('tally.json', location.href).href;
+  location.replace(VIEWER + '?src=' + encodeURIComponent(src) + location.search.replace(/^\?/, '&') + location.hash);
+</script>
+<a href="tally.json">tally.json</a>

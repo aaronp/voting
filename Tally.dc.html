@@ -11,24 +11,63 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* Themes (ids and palettes follow the ADR viewer): every UI colour is a token, set on <html data-theme>. Avatar hues are data and stay as they are. */
+:root,:root[data-theme="paper"]{--chrome:#15181C;--on-chrome:#F2F4F3;--chrome-muted:#B3B9BD;--chrome-line:#3A4148;--mark:#E0662B;color-scheme:light;--bg:#F7F6F2;--surface:#fff;--raised:#fbfaf7;--well:#ebe9e2;--well-2:#f1efea;--line:#e4e2db;--line-soft:#eeece6;--line-2:#d6d3ca;--line-strong:#b8b5ab;--ink:#1d1f24;--ink-2:#4a4d55;--muted:#6b6e76;--faint:#8a8d94;--faint-2:#a3a5ab;--on-ink:#fff;--accent:oklch(0.52 0.13 160);--accent-hover:oklch(0.42 0.13 160);--accent-soft:oklch(0.95 0.035 160);--accent-mid:oklch(0.8 0.06 160);--accent-ink:oklch(0.36 0.06 160);--danger:oklch(0.55 0.19 27);--danger-soft:oklch(0.96 0.03 27);--warn-bg:#f4eedd;--warn-fg:oklch(0.48 0.09 75)}
+:root[data-theme="night"]{--chrome:#0B0D0F;--on-chrome:#ECEFED;--chrome-muted:#9AA1A7;--chrome-line:#2E333A;--mark:#FF8A4C;color-scheme:dark;--bg:#111316;--surface:#1A1D21;--raised:#20242A;--well:#23272D;--well-2:#1D2025;--line:#2E333A;--line-soft:#2A2E34;--line-2:#444B53;--line-strong:#6B737B;--ink:#ECEFED;--ink-2:#C9CED2;--muted:#A9B0B6;--faint:#9AA1A7;--faint-2:#7D858C;--on-ink:#111316;--accent:oklch(0.75 0.13 160);--accent-hover:oklch(0.83 0.12 160);--accent-soft:oklch(0.3 0.05 160);--accent-mid:oklch(0.5 0.08 160);--accent-ink:oklch(0.86 0.08 160);--danger:oklch(0.72 0.16 27);--danger-soft:oklch(0.3 0.06 27);--warn-bg:#3A3016;--warn-fg:#F1D488}
+:root[data-theme="blueprint"]{--chrome:#0A1C35;--on-chrome:#F1F6FF;--chrome-muted:#9DB4DB;--chrome-line:#2A4F84;--mark:#FFB347;color-scheme:dark;--bg:#0F2747;--surface:#133059;--raised:#17386A;--well:#0C2240;--well-2:#102B50;--line:#2A4F84;--line-soft:#234775;--line-2:#4A74B0;--line-strong:#7FA3D6;--ink:#F1F6FF;--ink-2:#CFDDF5;--muted:#B4C8E8;--faint:#A5BBDF;--faint-2:#7F9CC6;--on-ink:#0F2747;--accent:#7EE0C3;--accent-hover:#B4F0DE;--accent-soft:#12403F;--accent-mid:#2F7A6C;--accent-ink:#B4F0DE;--danger:#FF9DA8;--danger-soft:#4A1F33;--warn-bg:#4A3D17;--warn-fg:#FFE29A}
+:root[data-theme="warm"]{--chrome:#2B211A;--on-chrome:#F5F0E6;--chrome-muted:#C9BBA3;--chrome-line:#4A3F33;--mark:#C8642B;color-scheme:light;--bg:#F5F0E6;--surface:#FFFDF8;--raised:#F9F4EA;--well:#EDE5D6;--well-2:#F1EADC;--line:#DDD2BE;--line-soft:#E8DFCF;--line-2:#C9BBA3;--line-strong:#8F806A;--ink:#231C14;--ink-2:#4A3F33;--muted:#5C5044;--faint:#6B5E4F;--faint-2:#9A8B76;--on-ink:#FFF8EE;--accent:#2F6B3A;--accent-hover:#23502B;--accent-soft:#E0EBD9;--accent-mid:#9CBF9F;--accent-ink:#23502B;--danger:#9E2A2A;--danger-soft:#F3DCD6;--warn-bg:#F2E3C2;--warn-fg:#6A4B0B}
 *{box-sizing:border-box}
-body{margin:0;background:#F7F6F2;color:#1d1f24;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 input,select,button,textarea{font-family:inherit}
-a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
+a{color:var(--accent)}a:hover{color:var(--accent-hover)}
+/* Header bar, as in the ADR viewer. */
+.tl-chrome{position:sticky;top:0;z-index:20;background:var(--chrome);color:var(--on-chrome)}
+.tl-row{max-width:1120px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap}
+.tl-brand{display:flex;align-items:center;gap:12px;min-height:44px;padding:0;background:none;border:0;color:var(--on-chrome);cursor:pointer}
+.tl-brand-name{font-size:19px;font-weight:700;letter-spacing:-0.01em}
+.tl-mono{font-family:'JetBrains Mono',monospace}
+.tl-tag{font-size:11px;letter-spacing:.08em;color:var(--chrome-muted);padding:3px 7px;border:1px solid var(--chrome-line);border-radius:4px}
+.tl-nav{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
+.tl-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 10px;background:none;border:0;border-radius:7px;color:var(--on-chrome);font-size:14px;font-weight:500;cursor:pointer}
+.tl-link:hover{background:var(--chrome-line)}
+.tl-invert{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 18px;border:0;border-radius:8px;background:var(--on-chrome);color:var(--chrome);font-size:14px;font-weight:600;cursor:pointer}
+.tl-themes{display:flex;align-items:center;gap:4px;padding:3px;border:1px solid var(--chrome-line);border-radius:10px}
+.tl-themes-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--chrome-muted);padding:0 6px 0 8px}
+.tl-theme{display:inline-flex;align-items:center;gap:8px;min-height:40px;min-width:40px;padding:0 10px;border-radius:7px;border:0;background:transparent;color:var(--on-chrome);font-size:13px;font-weight:600;cursor:pointer}
+.tl-theme[aria-pressed="true"]{background:var(--chrome-line)}
+.tl-swatch{position:relative;width:20px;height:20px;border-radius:50%;overflow:hidden;box-shadow:inset 0 0 0 1.5px var(--chrome-muted)}
+.tl-theme[aria-pressed="true"] .tl-swatch{box-shadow:inset 0 0 0 1.5px var(--on-chrome)}
+.tl-swatch>span{position:absolute;right:0;top:0;width:10px;height:20px}
+.tl-swatch>i{position:absolute;left:4px;bottom:4px;width:5px;height:5px;border-radius:50%}
+.tl-chrome :focus-visible{outline:2px solid var(--mark);outline-offset:2px}
 </style>
 </helmet>
 <div style="min-height:100vh;display:flex;flex-direction:column">
-<header style="position:sticky;top:0;z-index:20;background:rgba(247,246,242,.92);backdrop-filter:blur(8px);border-bottom:1px solid #e4e2db">
-  <div style="max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px">
-    <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:9px;background:none;border:none;padding:0;cursor:pointer;color:#1d1f24">
-      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3 L21 13 H15.5 V21 H8.5 V13 H3 Z" fill="oklch(0.52 0.13 160)"></path></svg>
-      <span style="font-weight:700;font-size:19px;letter-spacing:-0.02em">Tally</span>
+<header class="tl-chrome">
+  <div class="tl-row">
+    <button class="tl-brand" onClick="{{ goHome }}">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="4" stroke="currentColor" stroke-width="1.5"></rect><path d="M14 6 L22 15 H17.5 V22 H10.5 V15 H6 Z" fill="var(--mark)"></path></svg>
+      <span class="tl-brand-name">Tally</span>
+      <span class="tl-tag tl-mono">POLLS</span>
     </button>
-    <div style="flex:1"></div>
-    <div title="{{ meKey }}" style="display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border:1px solid #e4e2db;border-radius:999px;background:#fff;white-space:nowrap;flex-shrink:0">
-      <svg width="26" height="26" viewBox="0 0 100 100"><path d="{{ me.blobA }}" fill="{{ me.c1 }}"></path><path d="{{ me.blobB }}" fill="{{ me.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4a4d55">{{ me.keyShort }}</span>
-    </div>
+    <nav class="tl-nav" aria-label="Main">
+      <div class="tl-themes" role="group" aria-label="Theme">
+        <span class="tl-themes-label tl-mono">Theme</span>
+        <sc-for list="{{ themes }}" as="th" hint-placeholder-count="4">
+          <button class="tl-theme" aria-pressed="{{ th.on }}" aria-label="{{ th.aria }}" title="{{ th.label }}" onClick="{{ th.pick }}">
+            <span class="tl-swatch" aria-hidden="true" style="background:{{ th.bg }}"><span style="background:{{ th.primary }}"></span><i style="background:{{ th.accent }}"></i></span>
+            <sc-if value="{{ th.on }}"><span>{{ th.label }}</span></sc-if>
+          </button>
+        </sc-for>
+      </div>
+      <span title="{{ meKey }}" class="tl-link tl-mono" style="cursor:default;font-size:12.5px;color:var(--chrome-muted)">
+        <svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true"><path d="{{ me.blobA }}" fill="{{ me.c1 }}"></path><path d="{{ me.blobB }}" fill="{{ me.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>{{ me.keyShort }}
+      </span>
+      <button class="tl-link" onClick="{{ goHome }}">All polls</button>
+      <button class="tl-link" onClick="{{ showOpen }}" title="Open a tally.json from a file or URL"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"></path></svg> Open</button>
+      <button class="tl-link" onClick="{{ download }}" title="Download the polls as tally.json"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg> Download</button>
+      <button class="tl-invert" onClick="{{ newPoll }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg> New poll</button>
+    </nav>
   </div>
 </header>
 
@@ -38,45 +77,44 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
 <div style="display:flex;flex-direction:column;gap:22px">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
     <div>
-      <h1 style="margin:0;font-size:32px;letter-spacing:-0.025em;font-weight:700">Polls</h1>
-      <p style="margin:6px 0 0;color:#6b6e76;font-size:15px">Every ballot is a leaf in a public Merkle tree. Your choice stays sealed.</p>
+      <h1 style="margin:0;font-size:32px;letter-spacing:-0.025em;font-weight:700">{{ docTitle }}</h1>
+      <p style="margin:6px 0 0;color:var(--muted);font-size:15px">Every ballot is a leaf in a public Merkle tree. Your choice stays sealed.</p>
     </div>
-    <button onClick="{{ newPoll }}" style="display:flex;align-items:center;gap:6px;padding:10px 16px;border:none;border-radius:9px;background:#1d1f24;color:#fff;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#33363d">+ New poll</button>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-    <div style="display:flex;gap:3px;padding:3px;background:#ebe9e2;border-radius:10px;flex-wrap:wrap">
+    <div style="display:flex;gap:3px;padding:3px;background:var(--well);border-radius:10px;flex-wrap:wrap">
       <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
-        <button onClick="{{ t.onClick }}" style="border:none;cursor:pointer;padding:7px 12px;border-radius:7px;font-size:14px;font-weight:500;background:{{ t.bg }};color:{{ t.fg }};box-shadow:{{ t.shadow }};display:flex;gap:7px;align-items:center">{{ t.label }}<span style="font-size:11.5px;color:#8a8d94;font-family:'JetBrains Mono',monospace">{{ t.count }}</span></button>
+        <button onClick="{{ t.onClick }}" style="border:none;cursor:pointer;padding:7px 12px;border-radius:7px;font-size:14px;font-weight:500;background:{{ t.bg }};color:{{ t.fg }};box-shadow:{{ t.shadow }};display:flex;gap:7px;align-items:center">{{ t.label }}<span style="font-size:11.5px;color:var(--faint);font-family:'JetBrains Mono',monospace">{{ t.count }}</span></button>
       </sc-for>
     </div>
     <div style="flex:1"></div>
-    <input placeholder="Search polls" value="{{ q }}" onChange="{{ onQ }}" style="padding:9px 12px;border:1px solid #e4e2db;border-radius:9px;background:#fff;font-size:14px;min-width:200px;outline:none;color:#1d1f24" style-focus="border-color:oklch(0.52 0.13 160)">
-    <select value="{{ sort }}" onChange="{{ onSort }}" style="padding:9px 10px;border:1px solid #e4e2db;border-radius:9px;background:#fff;font-size:14px;color:#1d1f24;cursor:pointer">
+    <input placeholder="Search polls" value="{{ q }}" onChange="{{ onQ }}" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-size:14px;min-width:200px;outline:none;color:var(--ink)" style-focus="border-color:var(--accent)">
+    <select value="{{ sort }}" onChange="{{ onSort }}" style="padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-size:14px;color:var(--ink);cursor:pointer">
       <option value="new">Newest</option>
       <option value="votes">Most votes</option>
     </select>
   </div>
   <div style="display:flex;flex-direction:column;gap:10px">
     <sc-for list="{{ rows }}" as="p" hint-placeholder-count="5">
-      <div onClick="{{ p.onOpen }}" style="display:grid;grid-template-columns:60px minmax(0,1fr) auto;gap:14px;align-items:center;padding:16px 20px 16px 10px;background:#fff;border:1px solid #e4e2db;border-radius:12px;cursor:pointer;transition:border-color .15s, box-shadow .15s" style-hover="border-color:#cfccc2;box-shadow:0 3px 14px rgba(40,35,20,.06)">
+      <div onClick="{{ p.onOpen }}" style="display:grid;grid-template-columns:60px minmax(0,1fr) auto;gap:14px;align-items:center;padding:16px 20px 16px 10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;cursor:pointer;transition:border-color .15s, box-shadow .15s" style-hover="border-color:var(--line-2);box-shadow:0 3px 14px rgba(40,35,20,.06)">
         <div style="display:flex;flex-direction:column;align-items:center;gap:1px;color:{{ p.scoreColor }}">
           <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 4 L20 13.5 H15.5 V20 H8.5 V13.5 H4 Z" fill="currentColor"></path></svg>
           <span style="font-weight:700;font-size:17px;font-variant-numeric:tabular-nums">{{ p.score }}</span>
-          <span style="font-size:11px;color:#8a8d94">votes</span>
+          <span style="font-size:11px;color:var(--faint)">votes</span>
         </div>
         <div style="min-width:0;display:flex;flex-direction:column;gap:7px">
           <div style="font-size:17px;font-weight:600;letter-spacing:-0.01em;text-wrap:pretty">{{ p.title }}</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px">
             <span style="padding:2px 9px;border-radius:999px;font-weight:600;white-space:nowrap;background:{{ p.stBg }};color:{{ p.stFg }}">{{ p.status }}</span>
-            <sc-for list="{{ p.chips }}" as="c"><span style="padding:2px 9px;border-radius:999px;border:1px solid #e4e2db;color:#4a4d55;white-space:nowrap">{{ c }}</span></sc-for>
-            <span style="color:#8a8d94;margin-left:2px">{{ p.meta }}</span>
+            <sc-for list="{{ p.chips }}" as="c"><span style="padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);white-space:nowrap">{{ c }}</span></sc-for>
+            <span style="color:var(--faint);margin-left:2px">{{ p.meta }}</span>
           </div>
         </div>
         <span style="font-size:14px;font-weight:600;color:{{ p.actionColor }};white-space:nowrap">{{ p.action }} →</span>
       </div>
     </sc-for>
     <sc-if value="{{ noRows }}" hint-placeholder-val="{{ false }}">
-      <div style="padding:48px 20px;text-align:center;color:#6b6e76;border:1.5px dashed #e0ddd4;border-radius:12px;font-size:15px">No polls match this filter.</div>
+      <div style="padding:48px 20px;text-align:center;color:var(--muted);border:1.5px dashed var(--line-2);border-radius:12px;font-size:15px">{{ emptyText }}</div>
     </sc-if>
   </div>
 </div>
@@ -84,17 +122,17 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
 
 <sc-if value="{{ isPoll }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-direction:column;gap:22px">
-  <button onClick="{{ goHome }}" style="align-self:flex-start;background:none;border:none;padding:0;color:#6b6e76;font-size:14px;cursor:pointer" style-hover="color:#1d1f24">← All polls</button>
+  <button onClick="{{ goHome }}" style="align-self:flex-start;background:none;border:none;padding:0;color:var(--muted);font-size:14px;cursor:pointer" style-hover="color:var(--ink)">← All polls</button>
   <div style="display:flex;flex-direction:column;gap:10px">
     <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:12.5px">
       <span style="padding:2px 9px;border-radius:999px;font-weight:600;white-space:nowrap;background:{{ pv.stBg }};color:{{ pv.stFg }}">{{ pv.status }}</span>
-      <sc-for list="{{ pv.chips }}" as="c"><span style="padding:2px 9px;border-radius:999px;border:1px solid #e4e2db;color:#4a4d55;background:#fff;white-space:nowrap">{{ c }}</span></sc-for>
+      <sc-for list="{{ pv.chips }}" as="c"><span style="padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);background:var(--surface);white-space:nowrap">{{ c }}</span></sc-for>
     </div>
     <h1 style="margin:0;font-size:30px;letter-spacing:-0.025em;font-weight:700;text-wrap:pretty;max-width:760px">{{ pv.title }}</h1>
-    <p style="margin:0;color:#4a4d55;font-size:15.5px;line-height:1.5;max-width:680px;text-wrap:pretty">{{ pv.desc }}</p>
-    <div style="font-size:13.5px;color:#6b6e76">{{ pv.meta }}</div>
+    <p style="margin:0;color:var(--ink-2);font-size:15.5px;line-height:1.5;max-width:680px;text-wrap:pretty">{{ pv.desc }}</p>
+    <div style="font-size:13.5px;color:var(--muted)">{{ pv.meta }}</div>
   </div>
-  <div style="display:flex;gap:24px;border-bottom:1px solid #e4e2db">
+  <div style="display:flex;gap:24px;border-bottom:1px solid var(--line)">
     <sc-for list="{{ pv.tabs }}" as="t" hint-placeholder-count="3">
       <button onClick="{{ t.onClick }}" style="background:none;border:none;padding:10px 0;margin-bottom:-1px;font-size:15px;font-weight:600;cursor:pointer;color:{{ t.fg }};border-bottom:2px solid {{ t.line }}">{{ t.label }}</button>
     </sc-for>
@@ -103,51 +141,51 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
   <sc-if value="{{ pv.isVote }}">
     <div style="display:flex;flex-direction:column;gap:16px;max-width:760px">
       <sc-if value="{{ pv.canVote }}">
-        <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;overflow:hidden">
-          <div style="padding:18px 20px;border-bottom:1px solid #eeece6;display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden">
+          <div style="padding:18px 20px;border-bottom:1px solid var(--line-soft);display:flex;flex-direction:column;gap:10px">
             <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
               <div style="font-weight:600;font-size:16px">Allocate your tokens</div>
-              <div style="font-size:14px;color:#4a4d55"><span style="font-weight:700;color:#1d1f24;font-variant-numeric:tabular-nums">{{ pv.spent }}</span> of {{ pv.budget }} tokens spent</div>
+              <div style="font-size:14px;color:var(--ink-2)"><span style="font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums">{{ pv.spent }}</span> of {{ pv.budget }} tokens spent</div>
             </div>
-            <div style="height:6px;border-radius:3px;background:#efede7;overflow:hidden"><div style="height:100%;border-radius:3px;background:oklch(0.52 0.13 160);transition:width .25s;width:{{ pv.budgetW }}"></div></div>
-            <div style="font-size:13px;color:#6b6e76">{{ pv.ruleNote }}</div>
+            <div style="height:6px;border-radius:3px;background:var(--raised);overflow:hidden"><div style="height:100%;border-radius:3px;background:var(--accent);transition:width .25s;width:{{ pv.budgetW }}"></div></div>
+            <div style="font-size:13px;color:var(--muted)">{{ pv.ruleNote }}</div>
           </div>
           <sc-for list="{{ pv.options }}" as="o" hint-placeholder-count="3">
-            <div style="display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 20px 12px 12px;border-bottom:1px solid #f1efea">
+            <div style="display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 20px 12px 12px;border-bottom:1px solid var(--well-2)">
               <div style="display:flex;flex-direction:column;align-items:center;gap:0">
-                <button onClick="{{ o.onUp }}" style="width:34px;height:28px;border:none;border-radius:7px;background:transparent;cursor:{{ o.upCursor }};color:{{ o.upColor }};display:flex;align-items:center;justify-content:center;opacity:{{ o.upOpacity }}" style-hover="background:oklch(0.95 0.035 160)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 5 L20 15 H4 Z" fill="currentColor"></path></svg></button>
+                <button onClick="{{ o.onUp }}" style="width:34px;height:28px;border:none;border-radius:7px;background:transparent;cursor:{{ o.upCursor }};color:{{ o.upColor }};display:flex;align-items:center;justify-content:center;opacity:{{ o.upOpacity }}" style-hover="background:var(--accent-soft)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 5 L20 15 H4 Z" fill="currentColor"></path></svg></button>
                 <span style="font-weight:700;font-size:16px;font-variant-numeric:tabular-nums;color:{{ o.countColor }}">{{ o.k }}</span>
-                <button onClick="{{ o.onDown }}" style="width:34px;height:28px;border:none;border-radius:7px;background:transparent;cursor:pointer;color:#a3a5ab;display:flex;align-items:center;justify-content:center;opacity:{{ o.downOpacity }}" style-hover="background:#f1efea"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 19 L20 9 H4 Z" fill="currentColor"></path></svg></button>
+                <button onClick="{{ o.onDown }}" style="width:34px;height:28px;border:none;border-radius:7px;background:transparent;cursor:pointer;color:var(--faint-2);display:flex;align-items:center;justify-content:center;opacity:{{ o.downOpacity }}" style-hover="background:var(--well-2)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 19 L20 9 H4 Z" fill="currentColor"></path></svg></button>
               </div>
               <div style="font-size:16px;font-weight:500;text-wrap:pretty">{{ o.label }}</div>
-              <div style="font-size:13px;color:#6b6e76;text-align:right;font-variant-numeric:tabular-nums">{{ o.costText }}</div>
+              <div style="font-size:13px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums">{{ o.costText }}</div>
             </div>
           </sc-for>
-          <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#fbfaf7">
-            <div style="font-size:13px;color:#6b6e76;max-width:420px">{{ pv.sealNote }}</div>
+          <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--raised)">
+            <div style="font-size:13px;color:var(--muted);max-width:420px">{{ pv.sealNote }}</div>
             <button onClick="{{ pv.cast }}" style="padding:10px 18px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;background:{{ pv.castBg }};color:{{ pv.castFg }}">Sign &amp; cast ballot</button>
           </div>
         </div>
       </sc-if>
       <sc-if value="{{ pv.showResults }}">
-        <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
             <div style="font-weight:600;font-size:16px">Results</div>
-            <div style="font-size:13px;color:#6b6e76">{{ pv.resultsMeta }}</div>
+            <div style="font-size:13px;color:var(--muted)">{{ pv.resultsMeta }}</div>
           </div>
           <sc-for list="{{ pv.results }}" as="r" hint-placeholder-count="3">
             <div style="display:flex;flex-direction:column;gap:6px">
               <div style="display:flex;justify-content:space-between;gap:12px;font-size:15px">
                 <span style="font-weight:500">{{ r.label }}</span>
-                <span style="display:flex;gap:10px;align-items:baseline"><span style="font-size:12.5px;color:oklch(0.52 0.13 160);font-weight:600">{{ r.mine }}</span><span style="font-weight:700;font-variant-numeric:tabular-nums">{{ r.total }}</span></span>
+                <span style="display:flex;gap:10px;align-items:baseline"><span style="font-size:12.5px;color:var(--accent);font-weight:600">{{ r.mine }}</span><span style="font-weight:700;font-variant-numeric:tabular-nums">{{ r.total }}</span></span>
               </div>
-              <div style="height:8px;border-radius:4px;background:#f1efea;overflow:hidden"><div style="height:100%;border-radius:4px;background:{{ r.color }};width:{{ r.w }}"></div></div>
+              <div style="height:8px;border-radius:4px;background:var(--well-2);overflow:hidden"><div style="height:100%;border-radius:4px;background:{{ r.color }};width:{{ r.w }}"></div></div>
             </div>
           </sc-for>
           <sc-if value="{{ pv.voted }}">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:10px;background:oklch(0.96 0.03 160)">
-              <span style="font-size:14px;color:oklch(0.36 0.1 160)">Your ballot is sealed as leaf #{{ pv.myNum }}. Only you can open it.</span>
-              <button onClick="{{ pv.viewMine }}" style="background:none;border:none;padding:0;font-size:14px;font-weight:600;color:oklch(0.42 0.13 160);cursor:pointer">View in ledger →</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:10px;background:var(--accent-soft)">
+              <span style="font-size:14px;color:var(--accent-ink)">Your ballot is sealed as leaf #{{ pv.myNum }}. Only you can open it.</span>
+              <button onClick="{{ pv.viewMine }}" style="background:none;border:none;padding:0;font-size:14px;font-weight:600;color:var(--accent-hover);cursor:pointer">View in ledger →</button>
             </div>
           </sc-if>
         </div>
@@ -158,32 +196,32 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
   <sc-if value="{{ pv.isVoters }}">
     <div style="display:flex;flex-direction:column;gap:12px">
       <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">
-        <div style="font-size:14px;color:#4a4d55">{{ pv.votersMeta }}</div>
+        <div style="font-size:14px;color:var(--ink-2)">{{ pv.votersMeta }}</div>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span style="font-size:13px;color:#8a8d94">{{ pv.visNote }}</span>
-          <input placeholder="Find a public key" value="{{ pv.voterQ }}" onChange="{{ pv.onVoterQ }}" spellCheck="false" style="padding:8px 11px;border:1px solid #e4e2db;border-radius:8px;background:#fff;font-family:'JetBrains Mono',monospace;font-size:12.5px;min-width:220px;outline:none;color:#1d1f24" style-focus="border-color:oklch(0.52 0.13 160)">
-          <sc-if value="{{ pv.hasMore }}"><button onClick="{{ pv.showMore }}" style="padding:8px 11px;border:1px solid #e4e2db;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:#1d1f24">{{ pv.moreLabel }}</button></sc-if>
+          <span style="font-size:13px;color:var(--faint)">{{ pv.visNote }}</span>
+          <input placeholder="Find a public key" value="{{ pv.voterQ }}" onChange="{{ pv.onVoterQ }}" spellCheck="false" style="padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-family:'JetBrains Mono',monospace;font-size:12.5px;min-width:220px;outline:none;color:var(--ink)" style-focus="border-color:var(--accent)">
+          <sc-if value="{{ pv.hasMore }}"><button onClick="{{ pv.showMore }}" style="padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:13px;cursor:pointer;color:var(--ink)">{{ pv.moreLabel }}</button></sc-if>
         </div>
       </div>
-      <div style="overflow-x:auto;background:#fff;border:1px solid #e4e2db;border-radius:14px">
+      <div style="overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px">
         <div style="min-width:760px">
-          <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) 110px 100px 96px;gap:14px;padding:10px 18px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94;border-bottom:1px solid #eeece6">
+          <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) 110px 100px 96px;gap:14px;padding:10px 18px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line-soft)">
             <span>Voter</span><span>Public key</span><span>Tokens</span><span>Status</span><span></span>
           </div>
           <sc-for list="{{ pv.voters }}" as="v" hint-placeholder-count="8">
-            <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) 110px 100px 96px;gap:14px;padding:12px 18px;align-items:center;border-bottom:1px solid #f3f1ec">
+            <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) 110px 100px 96px;gap:14px;padding:12px 18px;align-items:center;border-bottom:1px solid var(--raised)">
               <div style="display:flex;align-items:center;gap:10px;min-width:0">
                 <sc-if value="{{ v.anon }}"><svg width="34" height="34" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ v.blobA }}" fill="{{ v.c1 }}"></path><path d="{{ v.blobB }}" fill="{{ v.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg></sc-if>
                 <sc-if value="{{ v.named }}"><span style="width:34px;height:34px;border-radius:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;background:{{ v.avBg }};color:{{ v.avFg }}">{{ v.initials }}</span></sc-if>
                 <div style="display:flex;flex-direction:column;min-width:0">
                   <span style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.label }}</span>
-                  <span style="font-size:12px;color:#8a8d94">{{ v.reasons }}</span>
+                  <span style="font-size:12px;color:var(--faint)">{{ v.reasons }}</span>
                 </div>
               </div>
-              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4a4d55;word-break:break-all;user-select:all">{{ v.pubkey }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-2);word-break:break-all;user-select:all">{{ v.pubkey }}</span>
               <span style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ v.tokColor }}">{{ v.tokens }}</span>
               <span style="display:flex;align-items:center;gap:6px;font-size:13.5px;color:{{ v.stColor }}"><span style="width:7px;height:7px;border-radius:4px;background:{{ v.stColor }}"></span>{{ v.status }}</span>
-              <sc-if value="{{ v.voted }}"><button onClick="{{ v.onLocate }}" style="background:none;border:1px solid #e4e2db;border-radius:7px;padding:5px 9px;font-size:12.5px;cursor:pointer;color:#1d1f24" style-hover="border-color:oklch(0.52 0.13 160)">Find leaf</button></sc-if>
+              <sc-if value="{{ v.voted }}"><button onClick="{{ v.onLocate }}" style="background:none;border:1px solid var(--line);border-radius:7px;padding:5px 9px;font-size:12.5px;cursor:pointer;color:var(--ink)" style-hover="border-color:var(--accent)">Find leaf</button></sc-if>
             </div>
           </sc-for>
         </div>
@@ -196,30 +234,30 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
         <span style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;font-size:14px;font-weight:600;background:{{ pv.okBg }};color:{{ pv.okFg }}"><span style="width:8px;height:8px;border-radius:4px;background:{{ pv.okFg }}"></span>{{ pv.okText }}</span>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <sc-if value="{{ pv.voted }}"><button onClick="{{ pv.toggleProof }}" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;border:1px solid #e4e2db;background:#fff;font-size:13.5px;cursor:pointer;white-space:nowrap;color:#1d1f24"><span style="width:28px;height:16px;border-radius:8px;padding:2px;display:flex;background:{{ pv.proofBg }};justify-content:{{ pv.proofJ }}"><span style="width:12px;height:12px;border-radius:6px;background:#fff"></span></span>My inclusion proof</button></sc-if>
-          <button onClick="{{ pv.toggleTamper }}" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;border:1px solid #e4e2db;background:#fff;font-size:13.5px;cursor:pointer;white-space:nowrap;color:#1d1f24"><span style="width:28px;height:16px;border-radius:8px;padding:2px;display:flex;background:{{ pv.tamperBg }};justify-content:{{ pv.tamperJ }}"><span style="width:12px;height:12px;border-radius:6px;background:#fff"></span></span>Tamper mode</button>
-          <sc-if value="{{ pv.hasTamper }}"><button onClick="{{ pv.resetTamper }}" style="padding:7px 12px;border-radius:9px;border:none;background:#1d1f24;white-space:nowrap;color:#fff;font-size:13.5px;font-weight:600;cursor:pointer">Reset edits</button></sc-if>
+          <sc-if value="{{ pv.voted }}"><button onClick="{{ pv.toggleProof }}" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;cursor:pointer;white-space:nowrap;color:var(--ink)"><span style="width:28px;height:16px;border-radius:8px;padding:2px;display:flex;background:{{ pv.proofBg }};justify-content:{{ pv.proofJ }}"><span style="width:12px;height:12px;border-radius:6px;background:var(--surface)"></span></span>My inclusion proof</button></sc-if>
+          <button onClick="{{ pv.toggleTamper }}" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;cursor:pointer;white-space:nowrap;color:var(--ink)"><span style="width:28px;height:16px;border-radius:8px;padding:2px;display:flex;background:{{ pv.tamperBg }};justify-content:{{ pv.tamperJ }}"><span style="width:12px;height:12px;border-radius:6px;background:var(--surface)"></span></span>Tamper mode</button>
+          <sc-if value="{{ pv.hasTamper }}"><button onClick="{{ pv.resetTamper }}" style="padding:7px 12px;border-radius:9px;border:none;background:var(--ink);white-space:nowrap;color:var(--on-ink);font-size:13.5px;font-weight:600;cursor:pointer">Reset edits</button></sc-if>
         </div>
       </div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:13px;color:#6b6e76">
-        <div style="display:flex;align-items:center;gap:8px;white-space:nowrap">Layout<div style="display:flex;gap:2px;padding:2px;background:#ebe9e2;border-radius:8px"><sc-for list="{{ pv.layouts }}" as="g"><button onClick="{{ g.onClick }}" style="border:none;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.shadow }}">{{ g.label }}</button></sc-for></div></div>
-        <div style="display:flex;align-items:center;gap:8px;white-space:nowrap">Group size<div style="display:flex;gap:2px;padding:2px;background:#ebe9e2;border-radius:8px"><sc-for list="{{ pv.groups }}" as="g"><button onClick="{{ g.onClick }}" style="border:none;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.shadow }}">{{ g.label }}</button></sc-for></div></div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)">
+        <div style="display:flex;align-items:center;gap:8px;white-space:nowrap">Layout<div style="display:flex;gap:2px;padding:2px;background:var(--well);border-radius:8px"><sc-for list="{{ pv.layouts }}" as="g"><button onClick="{{ g.onClick }}" style="border:none;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.shadow }}">{{ g.label }}</button></sc-for></div></div>
+        <div style="display:flex;align-items:center;gap:8px;white-space:nowrap">Group size<div style="display:flex;gap:2px;padding:2px;background:var(--well);border-radius:8px"><sc-for list="{{ pv.groups }}" as="g"><button onClick="{{ g.onClick }}" style="border:none;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.shadow }}">{{ g.label }}</button></sc-for></div></div>
         <span style="font-variant-numeric:tabular-nums">{{ pv.shape }}</span>
         <div style="flex:1"></div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <sc-if value="{{ pv.voted }}"><button onClick="{{ pv.goMine }}" style="padding:6px 11px;border:1px solid #e4e2db;white-space:nowrap;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:#1d1f24">Go to my ballot</button></sc-if>
-          <sc-if value="{{ pv.hasChanged }}"><button onClick="{{ pv.goTampered }}" style="padding:6px 11px;border:1px solid oklch(0.55 0.19 27);white-space:nowrap;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:oklch(0.55 0.19 27)">Go to tampered</button></sc-if>
-          <sc-if value="{{ pv.canCollapse }}"><button onClick="{{ pv.goRoot }}" style="padding:6px 11px;border:1px solid #e4e2db;white-space:nowrap;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:#1d1f24">Collapse all</button></sc-if>
+          <sc-if value="{{ pv.voted }}"><button onClick="{{ pv.goMine }}" style="padding:6px 11px;border:1px solid var(--line);white-space:nowrap;border-radius:8px;background:var(--surface);font-size:13px;cursor:pointer;color:var(--ink)">Go to my ballot</button></sc-if>
+          <sc-if value="{{ pv.hasChanged }}"><button onClick="{{ pv.goTampered }}" style="padding:6px 11px;border:1px solid var(--danger);white-space:nowrap;border-radius:8px;background:var(--surface);font-size:13px;cursor:pointer;color:var(--danger)">Go to tampered</button></sc-if>
+          <sc-if value="{{ pv.canCollapse }}"><button onClick="{{ pv.goRoot }}" style="padding:6px 11px;border:1px solid var(--line);white-space:nowrap;border-radius:8px;background:var(--surface);font-size:13px;cursor:pointer;color:var(--ink)">Collapse all</button></sc-if>
         </div>
       </div>
-      <div style="font-size:14px;color:#4a4d55;line-height:1.5;max-width:760px;text-wrap:pretty">{{ pv.ledgerNote }}</div>
+      <div style="font-size:14px;color:var(--ink-2);line-height:1.5;max-width:760px;text-wrap:pretty">{{ pv.ledgerNote }}</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
-        <div style="background:#fff;border:1px solid #e4e2db;border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
-          <span style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Published root</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;color:#1d1f24">{{ pv.published }}</span>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Published root</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;color:var(--ink)">{{ pv.published }}</span>
         </div>
-        <div style="background:#fff;border:1.5px solid {{ pv.rootBorder }};border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
-          <span style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Computed from the leaves below</span>
+        <div style="background:var(--surface);border:1.5px solid {{ pv.rootBorder }};border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Computed from the leaves below</span>
           <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;color:{{ pv.okFg }}">{{ pv.computed }}</span>
         </div>
       </div>
@@ -227,7 +265,7 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
         <nav style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
           <sc-for list="{{ pv.crumbs }}" as="cr" hint-placeholder-count="1">
             <span style="display:flex;align-items:center;gap:6px">
-              <span style="color:#b8b5ab;font-size:16px">{{ cr.sep }}</span>
+              <span style="color:var(--line-strong);font-size:16px">{{ cr.sep }}</span>
               <button onClick="{{ cr.onClick }}" title="{{ cr.full }}" style="display:flex;align-items:center;gap:7px;padding:3px 11px 3px 4px;border-radius:999px;cursor:pointer;font-size:13px;white-space:nowrap;background:{{ cr.bg }};color:{{ cr.fg }};border:1.5px solid {{ cr.border }}">
                 <svg width="22" height="22" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ cr.blobA }}" fill="{{ cr.c1 }}"></path><path d="{{ cr.blobB }}" fill="{{ cr.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
                 <span style="font-weight:600;font-variant-numeric:tabular-nums">{{ cr.label }}</span>
@@ -238,7 +276,7 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
         </nav>
 
         <sc-if value="{{ pv.isGrid }}">
-        <div ref="{{ pv.scrollRef }}" data-tree-box="1" style="overflow-x:auto;overflow-y:hidden;border:1px solid #e4e2db;border-radius:14px;background:#fff;padding:24px 16px 20px">
+        <div ref="{{ pv.scrollRef }}" data-tree-box="1" style="overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:24px 16px 20px">
           <div style="min-width:{{ pv.treeMin }};display:flex;flex-direction:column">
             <sc-for list="{{ pv.rows }}" as="row" hint-placeholder-count="1">
               <div style="display:grid;transition:grid-template-columns .45s cubic-bezier(.2,.8,.2,1);grid-template-columns:{{ pv.cols }}">
@@ -249,9 +287,9 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
                       <svg width="{{ n.bs }}" height="{{ n.bs }}" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ n.blobA }}" fill="{{ n.c1 }}"></path><path d="{{ n.blobB }}" fill="{{ n.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
                       <sc-if value="{{ n.showText }}">
                       <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
-                        <span style="font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:11.5px;color:{{ n.sub }}">{{ n.lbl }} <span style="color:oklch(0.55 0.19 27)">{{ n.note }}</span></span>
+                        <span style="font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:11.5px;color:{{ n.sub }}">{{ n.lbl }} <span style="color:var(--danger)">{{ n.note }}</span></span>
                         <sc-if value="{{ n.showRo }}"><span style="font-family:'JetBrains Mono',monospace;white-space:nowrap;font-size:{{ n.fs }}">{{ n.short }}</span></sc-if>
-                        <sc-if value="{{ n.showEdit }}"><input value="{{ n.full }}" onChange="{{ n.onEdit }}" onClick="{{ n.stop }}" spellCheck="false" style="width:120px;font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 5px;border-radius:5px;outline:none;border:1px dashed #a3a5ab;background:#fff;color:#1d1f24"></sc-if>
+                        <sc-if value="{{ n.showEdit }}"><input value="{{ n.full }}" onChange="{{ n.onEdit }}" onClick="{{ n.stop }}" spellCheck="false" style="width:120px;font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 5px;border-radius:5px;outline:none;border:1px dashed var(--faint-2);background:var(--surface);color:var(--ink)"></sc-if>
                       </div>
                       </sc-if>
                     </div>
@@ -268,30 +306,30 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
                     <div style="width:1.5px;height:12px;background:{{ c.stub }}"></div>
                     <sc-if value="{{ c.full }}"><dc-import name="BallotCard" c="{{ c }}" hint-size="100%,290px" style="width:100%"></dc-import></sc-if>
                     <sc-if value="{{ c.mini }}">
-                      <div title="{{ c.tip }}" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:4px;padding:{{ c.mpad }};border-radius:8px;cursor:pointer;background:#fff;border:{{ c.border }};box-shadow:{{ c.ring }}">
+                      <div title="{{ c.tip }}" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:4px;padding:{{ c.mpad }};border-radius:8px;cursor:pointer;background:var(--surface);border:{{ c.border }};box-shadow:{{ c.ring }}">
                         <svg width="{{ c.ms }}" height="{{ c.ms }}" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ c.blobA }}" fill="{{ c.c1 }}"></path><path d="{{ c.blobB }}" fill="{{ c.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
-                        <sc-if value="{{ c.showNum }}"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8a8d94">#{{ c.num }}</span></sc-if>
+                        <sc-if value="{{ c.showNum }}"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint)">#{{ c.num }}</span></sc-if>
                       </div>
                     </sc-if>
                   </div>
                 </sc-for>
               </div>
             </sc-if>
-            <sc-if value="{{ pv.noBallots }}"><div style="padding:28px;text-align:center;color:#8a8d94;font-size:14px">No ballots yet.</div></sc-if>
+            <sc-if value="{{ pv.noBallots }}"><div style="padding:28px;text-align:center;color:var(--faint);font-size:14px">No ballots yet.</div></sc-if>
           </div>
         </div>
         </sc-if>
 
         <sc-if value="{{ pv.isCarousel }}">
-        <div style="border:1px solid #e4e2db;border-radius:14px;background:#fff;padding:18px 0 22px;display:flex;flex-direction:column">
+        <div style="border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:18px 0 22px;display:flex;flex-direction:column">
           <sc-for list="{{ pv.crows }}" as="row" hint-placeholder-count="2">
             <div style="display:flex;flex-direction:column;gap:6px">
               <div style="display:flex;align-items:center;gap:10px;padding:0 18px">
-                <span style="font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#4a4d55">{{ row.title }}</span>
-                <span style="font-size:12.5px;color:#8a8d94;font-variant-numeric:tabular-nums">{{ row.sub }}</span>
+                <span style="font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)">{{ row.title }}</span>
+                <span style="font-size:12.5px;color:var(--faint);font-variant-numeric:tabular-nums">{{ row.sub }}</span>
                 <div style="flex:1"></div>
-                <button onClick="{{ row.prev }}" style="width:28px;height:28px;border-radius:14px;border:1px solid #e4e2db;background:#fff;cursor:pointer;color:#1d1f24;font-size:14px;opacity:{{ row.prevOp }}">‹</button>
-                <button onClick="{{ row.next }}" style="width:28px;height:28px;border-radius:14px;border:1px solid #e4e2db;background:#fff;cursor:pointer;color:#1d1f24;font-size:14px;opacity:{{ row.nextOp }}">›</button>
+                <button onClick="{{ row.prev }}" style="width:28px;height:28px;border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);font-size:14px;opacity:{{ row.prevOp }}">‹</button>
+                <button onClick="{{ row.next }}" style="width:28px;height:28px;border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);font-size:14px;opacity:{{ row.nextOp }}">›</button>
               </div>
               <div style="overflow:hidden;padding:8px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)">
                 <div style="position:relative;left:50%;display:flex;align-items:center;gap:14px;width:max-content;transition:transform .5s cubic-bezier(.2,.8,.2,1);transform:{{ row.tx }}">
@@ -304,8 +342,8 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
                           <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
                             <span style="font-weight:600;font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums;color:{{ it.sub }}">{{ it.rangeText }}</span>
                             <sc-if value="{{ it.ro }}"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">{{ it.short }}</span></sc-if>
-                            <sc-if value="{{ it.editable }}"><input value="{{ it.full }}" onChange="{{ it.onEdit }}" onClick="{{ it.stop }}" spellCheck="false" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:3px 5px;border-radius:5px;outline:none;border:1px dashed #a3a5ab;background:#fff;color:#1d1f24"></sc-if>
-                            <span style="font-size:11px;white-space:nowrap;color:{{ it.sub }}">{{ it.countText }} <span style="color:oklch(0.55 0.19 27);font-weight:600">{{ it.note }}</span></span>
+                            <sc-if value="{{ it.editable }}"><input value="{{ it.full }}" onChange="{{ it.onEdit }}" onClick="{{ it.stop }}" spellCheck="false" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:3px 5px;border-radius:5px;outline:none;border:1px dashed var(--faint-2);background:var(--surface);color:var(--ink)"></sc-if>
+                            <span style="font-size:11px;white-space:nowrap;color:{{ it.sub }}">{{ it.countText }} <span style="color:var(--danger);font-weight:600">{{ it.note }}</span></span>
                           </div>
                         </div>
                       </sc-if>
@@ -321,9 +359,9 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
 
         <sc-if value="{{ pv.isRadial }}">
         <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
-          <div style="flex:1 1 460px;max-width:760px;position:relative;aspect-ratio:1;background:#fff;border:1px solid #e4e2db;border-radius:14px;overflow:hidden">
+          <div style="flex:1 1 460px;max-width:760px;position:relative;aspect-ratio:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">
-              <sc-for list="{{ pv.rings }}" as="rg"><circle cx="50" cy="50" r="{{ rg.r }}" fill="none" stroke="#ebe9e2" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke"></circle></sc-for>
+              <sc-for list="{{ pv.rings }}" as="rg"><circle cx="50" cy="50" r="{{ rg.r }}" fill="none" stroke="var(--well)" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke"></circle></sc-for>
               <sc-for list="{{ pv.links }}" as="ln"><line x1="{{ ln.x1 }}" y1="{{ ln.y1 }}" x2="{{ ln.x2 }}" y2="{{ ln.y2 }}" stroke="{{ ln.color }}" strokeWidth="{{ ln.w }}" vectorEffect="non-scaling-stroke"></line></sc-for>
             </svg>
             <sc-for list="{{ pv.rnodes }}" as="rn">
@@ -332,35 +370,35 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
               </button>
             </sc-for>
             <sc-for list="{{ pv.rlabels }}" as="rl">
-              <span style="position:absolute;transform:translateX(-50%);pointer-events:none;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.92);font-size:11.5px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;color:{{ rl.fg }};left:{{ rl.x }};top:{{ rl.y }}">{{ rl.text }}</span>
+              <span style="position:absolute;transform:translateX(-50%);pointer-events:none;padding:2px 7px;border-radius:6px;background:color-mix(in srgb,var(--surface) 92%,transparent);font-size:11.5px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;color:{{ rl.fg }};left:{{ rl.x }};top:{{ rl.y }}">{{ rl.text }}</span>
             </sc-for>
           </div>
           <div style="flex:1 1 240px;max-width:320px;display:flex;flex-direction:column;gap:12px">
             <sc-for list="{{ pv.panelCards }}" as="c"><div style="width:220px"><dc-import name="BallotCard" c="{{ c }}" hint-size="220px,290px" style="width:100%"></dc-import></div></sc-for>
             <sc-for list="{{ pv.panelNodes }}" as="pn">
-              <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px">
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px">
                 <div style="display:flex;align-items:center;gap:12px">
                   <svg width="56" height="56" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ pn.blobA }}" fill="{{ pn.c1 }}"></path><path d="{{ pn.blobB }}" fill="{{ pn.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
                   <div style="display:flex;flex-direction:column;gap:2px">
-                    <span style="font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#4a4d55">{{ pn.pTitle }}</span>
+                    <span style="font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)">{{ pn.pTitle }}</span>
                     <span style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ pn.rangeText }}</span>
-                    <span style="font-size:12.5px;color:#6b6e76">{{ pn.countText }} · {{ pn.kidsText }}</span>
+                    <span style="font-size:12.5px;color:var(--muted)">{{ pn.countText }} · {{ pn.kidsText }}</span>
                   </div>
                 </div>
-                <sc-if value="{{ pn.ro }}"><span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;word-break:break-all;padding:8px 10px;border-radius:8px;background:#f5f4ef;color:{{ pn.hashColor }}">{{ pn.full }}</span></sc-if>
-                <sc-if value="{{ pn.editable }}"><textarea value="{{ pn.full }}" onChange="{{ pn.onEdit }}" spellCheck="false" rows="3" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:8px 10px;border-radius:8px;outline:none;border:1px dashed #a3a5ab;resize:none;color:#1d1f24"></textarea></sc-if>
-                <sc-if value="{{ pn.hasNote }}"><span style="font-size:12.5px;font-weight:600;color:oklch(0.55 0.19 27)">{{ pn.noteText }}</span></sc-if>
-                <button onClick="{{ pn.onZoom }}" style="align-self:flex-start;padding:7px 12px;border-radius:8px;border:1px solid #e4e2db;background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:#1d1f24">{{ pn.actLabel }}</button>
+                <sc-if value="{{ pn.ro }}"><span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;word-break:break-all;padding:8px 10px;border-radius:8px;background:var(--raised);color:{{ pn.hashColor }}">{{ pn.full }}</span></sc-if>
+                <sc-if value="{{ pn.editable }}"><textarea value="{{ pn.full }}" onChange="{{ pn.onEdit }}" spellCheck="false" rows="3" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:8px 10px;border-radius:8px;outline:none;border:1px dashed var(--faint-2);resize:none;color:var(--ink)"></textarea></sc-if>
+                <sc-if value="{{ pn.hasNote }}"><span style="font-size:12.5px;font-weight:600;color:var(--danger)">{{ pn.noteText }}</span></sc-if>
+                <button onClick="{{ pn.onZoom }}" style="align-self:flex-start;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)">{{ pn.actLabel }}</button>
               </div>
             </sc-for>
           </div>
         </div>
         </sc-if>
       </div>
-      <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:#6b6e76">
-        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:oklch(0.52 0.13 160)"></span>Your path to the root</span>
-        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;border:1.5px dashed oklch(0.52 0.13 160);background:oklch(0.95 0.035 160)"></span>Proof sibling</span>
-        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:oklch(0.96 0.03 27);border:1.5px solid oklch(0.55 0.19 27)"></span>Hash changed by tampering</span>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:var(--accent)"></span>Your path to the root</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;border:1.5px dashed var(--accent);background:var(--accent-soft)"></span>Proof sibling</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:var(--danger-soft);border:1.5px solid var(--danger)"></span>Hash changed by tampering</span>
       </div>
     </div>
   </sc-if>
@@ -369,96 +407,96 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
 
 <sc-if value="{{ isEditor }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-direction:column;gap:22px">
-  <button onClick="{{ goHome }}" style="align-self:flex-start;background:none;border:none;padding:0;color:#6b6e76;font-size:14px;cursor:pointer" style-hover="color:#1d1f24">← All polls</button>
+  <button onClick="{{ goHome }}" style="align-self:flex-start;background:none;border:none;padding:0;color:var(--muted);font-size:14px;cursor:pointer" style-hover="color:var(--ink)">← All polls</button>
   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-    <div style="display:flex;align-items:center;gap:10px"><h1 style="margin:0;font-size:28px;letter-spacing:-0.025em;font-weight:700">Draft poll</h1><span style="padding:2px 9px;border-radius:999px;font-weight:600;font-size:12.5px;background:#f4eedd;color:oklch(0.48 0.09 75)">Draft</span></div>
+    <div style="display:flex;align-items:center;gap:10px"><h1 style="margin:0;font-size:28px;letter-spacing:-0.025em;font-weight:700">Draft poll</h1><span style="padding:2px 9px;border-radius:999px;font-weight:600;font-size:12.5px;background:var(--warn-bg);color:var(--warn-fg)">Draft</span></div>
     <div style="display:flex;gap:8px">
-      <button onClick="{{ ed.del }}" style="padding:9px 14px;border-radius:9px;border:1px solid #e4e2db;background:#fff;font-size:14px;cursor:pointer;color:oklch(0.55 0.19 27)">Delete</button>
-      <button onClick="{{ ed.save }}" style="padding:9px 14px;border-radius:9px;border:1px solid #e4e2db;background:#fff;font-size:14px;font-weight:600;cursor:pointer;color:#1d1f24">Save draft</button>
-      <button onClick="{{ ed.publish }}" style="padding:9px 16px;border-radius:9px;border:none;background:oklch(0.52 0.13 160);color:#fff;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:oklch(0.46 0.13 160)">Publish</button>
+      <button onClick="{{ ed.del }}" style="padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:14px;cursor:pointer;color:var(--danger)">Delete</button>
+      <button onClick="{{ ed.save }}" style="padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:14px;font-weight:600;cursor:pointer;color:var(--ink)">Save draft</button>
+      <button onClick="{{ ed.publish }}" style="padding:9px 16px;border-radius:9px;border:none;background:var(--accent);color:var(--on-ink);font-size:14px;font-weight:600;cursor:pointer" style-hover="background:var(--accent-hover)">Publish</button>
     </div>
   </div>
   <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
     <div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:16px">
-      <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px">
-        <input value="{{ ed.title }}" onChange="{{ ed.onTitle }}" placeholder="What are you asking?" style="border:none;outline:none;font-size:22px;font-weight:600;letter-spacing:-0.015em;padding:0;color:#1d1f24;background:transparent">
-        <textarea value="{{ ed.desc }}" onChange="{{ ed.onDesc }}" placeholder="Context voters should know (optional)" rows="2" style="border:none;outline:none;font-size:15px;line-height:1.5;padding:0;color:#4a4d55;resize:vertical;background:transparent"></textarea>
-        <div style="height:1px;background:#eeece6"></div>
-        <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Options</div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <input value="{{ ed.title }}" onChange="{{ ed.onTitle }}" placeholder="What are you asking?" style="border:none;outline:none;font-size:22px;font-weight:600;letter-spacing:-0.015em;padding:0;color:var(--ink);background:transparent">
+        <textarea value="{{ ed.desc }}" onChange="{{ ed.onDesc }}" placeholder="Context voters should know (optional)" rows="2" style="border:none;outline:none;font-size:15px;line-height:1.5;padding:0;color:var(--ink-2);resize:vertical;background:transparent"></textarea>
+        <div style="height:1px;background:var(--line-soft)"></div>
+        <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Options</div>
         <sc-for list="{{ ed.options }}" as="o" hint-placeholder-count="3">
           <div style="display:flex;gap:8px;align-items:center">
-            <span style="width:22px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#a3a5ab">{{ o.n }}</span>
-            <input value="{{ o.value }}" onChange="{{ o.onChange }}" placeholder="Option" style="flex:1;min-width:0;padding:9px 12px;border:1px solid #e4e2db;border-radius:8px;font-size:15px;outline:none;color:#1d1f24" style-focus="border-color:oklch(0.52 0.13 160)">
-            <button onClick="{{ o.onRemove }}" style="width:32px;height:32px;border:none;background:none;border-radius:7px;color:#a3a5ab;font-size:18px;cursor:pointer" style-hover="background:#f1efea;color:#1d1f24">×</button>
+            <span style="width:22px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint-2)">{{ o.n }}</span>
+            <input value="{{ o.value }}" onChange="{{ o.onChange }}" placeholder="Option" style="flex:1;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:15px;outline:none;color:var(--ink)" style-focus="border-color:var(--accent)">
+            <button onClick="{{ o.onRemove }}" style="width:32px;height:32px;border:none;background:none;border-radius:7px;color:var(--faint-2);font-size:18px;cursor:pointer" style-hover="background:var(--well-2);color:var(--ink)">×</button>
           </div>
         </sc-for>
-        <button onClick="{{ ed.addOption }}" style="align-self:flex-start;margin-left:30px;background:none;border:none;padding:4px 0;font-size:14px;font-weight:600;color:oklch(0.47 0.13 160);cursor:pointer">+ Add option</button>
+        <button onClick="{{ ed.addOption }}" style="align-self:flex-start;margin-left:30px;background:none;border:none;padding:4px 0;font-size:14px;font-weight:600;color:var(--accent-hover);cursor:pointer">+ Add option</button>
       </div>
 
-      <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:6px 20px">
-        <div style="display:flex;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid #f1efea">
-          <div style="flex:1"><div style="font-weight:600;font-size:15px">Anonymous ballots</div><div style="font-size:13.5px;color:#6b6e76;margin-top:2px">Voters appear as a generated blob instead of their name and avatar. Public keys stay visible.</div></div>
-          <button onClick="{{ ed.toggleAnon }}" style="width:42px;height:24px;flex-shrink:0;border-radius:12px;border:none;padding:2px;display:flex;cursor:pointer;background:{{ ed.anonBg }};justify-content:{{ ed.anonJ }}"><span style="width:20px;height:20px;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px 20px">
+        <div style="display:flex;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--well-2)">
+          <div style="flex:1"><div style="font-weight:600;font-size:15px">Anonymous ballots</div><div style="font-size:13.5px;color:var(--muted);margin-top:2px">Voters appear as a generated blob instead of their name and avatar. Public keys stay visible.</div></div>
+          <button onClick="{{ ed.toggleAnon }}" style="width:42px;height:24px;flex-shrink:0;border-radius:12px;border:none;padding:2px;display:flex;cursor:pointer;background:{{ ed.anonBg }};justify-content:{{ ed.anonJ }}"><span style="width:20px;height:20px;border-radius:10px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
         </div>
         <div style="display:flex;gap:16px;align-items:center;padding:14px 0">
-          <div style="flex:1"><div style="font-weight:600;font-size:15px">Show vote weights</div><div style="font-size:13.5px;color:#6b6e76;margin-top:2px">Everyone can see how many tokens each public key holds and why.</div></div>
-          <button onClick="{{ ed.toggleWeights }}" style="width:42px;height:24px;flex-shrink:0;border-radius:12px;border:none;padding:2px;display:flex;cursor:pointer;background:{{ ed.weightsBg }};justify-content:{{ ed.weightsJ }}"><span style="width:20px;height:20px;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+          <div style="flex:1"><div style="font-weight:600;font-size:15px">Show vote weights</div><div style="font-size:13.5px;color:var(--muted);margin-top:2px">Everyone can see how many tokens each public key holds and why.</div></div>
+          <button onClick="{{ ed.toggleWeights }}" style="width:42px;height:24px;flex-shrink:0;border-radius:12px;border:none;padding:2px;display:flex;cursor:pointer;background:{{ ed.weightsBg }};justify-content:{{ ed.weightsJ }}"><span style="width:20px;height:20px;border-radius:10px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
         </div>
       </div>
 
-      <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;overflow:hidden">
-        <button onClick="{{ ed.toggleAdv }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:none;border:none;cursor:pointer;text-align:left;color:#1d1f24">
-          <span><span style="font-weight:600;font-size:15px">Advanced</span><span style="font-size:13.5px;color:#6b6e76;margin-left:8px">Weights and quadratic voting</span></span>
-          <span style="font-size:13px;color:#6b6e76">{{ ed.advLabel }}</span>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden">
+        <button onClick="{{ ed.toggleAdv }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:none;border:none;cursor:pointer;text-align:left;color:var(--ink)">
+          <span><span style="font-weight:600;font-size:15px">Advanced</span><span style="font-size:13.5px;color:var(--muted);margin-left:8px">Weights and quadratic voting</span></span>
+          <span style="font-size:13px;color:var(--muted)">{{ ed.advLabel }}</span>
         </button>
         <sc-if value="{{ ed.advOpen }}">
           <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:18px">
-            <div style="display:flex;gap:16px;align-items:center;padding-top:14px;border-top:1px solid #f1efea">
-              <div style="flex:1"><div style="font-weight:600;font-size:15px">Quadratic voting</div><div style="font-size:13.5px;color:#6b6e76;margin-top:2px">Casting n votes on one option costs n² tokens, so strong preferences cost more.</div></div>
-              <button onClick="{{ ed.toggleQuad }}" style="width:42px;height:24px;flex-shrink:0;border-radius:12px;border:none;padding:2px;display:flex;cursor:pointer;background:{{ ed.quadBg }};justify-content:{{ ed.quadJ }}"><span style="width:20px;height:20px;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+            <div style="display:flex;gap:16px;align-items:center;padding-top:14px;border-top:1px solid var(--well-2)">
+              <div style="flex:1"><div style="font-weight:600;font-size:15px">Quadratic voting</div><div style="font-size:13.5px;color:var(--muted);margin-top:2px">Casting n votes on one option costs n² tokens, so strong preferences cost more.</div></div>
+              <button onClick="{{ ed.toggleQuad }}" style="width:42px;height:24px;flex-shrink:0;border-radius:12px;border:none;padding:2px;display:flex;cursor:pointer;background:{{ ed.quadBg }};justify-content:{{ ed.quadJ }}"><span style="width:20px;height:20px;border-radius:10px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
             </div>
             <div style="display:flex;flex-direction:column;gap:10px">
-              <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Token allocation</div>
-              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:#fbfaf7;border:1px solid #eeece6;font-size:14.5px">
+              <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Token allocation</div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:var(--raised);border:1px solid var(--line-soft);font-size:14.5px">
                 <span style="flex:1;min-width:180px">Every eligible key gets</span>
-                <div style="display:flex;align-items:center;border:1px solid #e4e2db;border-radius:8px;background:#fff">
-                  <button onClick="{{ ed.decBase }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:#4a4d55">−</button>
+                <div style="display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--surface)">
+                  <button onClick="{{ ed.decBase }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:var(--ink-2)">−</button>
                   <span style="min-width:28px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums">{{ ed.base }}</span>
-                  <button onClick="{{ ed.incBase }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:#4a4d55">+</button>
+                  <button onClick="{{ ed.incBase }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:var(--ink-2)">+</button>
                 </div>
-                <span style="color:#6b6e76">tokens</span>
+                <span style="color:var(--muted)">tokens</span>
               </div>
               <sc-for list="{{ ed.rules }}" as="r" hint-placeholder-count="1">
-                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:#fbfaf7;border:1px solid #eeece6;font-size:14.5px">
-                  <span style="color:#6b6e76">If voter</span>
-                  <select value="{{ r.attr }}" onChange="{{ r.onAttr }}" style="flex:1;min-width:180px;padding:7px 9px;border:1px solid #e4e2db;border-radius:8px;background:#fff;font-size:14.5px;color:#1d1f24">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:var(--raised);border:1px solid var(--line-soft);font-size:14.5px">
+                  <span style="color:var(--muted)">If voter</span>
+                  <select value="{{ r.attr }}" onChange="{{ r.onAttr }}" style="flex:1;min-width:180px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:14.5px;color:var(--ink)">
                     <sc-for list="{{ r.attrs }}" as="a"><option value="{{ a.key }}">{{ a.label }}</option></sc-for>
                   </select>
-                  <div style="display:flex;align-items:center;border:1px solid #e4e2db;border-radius:8px;background:#fff">
-                    <button onClick="{{ r.dec }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:#4a4d55">−</button>
+                  <div style="display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--surface)">
+                    <button onClick="{{ r.dec }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:var(--ink-2)">−</button>
                     <span style="min-width:34px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums">+{{ r.tokens }}</span>
-                    <button onClick="{{ r.inc }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:#4a4d55">+</button>
+                    <button onClick="{{ r.inc }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:var(--ink-2)">+</button>
                   </div>
-                  <span style="color:#6b6e76">tokens</span>
-                  <button onClick="{{ r.remove }}" style="width:30px;height:30px;border:none;background:none;border-radius:7px;color:#a3a5ab;font-size:18px;cursor:pointer" style-hover="background:#f1efea;color:#1d1f24">×</button>
+                  <span style="color:var(--muted)">tokens</span>
+                  <button onClick="{{ r.remove }}" style="width:30px;height:30px;border:none;background:none;border-radius:7px;color:var(--faint-2);font-size:18px;cursor:pointer" style-hover="background:var(--well-2);color:var(--ink)">×</button>
                 </div>
               </sc-for>
-              <button onClick="{{ ed.addRule }}" style="align-self:flex-start;background:none;border:none;padding:4px 0;font-size:14px;font-weight:600;color:oklch(0.47 0.13 160);cursor:pointer">+ Add weight rule</button>
+              <button onClick="{{ ed.addRule }}" style="align-self:flex-start;background:none;border:none;padding:4px 0;font-size:14px;font-weight:600;color:var(--accent-hover);cursor:pointer">+ Add weight rule</button>
             </div>
             <div style="display:flex;flex-direction:column;gap:4px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px">
-                <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Resulting allocation per public key</div>
-                <div style="font-size:13px;color:#6b6e76">{{ ed.totalText }}</div>
+                <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Resulting allocation per public key</div>
+                <div style="font-size:13px;color:var(--muted)">{{ ed.totalText }}</div>
               </div>
               <sc-for list="{{ ed.preview }}" as="v" hint-placeholder-count="6">
                 <div style="display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr) 44px;gap:12px;align-items:center;padding:5px 0">
                   <div style="display:flex;align-items:center;gap:8px;min-width:0">
                     <span style="width:24px;height:24px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;background:{{ v.avBg }};color:{{ v.avFg }}">{{ v.initials }}</span>
-                    <div style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#a3a5ab">{{ v.keyShort }}</span></div>
+                    <div style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--faint-2)">{{ v.keyShort }}</span></div>
                   </div>
                   <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
-                    <div style="height:7px;border-radius:4px;background:#f1efea;overflow:hidden"><div style="height:100%;border-radius:4px;background:oklch(0.52 0.13 160);transition:width .25s;width:{{ v.w }}"></div></div>
-                    <span style="font-size:11.5px;color:#8a8d94;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.reasons }}</span>
+                    <div style="height:7px;border-radius:4px;background:var(--well-2);overflow:hidden"><div style="height:100%;border-radius:4px;background:var(--accent);transition:width .25s;width:{{ v.w }}"></div></div>
+                    <span style="font-size:11.5px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.reasons }}</span>
                   </div>
                   <span style="text-align:right;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">{{ v.tokens }}</span>
                 </div>
@@ -469,17 +507,17 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
       </div>
     </div>
 
-    <div style="flex:1 1 260px;max-width:360px;position:sticky;top:84px;background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
+    <div style="flex:1 1 260px;max-width:360px;position:sticky;top:84px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
       <div style="font-weight:600;font-size:15px">Summary</div>
       <sc-for list="{{ ed.summary }}" as="s" hint-placeholder-count="5">
-        <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px"><span style="color:#6b6e76">{{ s.k }}</span><span style="font-weight:600;text-align:right">{{ s.v }}</span></div>
+        <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px"><span style="color:var(--muted)">{{ s.k }}</span><span style="font-weight:600;text-align:right">{{ s.v }}</span></div>
       </sc-for>
-      <div style="height:1px;background:#eeece6"></div>
-      <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Voters will appear as</div>
+      <div style="height:1px;background:var(--line-soft)"></div>
+      <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Voters will appear as</div>
       <div style="display:flex;align-items:center;gap:10px">
         <sc-if value="{{ ed.sample.anon }}"><svg width="36" height="36" viewBox="0 0 100 100"><path d="{{ ed.sample.blobA }}" fill="{{ ed.sample.c1 }}"></path><path d="{{ ed.sample.blobB }}" fill="{{ ed.sample.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg></sc-if>
         <sc-if value="{{ ed.sample.named }}"><span style="width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:{{ ed.sample.avBg }};color:{{ ed.sample.avFg }}">{{ ed.sample.initials }}</span></sc-if>
-        <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:600">{{ ed.sampleLabel }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8a8d94">{{ ed.sample.keyShort }}</span></div>
+        <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:600">{{ ed.sampleLabel }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint)">{{ ed.sample.keyShort }}</span></div>
       </div>
     </div>
   </div>
@@ -487,21 +525,55 @@ a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
 </sc-if>
 </main>
 
+<sc-if value="{{ openOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ openBackdrop }}" onKeyDown="{{ openKey }}" style="position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.45)">
+    <div role="dialog" aria-modal="true" aria-labelledby="tl-open-h" style="width:min(520px,100%);display:flex;flex-direction:column;gap:14px;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.25)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <h2 id="tl-open-h" style="margin:0;flex:1;font-size:17px;font-weight:700">Open polls</h2>
+        <button aria-label="Close" onClick="{{ hideOpen }}" style="width:32px;height:32px;border:none;border-radius:8px;background:transparent;color:var(--muted);font-size:18px;cursor:pointer">×</button>
+      </div>
+      <label onDragOver="{{ openDragOver }}" onDragLeave="{{ openDragLeave }}" onDrop="{{ openDrop }}" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px 16px;border:2px dashed {{ openDropBorder }};border-radius:10px;background:{{ openDropBg }};cursor:pointer;text-align:center">
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9.5V2M4 5l3-3 3 3M2 10v2h10v-2"></path></svg>
+        <span style="font-size:14px">Drop a .json file here, or <span style="color:var(--accent);text-decoration:underline">choose a file</span></span>
+        <input type="file" accept=".json,application/json" onChange="{{ onJsonFile }}" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+      </label>
+      <form onSubmit="{{ openUrlSubmit }}" style="display:flex;flex-direction:column;gap:6px">
+        <label for="tl-open-url" style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Or open from a URL</label>
+        <div style="display:flex;gap:6px">
+          <input id="tl-open-url" type="url" placeholder="https://…/tally.json" value="{{ openUrl }}" onChange="{{ onOpenUrl }}" style="flex:1;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none">
+          <button type="submit" disabled="{{ openUrlDisabled }}" style="padding:9px 16px;border:none;border-radius:9px;background:var(--ink);color:var(--on-ink);font-size:14px;font-weight:600;cursor:pointer;opacity:{{ openUrlOpacity }}">{{ openUrlLabel }}</button>
+        </div>
+        <span style="font-size:12px;line-height:1.45;color:var(--muted)">GitHub file links work. To share polls, link to them with ?src= instead. Opening replaces the polls saved in this browser.</span>
+      </form>
+      <sc-if value="{{ hasOpenError }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="padding:8px 10px;border-radius:8px;border:1px solid var(--danger);background:var(--danger-soft);color:var(--danger);font-size:13px;line-height:1.45;white-space:pre-wrap">{{ openError }}</div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
 <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-  <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:30;background:#1d1f24;color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.2);max-width:calc(100vw - 48px)">{{ toast }}</div>
+  <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--on-ink);padding:12px 18px;border-radius:10px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.2);max-width:calc(100vw - 48px)">{{ toast }}</div>
 </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;startOn&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dashboard&quot;,&quot;Ledger demo&quot;],&quot;default&quot;:&quot;Dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tree&quot;,&quot;Fisheye&quot;,&quot;Carousel&quot;,&quot;Radial&quot;],&quot;default&quot;:&quot;Tree&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;groupSize&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[2,4,10,16],&quot;default&quot;:10,&quot;tsType&quot;:&quot;number&quot;},&quot;hashChars&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:4,&quot;max&quot;:12,&quot;step&quot;:1,&quot;default&quot;:6,&quot;tsType&quot;:&quot;number&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tree&quot;,&quot;Fisheye&quot;,&quot;Carousel&quot;,&quot;Radial&quot;],&quot;default&quot;:&quot;Tree&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;groupSize&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[2,4,10,16],&quot;default&quot;:10,&quot;tsType&quot;:&quot;number&quot;},&quot;hashChars&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:4,&quot;max&quot;:12,&quot;step&quot;:1,&quot;default&quot;:6,&quot;tsType&quot;:&quot;number&quot;}}">
 class Component extends DCLogic {
-  C = { accent:'oklch(0.52 0.13 160)', accentSoft:'oklch(0.95 0.035 160)', danger:'oklch(0.55 0.19 27)', dangerSoft:'oklch(0.96 0.03 27)', line:'#e4e2db', ink:'#1d1f24', muted:'#6b6e76' };
-  ATTRS = [
-    { key:'near', label:'Lives within 1 mile' },
-    { key:'stake', label:'Has a stake in the company' },
-    { key:'member', label:'Verified member' },
-    { key:'resident', label:'Resident 2+ years' }
-  ];
+  C = { accent:'var(--accent)', accentSoft:'var(--accent-soft)', danger:'var(--danger)', dangerSoft:'var(--danger-soft)', line:'var(--line)', ink:'var(--ink)', muted:'var(--muted)' };
   FIELDS = [['pubkey','Public key'],['nullifier','Vote token'],['spent','Tokens spent'],['commitment','Commitment'],['sig','Signature']];
+  THEMES = [
+    { value:'paper', label:'Graph paper', bg:'#f2f4f3', primary:'#15181c', accent:'#e0662b' },
+    { value:'night', label:'Night shift', bg:'#111316', primary:'#ecefed', accent:'#ff8a4c' },
+    { value:'blueprint', label:'Blueprint', bg:'#0f2747', primary:'#ffffff', accent:'#ffb347' },
+    { value:'warm', label:'Warm ledger', bg:'#f5f0e6', primary:'#7a2e1c', accent:'#c8642b' }
+  ];
+  LAYOUTS = ['tree', 'fisheye', 'carousel', 'radial'];
+  POLL_KEYS = ['id', 'status', 'title', 'desc', 'options', 'anonymous', 'showWeights', 'quadratic', 'base', 'rules', 'closes', 'created', 'eligible', 'ballots'];
+  static KEYS = { json: 'tally:json:v1', theme: 'tally:theme:v1' };
+  // localStorage can be missing or blocked (private mode); the app still works, it just doesn't remember.
+  static store(op, key, value) {
+    try { return op === 'get' ? localStorage.getItem(key) : localStorage.setItem(key, value); } catch (err) { return null; }
+  }
   _cache = new Map();
   _blobs = new Map();
   state = this.init();
@@ -509,8 +581,57 @@ class Component extends DCLogic {
   componentDidMount() {
     this._onResize = () => { const el = document.querySelector('[data-tree-box]'); if (el) this.measureTree(el); };
     window.addEventListener('resize', this._onResize);
-    if (this.props.startOn === 'Ledger demo') this.setState({ view:'poll', pollId:'p5', tab:'ledger' });
+    this._onPop = () => this.setState(this.fromQuery(location.search));
+    window.addEventListener('popstate', this._onPop);
+    if (this.state.toast) this.flash(this.state.toast);
+    if (this.src !== null) this.openUrl(this.src, true).catch(err => this.setState({ openOpen: true, openError: "Can't load " + this.src + ': ' + err.message }));
+    this.componentDidUpdate();
   }
+  componentDidUpdate() {
+    const s = this.state;
+    document.documentElement.dataset.theme = s.theme;
+    if (this.src === null && s.polls !== this.savedPolls) { this.savedPolls = s.polls; Component.store('set', Component.KEYS.json, this.serialize(this.toDoc())); }
+    // A new page (poll, tab, editor or dashboard) is a new history entry; anything else (filters, layout, theme) replaces it.
+    const url = this.toQuery(s, location.search), key = this.pageKey(s);
+    if (url !== location.search) history[key === this.pageKeyWas ? 'replaceState' : 'pushState'](null, '', location.pathname + url + location.hash);
+    this.pageKeyWas = key;
+    if (s.openOpen && !this.wasOpen) { const el = document.getElementById('tl-open-url'); if (el) el.focus(); }
+    this.wasOpen = s.openOpen;
+  }
+
+  // The address bar as state. ?poll=<id>[&tab=voters|ledger[&layout=…&group=…]], ?edit=<id> (drafts only), or the
+  // dashboard's ?filter= ?q= ?sort=votes; ?theme= anywhere. Other params, like ?src=, are left alone. Unknown values are ignored.
+  fromQuery(search) {
+    const q = new URLSearchParams(search), pick = (k, ok, def) => ok.includes(q.get(k)) ? q.get(k) : def, theme = q.get('theme');
+    return {
+      view: q.get('edit') ? 'editor' : q.get('poll') ? 'poll' : 'dashboard', pollId: q.get('poll'), editId: q.get('edit'),
+      tab: pick('tab', ['vote', 'voters', 'ledger'], 'vote'),
+      filter: pick('filter', ['all', 'todo', 'voted', 'drafts'], 'all'), q: q.get('q') ?? '', sort: pick('sort', ['new', 'votes'], 'new'),
+      layout: pick('layout', this.LAYOUTS, this.defaultLayout()), groupSize: Number(pick('group', ['2', '4', '10', '16'], String(this.defaultGroup()))),
+      ...(this.THEMES.some(t => t.value === theme) ? { theme } : {})
+    };
+  }
+  toQuery(s, search) {
+    const q = new URLSearchParams(search);
+    ['poll', 'tab', 'layout', 'group', 'edit', 'filter', 'q', 'sort', 'theme'].forEach(k => q.delete(k));
+    if (s.view === 'poll') {
+      q.set('poll', s.pollId);
+      if (s.tab !== 'vote') q.set('tab', s.tab);
+      if (s.tab === 'ledger' && s.layout !== this.defaultLayout()) q.set('layout', s.layout);
+      if (s.tab === 'ledger' && s.groupSize !== this.defaultGroup()) q.set('group', s.groupSize);
+    } else if (s.view === 'editor') q.set('edit', s.editId);
+    else {
+      if (s.filter !== 'all') q.set('filter', s.filter);
+      if (s.q !== '') q.set('q', s.q);
+      if (s.sort !== 'new') q.set('sort', s.sort);
+    }
+    if (s.theme !== 'paper') q.set('theme', s.theme);
+    const out = q.toString().replace(/%2F/gi, '/').replace(/%3A/gi, ':');
+    return out === '' ? '' : '?' + out;
+  }
+  pageKey(s) { return s.view === 'poll' ? 'poll:' + s.pollId + ':' + s.tab : s.view === 'editor' ? 'edit:' + s.editId : 'dashboard'; }
+  defaultLayout() { const l = String(this.props.layout || 'tree').toLowerCase(); return this.LAYOUTS.includes(l) ? l : 'tree'; }
+  defaultGroup() { return [2, 4, 10, 16].includes(Number(this.props.groupSize)) ? Number(this.props.groupSize) : 10; }
 
   sha(input) {
     const key = String(input);
@@ -580,16 +701,9 @@ class Component extends DCLogic {
   allocStr(alloc) { return Object.keys(alloc).filter(k => alloc[k] > 0).sort().map(k => k + ':' + alloc[k]).join(','); }
   total(p) { return (p.ballots || []).reduce((s, b) => s + Object.values(b.alloc).reduce((a, k) => a + k, 0), 0); }
 
+  // The file stores only who voted and how; the leaf (salt, commitment, vote token, signature) is derived from that.
   mkBallot(p, vi, alloc) {
-    const v = this.pool[vi], budget = this.tokensFor(p, v), n = p.options.length;
-    if (!alloc) {
-      const h = this.sha(p.id + ':' + vi); const o1 = parseInt(h[0], 16) % n; alloc = {};
-      if (p.quadratic) {
-        const k1 = Math.floor(Math.sqrt(budget)); alloc[o1] = k1;
-        const rest = budget - k1 * k1, k2 = Math.floor(Math.sqrt(rest));
-        if (k2 > 0 && n > 1) alloc[(o1 + 1 + parseInt(h[1], 16) % (n - 1)) % n] = k2;
-      } else alloc[o1] = budget;
-    }
+    const v = this.pool[vi];
     const salt = this.sha('salt:' + p.id + vi).slice(0, 16);
     const commitment = this.sha(this.allocStr(alloc) + '|' + salt);
     const nullifier = this.sha('null:' + p.id + ':' + v.pubkey).slice(0, 24);
@@ -598,47 +712,147 @@ class Component extends DCLogic {
   }
 
   leafHash(l) { return this.sha([l.pubkey, l.nullifier, l.spent, l.commitment, l.sig].join('|')); }
-  tree(leaves) {
-    let lvl = leaves.map(l => this.leafHash(l)); let n = 1;
-    while (n < Math.max(2, lvl.length)) n *= 2;
-    const empty = this.sha('∅'); while (lvl.length < n) lvl.push(empty);
-    const levels = [lvl];
-    while (lvl.length > 1) { const nx = []; for (let i = 0; i < lvl.length; i += 2) nx.push(this.sha(lvl[i] + lvl[i + 1])); levels.push(nx); lvl = nx; }
-    return levels;
+
+  mkVoter(name, attrs, i) { const pk = '0x' + this.sha('pk:' + name).slice(0, 40); return { i, name, attrs, pubkey: pk, hue: parseInt(pk.slice(2, 6), 16) % 360 }; }
+  // The listed voters, then generated ones ("Voter 0011"…) for polls open to more keys than are listed.
+  poolFor(doc) {
+    const keys = doc.attributes.map(a => a.key), n = Math.max(doc.voters.length, ...doc.polls.map(p => p.eligible));
+    const pool = doc.voters.map((v, i) => this.mkVoter(v.name, v.attrs, i));
+    for (let i = pool.length; i < n; i++) { const h = this.sha('attr:' + i); pool.push(this.mkVoter('Voter ' + String(i + 1).padStart(4, '0'), keys.filter((_, q) => parseInt(h[q], 16) < 6), i)); }
+    return pool;
   }
-  rootOf(ballots) { const t = this.tree(ballots.map(b => b.leaf)); return t[t.length - 1][0]; }
+
+  // Reads a tally.json strictly (format in schema.md): anything wrong throws with its path, e.g. "polls[2].ballots[0].voter: …".
+  // Returns the document with every poll's optional fields filled in, in POLL_KEYS order.
+  parse(text) {
+    let d; try { d = JSON.parse(text); } catch (e) { throw new Error('Not valid JSON: ' + e.message); }
+    const fail = (path, msg) => { throw new Error(path + ': ' + msg); };
+    const obj = (v, path) => v !== null && typeof v === 'object' && !Array.isArray(v) ? v : fail(path, 'expected an object');
+    const arr = (v, path) => Array.isArray(v) ? v : fail(path, 'expected a list');
+    const str = (v, path) => typeof v === 'string' ? v : fail(path, 'expected text');
+    const bool = (v, path) => typeof v === 'boolean' ? v : fail(path, 'expected true or false');
+    const int = min => (v, path) => Number.isInteger(v) && v >= min ? v : fail(path, 'expected a whole number ≥ ' + min);
+    const opt = (o, path, k, def, check) => o[k] === undefined ? def : check(o[k], path + '.' + k);
+    const unique = (list, path, what) => list.forEach((x, i) => { if (list.indexOf(x) !== i) fail(path + '[' + i + ']', 'duplicate ' + what + ' "' + x + '"'); });
+    obj(d, 'file');
+    const attributes = opt(d, 'file', 'attributes', [], arr).map((a, i) => { const at = 'attributes[' + i + ']'; obj(a, at); return { key: str(a.key, at + '.key'), label: str(a.label, at + '.label') }; });
+    const keys = attributes.map(a => a.key); unique(keys, 'attributes', 'key');
+    const attr = (v, path) => keys.includes(v) ? v : fail(path, 'unknown attribute "' + v + '" (not in attributes)');
+    const voters = arr(d.voters, 'voters').map((v, i) => { const at = 'voters[' + i + ']'; obj(v, at); return { name: str(v.name, at + '.name'), attrs: opt(v, at, 'attrs', [], arr).map((a, j) => attr(a, at + '.attrs[' + j + ']')) }; });
+    if (!voters.length) fail('voters', 'needs at least one voter (the first one is you)');
+    unique(voters.map(v => v.name), 'voters', 'name');
+    const polls = arr(d.polls, 'polls').map((p, i) => {
+      const at = 'polls[' + i + ']'; obj(p, at);
+      const o = {
+        id: str(p.id, at + '.id') || fail(at + '.id', 'must not be empty'),
+        status: ['live', 'closed', 'draft'].includes(p.status) ? p.status : fail(at + '.status', 'expected "live", "closed" or "draft"'),
+        title: str(p.title, at + '.title'), desc: opt(p, at, 'desc', '', str),
+        options: arr(p.options, at + '.options').map((x, j) => str(x, at + '.options[' + j + ']')),
+        anonymous: opt(p, at, 'anonymous', false, bool), showWeights: opt(p, at, 'showWeights', false, bool), quadratic: opt(p, at, 'quadratic', false, bool),
+        base: opt(p, at, 'base', 1, int(1)),
+        rules: opt(p, at, 'rules', [], arr).map((r, j) => { const rt = at + '.rules[' + j + ']'; obj(r, rt); return { attr: attr(r.attr, rt + '.attr'), tokens: int(1)(r.tokens, rt + '.tokens') }; }),
+        closes: opt(p, at, 'closes', '', str), created: opt(p, at, 'created', i, (v, path) => typeof v === 'number' ? v : fail(path, 'expected a number')),
+        eligible: opt(p, at, 'eligible', voters.length, int(1))
+      };
+      if (o.status !== 'draft' && o.options.length < 2) fail(at + '.options', 'a live or closed poll needs at least two options');
+      o.ballots = opt(p, at, 'ballots', [], arr).map((b, j) => {
+        const bt = at + '.ballots[' + j + ']'; obj(b, bt);
+        const voter = int(0)(b.voter, bt + '.voter');
+        if (voter >= o.eligible) fail(bt + '.voter', 'this poll is open to keys 0–' + (o.eligible - 1));
+        const alloc = {};
+        for (const [k, v] of Object.entries(obj(b.alloc, bt + '.alloc'))) {
+          if (!/^\d+$/.test(k) || Number(k) >= o.options.length) fail(bt + '.alloc', '"' + k + '" is not an option number (0–' + (o.options.length - 1) + ')');
+          alloc[k] = int(0)(v, bt + '.alloc.' + k);
+        }
+        return { voter, alloc };
+      });
+      unique(o.ballots.map(b => b.voter), at + '.ballots', 'voter');
+      return o;
+    });
+    unique(polls.map(p => p.id), 'polls', 'id');
+    const doc = { title: opt(d, 'file', 'title', '', str), attributes, voters, polls }, pool = this.poolFor(doc);
+    polls.forEach((p, i) => p.ballots.forEach((b, j) => {
+      const spent = this.cost(p, b.alloc), has = this.tokensFor(p, pool[b.voter]);
+      if (spent > has) fail('polls[' + i + '].ballots[' + j + '].alloc', 'spends ' + spent + ' tokens but voter ' + b.voter + ' holds ' + has);
+    }));
+    return doc;
+  }
+  // Pretty JSON, with short lists and objects (options, rules, each ballot) kept on one line.
+  serialize(doc) {
+    let s = JSON.stringify(doc, null, 2);
+    for (let pass = 0; pass < 3; pass++) s = s.replace(/[\[{](?:[^\[\]{}]|\{[^{}\[\]\n]*\}|\[[^{}\[\]\n]*\])*[\]}]/g, m => { const one = m.replace(/\s*\n\s*/g, ' '); return one.length <= 100 ? one : m; });
+    return s + '\n';
+  }
+  // Makes the parsed document current; returns the state it implies.
+  load(doc) {
+    this.title = doc.title; this.ATTRS = doc.attributes; this.pool = this.poolFor(doc); this.voters = this.pool.slice(0, doc.voters.length);
+    return { docTitle: doc.title, polls: doc.polls.map(p => ({ ...p, ballots: p.ballots.map(b => this.mkBallot(p, b.voter, b.alloc)) })) };
+  }
+  toDoc() {
+    const pick = p => Object.fromEntries(this.POLL_KEYS.map(k => [k, k === 'ballots' ? p.ballots.map(b => ({ voter: b.vi, alloc: b.alloc })) : p[k]]));
+    return { title: this.title, attributes: this.ATTRS, voters: this.voters.map(v => ({ name: v.name, attrs: v.attrs })), polls: this.state.polls.map(pick) };
+  }
 
   init() {
-    const people = [['Sam Rivera','near member'],['Maya Chen','near stake member'],['Jonas Albers','stake'],['Priya Raman','near resident'],['Theo Brandt','member resident'],['Ada Okoro','near stake resident'],['Luis Ferreira','member'],['Hana Sato','near'],['Omar Haddad','stake member resident'],['Ines Duarte','resident']];
-    const mk = (name, attrs, i) => { const pk = '0x' + this.sha('pk:' + name).slice(0, 40); return { i, name, attrs, pubkey: pk, hue: parseInt(pk.slice(2, 6), 16) % 360 }; };
-    this.pool = people.map(([name, a], i) => mk(name, a.split(' '), i));
-    for (let i = people.length; i < 1300; i++) { const h = this.sha('attr:' + i); this.pool.push(mk('Voter ' + String(i + 1).padStart(4, '0'), this.ATTRS.map(x => x.key).filter((_, q) => parseInt(h[q], 16) < 6), i)); }
-    this.voters = this.pool.slice(0, people.length);
-    const raw = [
-      { id:'p1', status:'live', title:'Convert the Elm St. lot into a community garden?', desc:'The city has offered the vacant lot on a 10-year lease. A yes vote commits the association to seasonal upkeep.', options:['Yes, build the garden','No, keep it as parking','Defer to the spring meeting'], anonymous:true, showWeights:false, quadratic:true, base:1, rules:[{attr:'near',tokens:8},{attr:'resident',tokens:3}], closes:'Closes in 2 days', created:6, prior:[1,3,4,5,7,9] },
-      { id:'p2', status:'live', title:'Which Q4 project gets the discretionary budget?', desc:'One project will be funded from the remaining $18,000.', options:['Protected bike lanes on 5th','Extended library hours','Street lighting on Harbor Rd','Quarterly park cleanup'], anonymous:false, showWeights:true, quadratic:true, base:4, rules:[{attr:'member',tokens:5}], closes:'Closes in 5 days', created:5, prior:[1,2,4,6,8] },
-      { id:'p3', status:'live', title:'Pilot a four-day work week in Q1', desc:'A 12-week pilot for all full-time staff, reviewed at the end of March.', options:['Yes, run the pilot','No'], anonymous:true, showWeights:true, quadratic:false, base:1, rules:[{attr:'stake',tokens:4}], closes:'Closes in 9 hours', created:4, prior:[1,2,5,8], mine:true },
-      { id:'p4', status:'live', title:'Name the new co-op café', desc:'Shortlisted from 40 member suggestions.', options:['Common Grounds','The Pour House','Elm & Ember'], anonymous:false, showWeights:false, quadratic:true, base:9, rules:[], closes:'Closes in 3 days', created:3, prior:[2,3,6,7,9], mine:true },
-      { id:'p5', status:'closed', title:'Move the monthly all-hands to Thursdays', desc:'Tuesdays conflict with the regional ops call for half the team.', options:['Thursdays','Keep Tuesdays'], anonymous:true, showWeights:false, quadratic:false, base:1, rules:[{attr:'stake',tokens:2}], closes:'Closed Sep 12', created:2, prior:[1,2,3,4,5,6,8], mine:true },
-      { id:'p6', status:'draft', title:'Allocate the $50k neighborhood fund', desc:'', options:['Playground repairs','Tree planting','Small business grants'], anonymous:true, showWeights:false, quadratic:true, base:1, rules:[{attr:'near',tokens:8}], created:7 },
-      { id:'p7', status:'draft', title:'Rooftop solar for Building B', desc:'', options:['Approve','Reject'], anonymous:false, showWeights:true, quadratic:false, base:1, rules:[{attr:'stake',tokens:9}], created:1 },
-      { id:'p8', status:'closed', title:'Regional transit levy: fund the Line 4 extension?', desc:'A 0.25% levy over 10 years to extend Line 4 to the harbor district. Open to every registered resident key in the region.', options:['Approve the levy','Reject the levy'], anonymous:true, showWeights:false, quadratic:false, base:1, rules:[{attr:'resident',tokens:1}], closes:'Closed Sep 20', created:8, eligible:1300, bulk:1237, mineAt:842 }
-    ];
-    const polls = raw.map(p => {
-      let ballots;
-      if (p.bulk) { ballots = []; for (let vi = 1; ballots.length < p.bulk; vi++) ballots.push(this.mkBallot(p, vi)); ballots.splice(p.mineAt, 0, this.mkBallot(p, 0)); }
-      else { ballots = (p.prior || []).map(vi => this.mkBallot(p, vi)); if (p.mine) ballots.splice(2, 0, this.mkBallot(p, 0)); }
-      return { ...p, eligible: p.eligible || 10, ballots, published: p.bulk ? '' : this.rootOf(ballots) };
-    });
-    return { view:'dashboard', pollId:null, tab:'vote', filter:'all', q:'', sort:'new', polls, allocs:{}, tamperMode:false, showProof:true, flipped:{}, tamper:{}, highlight:null, toast:null, editId:null, advOpen:true, groupSize: (this.props && this.props.groupSize) || 10, expanded:{}, sel:{}, ntamper:{}, layout:(this.props && this.props.layout ? String(this.props.layout).toLowerCase() : 'tree'), treeW:0, voterQ:'', voterLimit:40 };
+    // ?src= shows that file (not autosaved, so it never overwrites the saved one); otherwise the polls saved in this browser, or none.
+    const q = new URLSearchParams(location.search);
+    this.src = q.get('src');
+    let doc = { title: '', attributes: [], voters: [{ name: 'You', attrs: [] }], polls: [] }, toast = null;
+    const saved = this.src === null ? Component.store('get', Component.KEYS.json) : null;
+    if (saved !== null) { try { doc = this.parse(saved); } catch (e) { toast = 'The polls saved in this browser could not be read. ' + e.message; } }
+    const loaded = this.load(doc);
+    this.savedPolls = loaded.polls;
+    const theme = [q.get('theme'), Component.store('get', Component.KEYS.theme)].find(t => this.THEMES.some(x => x.value === t)) || 'paper';
+    return { ...loaded, allocs:{}, tamperMode:false, showProof:true, flipped:{}, tamper:{}, highlight:null, toast, advOpen:true, expanded:{}, sel:{}, ntamper:{}, treeW:0, voterQ:'', voterLimit:40,
+      theme, openOpen:false, openUrl: this.src || '', openBusy:false, openError:null, openDragging:false, ...this.fromQuery(location.search) };
+  }
+
+  onJsonFile(e) { const file = e.target.files[0]; e.target.value = ''; this.openFile(file); }
+  openFile(file) {
+    if (file === undefined) { this.setState({ openError: 'Drop or choose a .json file.' }); return; }
+    if (!/\.json$/i.test(file.name)) { this.setState({ openError: '"' + file.name + '" is not a JSON file (.json).' }); return; }
+    file.text().then(text => this.adopt(text, file.name)).catch(err => this.setState({ openError: "Can't open " + file.name + ': ' + err.message }));
+  }
+  // Fetches a tally.json (absolute, or relative to the page; GitHub "blob" links are fetched raw). Other hosts must allow CORS.
+  async openUrl(raw, fromSrc) {
+    const url = new URL(raw.trim(), location.href).href.replace(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\//, 'https://raw.githubusercontent.com/$1/$2/');
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    if (/^\s*<(!doctype|html)/i.test(text)) throw new Error('that is a web page, not a JSON file');
+    this.adopt(text, url.split('/').pop(), fromSrc === true);
+  }
+  // A file opened from the dialog becomes the saved copy (and drops ?src= from the address bar); the ?src= file on load stays read-only.
+  adopt(text, name, fromSrc) {
+    const doc = this.parse(text);
+    if (!fromSrc && this.src !== null) {
+      this.src = null;
+      const q = new URLSearchParams(location.search); q.delete('src');
+      history.replaceState(null, '', location.pathname + (q.toString() === '' ? '' : '?' + q) + location.hash);
+    }
+    this.setState({ ...this.load(doc), allocs:{}, flipped:{}, tamper:{}, ntamper:{}, expanded:{}, sel:{}, highlight:null, openOpen:false, openError:null, openDragging:false });
+    if (!fromSrc) this.flash('Opened ' + name);
+  }
+  submitOpenUrl() {
+    if (this.state.openUrl.trim() === '' || this.state.openBusy) return;
+    this.setState({ openBusy: true, openError: null });
+    this.openUrl(this.state.openUrl).then(
+      () => this.setState({ openBusy: false }),
+      err => this.setState({ openBusy: false, openError: "Can't open " + this.state.openUrl.trim() + ': ' + err.message }));
+  }
+  download() {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([this.serialize(this.toDoc())], { type: 'application/json' }));
+    a.download = 'tally.json'; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
   flash(msg) { this.setState({ toast: msg }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: null }), 3400); }
   openPoll(id, tab) { this.setState({ view:'poll', pollId:id, tab: tab || 'vote', highlight:null }); window.scrollTo(0, 0); }
   openEditor(id) { this.setState({ view:'editor', editId:id }); window.scrollTo(0, 0); }
   newPoll() {
-    const id = 'p' + Date.now(), created = Math.max(...this.state.polls.map(p => p.created)) + 1;
-    const p = { id, status:'draft', title:'', desc:'', options:['',''], anonymous:true, showWeights:false, quadratic:false, base:1, rules:[], created, eligible:10, ballots:[], published:this.rootOf([]) };
+    const id = 'p' + Date.now(), created = Math.max(0, ...this.state.polls.map(p => p.created)) + 1;
+    const p = { id, status:'draft', title:'', desc:'', options:['',''], anonymous:true, showWeights:false, quadratic:false, base:1, rules:[], created, eligible:this.voters.length, ballots:[] };
     this.setState(s => ({ polls:[p, ...s.polls] })); this.openEditor(id);
   }
   setPoll(id, fn) { this.setState(s => ({ polls: s.polls.map(p => p.id === id ? fn(p) : p) })); }
@@ -649,7 +863,7 @@ class Component extends DCLogic {
     const spent = this.cost(p, alloc);
     if (!spent || spent > this.tokensFor(p, this.voters[0])) return;
     this.setState(st => ({
-      polls: st.polls.map(x => { if (x.id !== pid) return x; const ballots = [...x.ballots, this.mkBallot(x, 0, alloc)]; return { ...x, ballots, published: this.rootOf(ballots) }; }),
+      polls: st.polls.map(x => { if (x.id !== pid) return x; const ballots = [...x.ballots, this.mkBallot(x, 0, alloc)]; return { ...x, ballots }; }),
       tamper: { ...st.tamper, [pid]: {} }
     }));
     this.flash('Ballot signed. It is now a leaf in the tree and the published root was updated.');
@@ -657,9 +871,9 @@ class Component extends DCLogic {
 
   statusOf(p, voted) {
     const C = this.C;
-    if (p.status === 'draft') return ['Draft', '#f4eedd', 'oklch(0.48 0.09 75)'];
-    if (p.status === 'closed') return [voted ? 'Closed · you voted' : 'Closed', '#ecebe6', C.muted];
-    return voted ? ['You voted', '#e9ece9', 'oklch(0.36 0.06 160)'] : ['Live', C.accentSoft, C.accent];
+    if (p.status === 'draft') return ['Draft', 'var(--warn-bg)', 'var(--warn-fg)'];
+    if (p.status === 'closed') return [voted ? 'Closed · you voted' : 'Closed', 'var(--well-2)', C.muted];
+    return voted ? ['You voted', 'var(--well-2)', 'var(--accent-ink)'] : ['Live', C.accentSoft, C.accent];
   }
   chipsOf(p) { return [p.anonymous ? 'Anonymous' : 'Named voters', p.quadratic ? 'Quadratic' : '', p.rules.length ? 'Weighted' : '', p.showWeights ? 'Weights visible' : 'Weights hidden'].filter(Boolean); }
 
@@ -667,7 +881,7 @@ class Component extends DCLogic {
     const s = this.state, C = this.C;
     const info = s.polls.map(p => { const voted = p.ballots.some(b => b.vi === 0); const cat = p.status === 'draft' ? 'drafts' : voted ? 'voted' : p.status === 'live' ? 'todo' : 'closed'; return { p, voted, cat }; });
     const defs = [['all','All'],['todo','Needs your vote'],['voted','Voted'],['drafts','Drafts']];
-    const tabs = defs.map(([k, l]) => { const on = s.filter === k; return { label:l, count: k === 'all' ? info.length : info.filter(x => x.cat === k).length, bg: on ? '#fff' : 'transparent', fg: on ? C.ink : C.muted, shadow: on ? '0 1px 2px rgba(0,0,0,.08)' : 'none', onClick: () => this.setState({ filter:k }) }; });
+    const tabs = defs.map(([k, l]) => { const on = s.filter === k; return { label:l, count: k === 'all' ? info.length : info.filter(x => x.cat === k).length, bg: on ? 'var(--surface)' : 'transparent', fg: on ? C.ink : C.muted, shadow: on ? '0 1px 2px rgba(0,0,0,.08)' : 'none', onClick: () => this.setState({ filter:k }) }; });
     const q = s.q.trim().toLowerCase();
     const list = info.filter(x => s.filter === 'all' || x.cat === s.filter).filter(x => !q || x.p.title.toLowerCase().includes(q));
     list.sort(s.sort === 'votes' ? (a, b) => this.total(b.p) - this.total(a.p) : (a, b) => b.p.created - a.p.created);
@@ -676,12 +890,12 @@ class Component extends DCLogic {
       return {
         title: p.title || 'Untitled draft', status, stBg, stFg, chips: this.chipsOf(p),
         meta: cat === 'drafts' ? `${p.options.filter(Boolean).length} options · not published` : `${p.ballots.length.toLocaleString()} of ${p.eligible.toLocaleString()} voted · ${p.closes}`,
-        score: cat === 'drafts' ? '–' : this.total(p), scoreColor: cat === 'todo' ? C.accent : voted ? C.ink : '#a3a5ab',
+        score: cat === 'drafts' ? '–' : this.total(p), scoreColor: cat === 'todo' ? C.accent : voted ? C.ink : 'var(--faint-2)',
         action: { todo:'Vote', voted:'View', closed:'Results', drafts:'Edit' }[cat], actionColor: cat === 'todo' ? C.accent : C.ink,
         onOpen: () => cat === 'drafts' ? this.openEditor(p.id) : this.openPoll(p.id)
       };
     });
-    return { tabs, rows, noRows: rows.length === 0, q: s.q, sort: s.sort, onQ: e => this.setState({ q: e.target.value }), onSort: e => this.setState({ sort: e.target.value }), newPoll: () => this.newPoll() };
+    return { tabs, rows, noRows: rows.length === 0, emptyText: s.polls.length ? 'No polls match this filter.' : 'No polls yet. Start one with + New poll, or Open… a tally.json.', q: s.q, sort: s.sort, onQ: e => this.setState({ q: e.target.value }), onSort: e => this.setState({ sort: e.target.value }), newPoll: () => this.newPoll() };
   }
 
   pollVals() {
@@ -705,17 +919,17 @@ class Component extends DCLogic {
         sealNote: p.anonymous ? 'Your choice is sealed in a commitment. The ledger only shows that your token was spent.' : 'Your name is shown on your leaf. Your choice is still sealed in a commitment.',
         options: p.options.map((label, i) => {
           const k = alloc[i] || 0, next = p.quadratic ? (k + 1) ** 2 - k * k : 1, canUp = spent + next <= budget, c = p.quadratic ? k * k : k;
-          return { label, k, countColor: k ? C.accent : '#a3a5ab', upColor: canUp ? C.accent : '#c9c7c0', upCursor: canUp ? 'pointer' : 'not-allowed', upOpacity: canUp ? 1 : .5, downOpacity: k ? 1 : .35,
+          return { label, k, countColor: k ? C.accent : 'var(--faint-2)', upColor: canUp ? C.accent : 'var(--line-2)', upCursor: canUp ? 'pointer' : 'not-allowed', upOpacity: canUp ? 1 : .5, downOpacity: k ? 1 : .35,
             costText: k ? `${k} vote${k > 1 ? 's' : ''} · ${c} token${c > 1 ? 's' : ''}` : (canUp ? `+1 costs ${next}` : 'Not enough tokens'),
             onUp: () => canUp && setK(i, k + 1), onDown: () => k > 0 && setK(i, k - 1) };
         }),
-        castBg: spent > 0 ? C.accent : '#e4e2db', castFg: spent > 0 ? '#fff' : '#8a8d94', cast: () => this.cast()
+        castBg: spent > 0 ? C.accent : 'var(--line)', castFg: spent > 0 ? 'var(--on-ink)' : 'var(--faint)', cast: () => this.cast()
       });
       out.showResults = voted || p.status === 'closed';
       if (out.showResults) {
         const totals = p.options.map((_, i) => p.ballots.reduce((a, b) => a + (b.alloc[i] || 0), 0)), max = Math.max(1, ...totals);
         const mine = voted ? p.ballots[myIdx].alloc : {};
-        out.results = p.options.map((label, i) => ({ label, total: totals[i], w: (totals[i] / max * 100) + '%', color: totals[i] === max ? C.accent : 'oklch(0.8 0.06 160)', mine: mine[i] ? `You: ${mine[i]}` : '' }));
+        out.results = p.options.map((label, i) => ({ label, total: totals[i], w: (totals[i] / max * 100) + '%', color: totals[i] === max ? C.accent : 'var(--accent-mid)', mine: mine[i] ? `You: ${mine[i]}` : '' }));
         out.resultsMeta = `${totals.reduce((a, b) => a + b, 0)} votes from ${p.ballots.length} keys`;
       }
     }
@@ -730,8 +944,8 @@ class Component extends DCLogic {
         return { ...id, pubkey: v.pubkey, voted: bi >= 0,
           label: p.anonymous ? (v.i === 0 ? 'You' : 'Anonymous voter') : id.name,
           reasons: p.showWeights ? (reasons.join(' · ') || 'Base allocation') : (v.i === 0 ? 'Only you see your weight' : ''),
-          tokens: p.showWeights || v.i === 0 ? `${t} token${t === 1 ? '' : 's'}` : 'Hidden', tokColor: p.showWeights || v.i === 0 ? C.ink : '#a3a5ab',
-          status: bi >= 0 ? 'Voted' : 'Not yet', stColor: bi >= 0 ? C.accent : '#a3a5ab',
+          tokens: p.showWeights || v.i === 0 ? `${t} token${t === 1 ? '' : 's'}` : 'Hidden', tokColor: p.showWeights || v.i === 0 ? C.ink : 'var(--faint-2)',
+          status: bi >= 0 ? 'Voted' : 'Not yet', stColor: bi >= 0 ? C.accent : 'var(--faint-2)',
           onLocate: () => this.locate(p, bi) };
       });
       Object.assign(out, { voters, voterQ: s.voterQ, onVoterQ: e => this.setState({ voterQ: e.target.value, voterLimit: 40 }),
@@ -764,7 +978,7 @@ class Component extends DCLogic {
       return { ...(extra || {}), expanded: { ...st.expanded, [tkey]: e }, sel: { ...st.sel, [tkey]: { d, i } } }; });
   }
   locate(p, j) { const k = this.state.groupSize, n = p.ballots.length; this.reveal(p.id + ':' + k, this.levelsFor(n, k), n, k, 0, j, { tab: 'ledger', highlight: j }); }
-  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); window.removeEventListener('popstate', this._onPop); }
   measureTree(el) { const w = el.clientWidth; if (w && Math.abs(w - (this.state.treeW || 0)) > 8) window.setTimeout(() => this.setState({ treeW: w }), 0); }
   scrollToSel() {
     const deep = (root) => { const hit = root.querySelector('[data-sel="1"]'); if (hit) return hit; for (const n of root.querySelectorAll('*')) if (n.shadowRoot) { const x = deep(n.shadowRoot); if (x) return x; } return null; };
@@ -788,19 +1002,19 @@ class Component extends DCLogic {
     const opens = this.sha(this.allocStr(b.alloc) + '|' + b.salt) === l.commitment && String(this.cost(p, b.alloc)) === l.spent;
     const sib = proof && !mine && Math.floor(j / k) === Math.floor(myIdx / k), hl = s.highlight === j, id = this.ident(v, p.anonymous);
     const setT = (key, val) => this.setState(st => { const pt = { ...(st.tamper[p.id] || {}) }; pt[j] = { ...(pt[j] || {}), [key]: val }; return { tamper: { ...st.tamper, [p.id]: pt } }; });
-    return { ...id, num: (j + 1).toLocaleString(), mine, stub: changed ? C.danger : (mine && proof) ? C.accent : '#d6d3ca',
+    return { ...id, num: (j + 1).toLocaleString(), mine, stub: changed ? C.danger : (mine && proof) ? C.accent : 'var(--line-2)',
       label: p.anonymous ? (mine ? 'You' : id.keyShort) : id.name.replace(' (you)', ''),
       rot: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-      border: changed ? `1.5px solid ${C.danger}` : mine && proof ? `1.5px solid ${C.accent}` : sib ? `1.5px dashed ${C.accent}` : '1.5px solid #e4e2db',
+      border: changed ? `1.5px solid ${C.danger}` : mine && proof ? `1.5px solid ${C.accent}` : sib ? `1.5px dashed ${C.accent}` : '1.5px solid var(--line)',
       backBorder: changed ? `1.5px solid ${C.danger}` : '1.5px solid #1f2227',
       ring: hl ? `0 0 0 4px ${C.accentSoft}, 0 6px 20px rgba(0,0,0,.08)` : '0 1px 2px rgba(0,0,0,.03)',
       spentText: `${l.spent} spent`, spentColor: changed ? C.danger : C.accent,
       sigText: sigOk ? '✓ Valid' : '✗ Invalid', sigColor: sigOk ? C.accent : C.danger,
-      leafShort: this.short(h), leafColor: changed ? C.danger : '#4a4d55',
-      flipLabel: flippable ? (s.tamperMode ? 'Flip to edit' : 'Flip to inspect') : 'Sealed', flipCursor: flippable ? 'pointer' : 'default', flipColor: flippable ? C.ink : '#a3a5ab',
+      leafShort: this.short(h), leafColor: changed ? C.danger : 'var(--ink-2)',
+      flipLabel: flippable ? (s.tamperMode ? 'Flip to edit' : 'Flip to inspect') : 'Sealed', flipCursor: flippable ? 'pointer' : 'default', flipColor: flippable ? C.ink : 'var(--faint-2)',
       flip: () => flippable && this.setState(st => ({ flipped: { ...st.flipped, [fk]: !st.flipped[fk] } })),
       fields: this.FIELDS.map(([key, label]) => { const ch = l[key] !== b.leaf[key]; return { label, value: l[key], ro: !s.tamperMode,
-        onChange: e => setT(key, e.target.value), labelColor: ch ? '#ff9a85' : '#8a8d94', bg: ch ? '#3a2522' : '#2b2f35', fg: ch ? '#ffb4a4' : '#e8e6e0',
+        onChange: e => setT(key, e.target.value), labelColor: ch ? '#ff9a85' : 'var(--faint)', bg: ch ? '#3a2522' : '#2b2f35', fg: ch ? '#ffb4a4' : '#e8e6e0',
         border: ch ? `1px solid ${C.danger}` : s.tamperMode ? '1px dashed #5b6068' : '1px solid transparent' }; }),
       choice: p.options.map((o, i) => b.alloc[i] ? `${o} ×${b.alloc[i]}` : '').filter(Boolean).join(', '),
       openText: opens ? '✓ Commitment opens to this choice' : '✗ Commitment no longer matches', openColor: opens ? '#7fd6ae' : '#ff9a85' };
@@ -819,8 +1033,8 @@ class Component extends DCLogic {
     const forged = (d, i) => ov[d + ':' + i] !== undefined && ov[d + ':' + i] !== T0[d][i];
     const setOv = (d, i, v) => this.setState(st => ({ ntamper: { ...st.ntamper, [tkey]: { ...(st.ntamper[tkey] || {}), [d + ':' + i]: v } } }));
     const stop = e => e.stopPropagation();
-    const look = (ch, a, sib) => ({ bg: ch ? C.dangerSoft : a ? C.accent : sib ? C.accentSoft : '#fff', fg: ch ? C.danger : a ? '#fff' : C.ink, sub: ch ? C.danger : a ? '#fff' : '#6b6e76',
-      border: ch ? '1.5px solid ' + C.danger : a ? '1.5px solid ' + C.accent : sib ? '1.5px dashed ' + C.accent : '1.5px solid #e4e2db', line: ch ? C.danger : a ? C.accent : '#d6d3ca' });
+    const look = (ch, a, sib) => ({ bg: ch ? C.dangerSoft : a ? C.accent : sib ? C.accentSoft : 'var(--surface)', fg: ch ? C.danger : a ? 'var(--on-ink)' : C.ink, sub: ch ? C.danger : a ? 'var(--on-ink)' : 'var(--muted)',
+      border: ch ? '1.5px solid ' + C.danger : a ? '1.5px solid ' + C.accent : sib ? '1.5px dashed ' + C.accent : '1.5px solid var(--line)', line: ch ? C.danger : a ? C.accent : 'var(--line-2)' });
     const exp = this.expOf(tkey, H, n, k), isExp = (d, i) => d > 0 && !!exp[d + ':' + i];
     let sel = s.sel[tkey] || { d: H, i: 0 }; if (sel.d > H || sel.i >= T1[sel.d].length) sel = { d: H, i: 0 };
     const onPath = (d, i) => d >= sel.d && Math.floor(sel.i / pw(d - sel.d)) === i;
@@ -836,7 +1050,7 @@ class Component extends DCLogic {
       return { ...lk, ...this.nodeAv(h), d, i, e, root, isSel, short: this.short(h), full: h, tip: (n ? rng(d, i) : 'empty') + ' · ' + h,
         rangeText: n ? rng(d, i) : 'empty', countText: fmt(c) + ' ballot' + (c === 1 ? '' : 's'),
         label: (e ? '▾ ' : '▸ ') + (root ? 'Root · ' : '') + (n ? rng(d, i) : 'empty'), note: forged(d, i) ? 'forged' : '',
-        stub: lk.line, selRing: isSel ? ring : onPath(d, i) ? '0 0 0 2px #b8b5ab' : 'none', selAttr: isSel ? '1' : '0',
+        stub: lk.line, selRing: isSel ? ring : onPath(d, i) ? '0 0 0 2px var(--line-strong)' : 'none', selAttr: isSel ? '1' : '0',
         onZoom: () => toggle(d, i), ro: !s.tamperMode, editable: s.tamperMode, onEdit: ev => setOv(d, i, ev.target.value), stop };
     };
     const cardView = j => { const c = this.kcard(p, j, T1[0][j], T0[0][j], leaves[j], myIdx, proof, k), isSel = sel.d === 0 && sel.i === j;
@@ -897,7 +1111,7 @@ class Component extends DCLogic {
           title: d === H ? 'Root' : d === 0 ? 'Ballots' : 'Level ' + d,
           sub: d === H ? fmt(n) + ' ballots' : (idx + 1) + ' of ' + (b - a) + (activeI == null ? ' · choose one' : ''),
           prev: () => idx > 0 && select(d, a + idx - 1), next: () => idx < b - a - 1 && select(d, a + idx + 1),
-          prevOp: idx > 0 ? 1 : .3, nextOp: idx < b - a - 1 ? 1 : .3, line: act ? act.stub : '#d6d3ca', hasLine: true };
+          prevOp: idx > 0 ? 1 : .3, nextOp: idx < b - a - 1 ? 1 : .3, line: act ? act.stub : 'var(--line-2)', hasLine: true };
       };
       path.forEach(({ d, i }) => { const [a, b] = d === H ? [0, 1] : kids(d + 1, Math.floor(i / k)); crows.push(mkRow(d, a, b, i)); });
       if (sel.d > 0) { const [a, b] = kids(sel.d, sel.i); crows.push(mkRow(sel.d - 1, a, b, null)); }
@@ -919,7 +1133,7 @@ class Component extends DCLogic {
         const { d, i } = v, h = T1[d][i], ch = h !== T0[d][i], a = anc(d, i), sib = proof && !a && d < H && anc(d + 1, Math.floor(i / k)), lk = look(ch, a, sib);
         const isSel = sel.d === d && sel.i === i, size = d === H ? 60 : d === 0 ? 24 : Math.max(24, 46 - v.r * 7), av = this.nodeAv(h);
         rnodes.push({ ...av, x: v.x + '%', y: v.y + '%', size: size + 'px', bs: Math.round(size * .68), bg: lk.bg, border: lk.border,
-          selRing: isSel ? '0 0 0 3px ' + C.ink : onPath(d, i) ? '0 0 0 2px #b8b5ab' : 'none',
+          selRing: isSel ? '0 0 0 3px ' + C.ink : onPath(d, i) ? '0 0 0 2px var(--line-strong)' : 'none',
           tip: (d === 0 ? 'Ballot #' + fmt(i + 1) : (n ? rng(d, i) : 'empty')) + ' · ' + h,
           onClick: d === 0 ? () => select(0, i) : () => toggle(d, i) });
         if (v.par >= 0) { const pp = vis[v.par]; links.push({ x1: pp.x, y1: pp.y, x2: v.x, y2: v.y, color: lk.line, w: a || ch ? 2 : 1.25 }); }
@@ -939,12 +1153,12 @@ class Component extends DCLogic {
     for (let d = H; d >= sel.d; d--) {
       const i = Math.floor(sel.i / pw(d - sel.d)), h = T1[d][i], cur = d === sel.d, ch = h !== T0[d][i];
       crumbs.push({ ...this.nodeAv(h), sep: d === H ? '' : '›', label: d === H ? 'Root' : d === 0 ? 'Ballot #' + fmt(i + 1) : rng(d, i), short: this.short(h), full: h, onClick: () => reveal(d, i),
-        bg: cur ? '#1d1f24' : '#fff', fg: cur ? '#fff' : C.ink, border: ch ? C.danger : cur ? '#1d1f24' : '#e4e2db', hashFg: cur ? '#c9c7c0' : '#8a8d94' });
+        bg: cur ? 'var(--ink)' : 'var(--surface)', fg: cur ? 'var(--on-ink)' : C.ink, border: ch ? C.danger : cur ? 'var(--ink)' : 'var(--line)', hashFg: cur ? 'var(--line-2)' : 'var(--faint)' });
     }
     if (!this._setScroller) this._setScroller = el => { this._scroller = el; if (el) this.measureTree(el); };
     const changedLeaves = Object.keys(tam).map(Number).filter(j => T1[0][j] !== T0[0][j]);
     const forgedKeys = Object.keys(ov).filter(key => { const [d, i] = key.split(':').map(Number); return forged(d, i); });
-    const seg = on => ({ bg: on ? '#fff' : 'transparent', fg: on ? C.ink : C.muted, shadow: on ? '0 1px 2px rgba(0,0,0,.08)' : 'none' });
+    const seg = on => ({ bg: on ? 'var(--surface)' : 'transparent', fg: on ? C.ink : C.muted, shadow: on ? '0 1px 2px rgba(0,0,0,.08)' : 'none' });
     const nBad = changedLeaves.length + forgedKeys.length;
     return {
       ...out, noBallots: n === 0, crumbs, scrollRef: this._setScroller,
@@ -954,13 +1168,13 @@ class Component extends DCLogic {
       goMine: () => reveal(0, myIdx),
       goTampered: () => { if (changedLeaves.length) reveal(0, changedLeaves[0]); else if (forgedKeys.length) { const [d, i] = forgedKeys[0].split(':').map(Number); reveal(d, i); } },
       hasChanged: nBad > 0,
-      published, computed, rootBorder: ok ? '#e4e2db' : C.danger, okBg: ok ? C.accentSoft : C.dangerSoft, okFg: ok ? C.accent : C.danger,
+      published, computed, rootBorder: ok ? 'var(--line)' : C.danger, okBg: ok ? C.accentSoft : C.dangerSoft, okFg: ok ? C.accent : C.danger,
       okText: ok ? 'Tree valid · computed root matches the published root' : `Tampered · ${nBad} edit${nBad === 1 ? '' : 's'} in the tree, root no longer matches`,
       ledgerNote: s.tamperMode ? 'Tamper mode: flip a ballot card and edit its data, or overwrite any group hash. Every hash above it is recomputed and the change shows up at the root.'
         : `Every ${k} ballots roll up into one hash, and every ${k} hashes into the next level, up to the root. ` + ({ tree: 'Click a group to expand or collapse it; the breadcrumb shows the path to your selection.', fisheye: 'The selected node is magnified and the rest of the tree shrinks around it, so the whole tree fits. Click any node to move the focus and expand it.', carousel: 'Each row is one level. The centred item is on your selected path; pick a sibling to switch branches, and the row below shows its children.', radial: 'The root sits in the centre and each ring is one level down. Click a group to expand or collapse it; click a ballot to open its card.' })[layout] + (proof ? ' Your path is highlighted; dashed hashes are the siblings that prove your ballot is counted without revealing it.' : ''),
       groups: [2, 4, 10, 16].map(g => ({ label: String(g), ...seg(g === k), onClick: () => this.setState({ groupSize: g }) })),
-      proofBg: s.showProof ? C.accent : '#cfccc2', proofJ: s.showProof ? 'flex-end' : 'flex-start',
-      tamperBg: s.tamperMode ? C.danger : '#cfccc2', tamperJ: s.tamperMode ? 'flex-end' : 'flex-start',
+      proofBg: s.showProof ? C.accent : 'var(--line-2)', proofJ: s.showProof ? 'flex-end' : 'flex-start',
+      tamperBg: s.tamperMode ? C.danger : 'var(--line-2)', tamperJ: s.tamperMode ? 'flex-end' : 'flex-start',
       toggleProof: () => this.setState(st => ({ showProof: !st.showProof })), toggleTamper: () => this.setState(st => ({ tamperMode: !st.tamperMode })),
       hasTamper: Object.keys(tam).length > 0 || Object.keys(ov).length > 0,
       resetTamper: () => this.setState(st => { const nt = { ...st.ntamper }; Object.keys(nt).forEach(x => { if (x.startsWith(p.id + ':')) delete nt[x]; }); return { tamper: { ...st.tamper, [p.id]: {} }, ntamper: nt }; })
@@ -970,7 +1184,7 @@ class Component extends DCLogic {
 
   editorVals() {
     const s = this.state, C = this.C, p = s.polls.find(x => x.id === s.editId); if (!p) return {};
-    const up = fn => this.setPoll(p.id, fn), tog = on => ({ bg: on ? C.accent : '#cfccc2', j: on ? 'flex-end' : 'flex-start' });
+    const up = fn => this.setPoll(p.id, fn), tog = on => ({ bg: on ? C.accent : 'var(--line-2)', j: on ? 'flex-end' : 'flex-start' });
     const a = tog(p.anonymous), w = tog(p.showWeights), q = tog(p.quadratic);
     const toks = this.voters.map(v => this.tokensFor(p, v)), maxT = Math.max(1, ...toks), total = toks.reduce((x, y) => x + y, 0);
     const bigIdx = toks.indexOf(Math.max(...toks));
@@ -993,7 +1207,7 @@ class Component extends DCLogic {
         inc: () => up(x => ({ ...x, rules: x.rules.map((y, k) => k === i ? { ...y, tokens: y.tokens + 1 } : y) })),
         dec: () => up(x => ({ ...x, rules: x.rules.map((y, k) => k === i ? { ...y, tokens: Math.max(1, y.tokens - 1) } : y) })),
         remove: () => up(x => ({ ...x, rules: x.rules.filter((_, k) => k !== i) })) })),
-      addRule: () => up(x => ({ ...x, rules: [...x.rules, { attr: this.ATTRS.find(t => !x.rules.some(r => r.attr === t.key))?.key || 'near', tokens: 4 }] })),
+      addRule: () => this.ATTRS.length && up(x => ({ ...x, rules: [...x.rules, { attr: (this.ATTRS.find(t => !x.rules.some(r => r.attr === t.key)) || this.ATTRS[0]).key, tokens: 4 }] })),
       preview: this.voters.map((v, i) => { const id = this.ident(v, false), t = toks[i];
         const rs = p.rules.filter(r => v.attrs.includes(r.attr)).map(r => this.ATTRS.find(x => x.key === r.attr).label);
         return { ...id, tokens: t, w: (t / maxT * 100) + '%', reasons: (rs.length ? rs.join(' · ') : 'Base only') + (p.quadratic ? ` · max ${Math.floor(Math.sqrt(t))} votes on one option` : '') }; }),
@@ -1005,28 +1219,46 @@ class Component extends DCLogic {
         { k:'Voting', v: p.quadratic ? 'Quadratic' : 'One token per vote' },
         { k:'Weights', v: p.showWeights ? 'Visible to all' : 'Hidden' }
       ],
-      sample: this.ident(this.voters[3], p.anonymous), sampleLabel: p.anonymous ? 'Anonymous voter' : this.voters[3].name,
+      sample: this.ident(this.voters[Math.min(3, this.voters.length - 1)], p.anonymous), sampleLabel: p.anonymous ? 'Anonymous voter' : this.voters[Math.min(3, this.voters.length - 1)].name,
       save: () => { this.setState({ view:'dashboard', filter:'drafts' }); this.flash('Draft saved.'); },
       del: () => { this.setState(st => ({ polls: st.polls.filter(x => x.id !== p.id), view:'dashboard' })); this.flash('Draft deleted.'); },
       publish: () => {
         const opts = p.options.map(o => o.trim()).filter(Boolean);
         if (!p.title.trim() || opts.length < 2) { this.flash('Add a title and at least two options before publishing.'); return; }
-        up(x => ({ ...x, options: opts, status:'live', closes:'Closes in 7 days', ballots:[], published: this.rootOf([]) }));
+        up(x => ({ ...x, options: opts, status:'live', closes:'Closes in 7 days', ballots:[] }));
         this.openPoll(p.id); this.flash('Published. Eligible keys can now vote.');
       }
     };
   }
 
   renderVals() {
-    const s = this.state, me = this.voters[0];
+    const s = this.state, me = this.voters[0], C = this.C;
+    // An address naming a poll that isn't loaded (yet), or ?edit= on a poll that isn't a draft, shows the dashboard.
+    const find = id => s.polls.find(p => p.id === id);
+    const view = s.view === 'poll' && !find(s.pollId) || s.view === 'editor' && find(s.editId)?.status !== 'draft' ? 'dashboard' : s.view;
     return {
-      isDash: s.view === 'dashboard', isPoll: s.view === 'poll', isEditor: s.view === 'editor',
+      isDash: view === 'dashboard', isPoll: view === 'poll', isEditor: view === 'editor',
       goHome: () => { this.setState({ view:'dashboard', highlight:null }); window.scrollTo(0, 0); },
-      me: this.ident(me, true), meKey: me.pubkey,
+      me: this.ident(me, true), meKey: me.pubkey, docTitle: s.docTitle || 'Polls',
       toast: s.toast, hasToast: !!s.toast,
+      themes: this.THEMES.map(t => ({ ...t, on: t.value === s.theme, aria: t.label + ' theme',
+        pick: () => { this.setState({ theme: t.value }); Component.store('set', Component.KEYS.theme, t.value); } })),
+      download: () => this.download(),
+      openOpen: s.openOpen, showOpen: () => this.setState({ openOpen: true, openError: null }), hideOpen: () => this.setState({ openOpen: false }),
+      openBackdrop: e => { if (e.target === e.currentTarget) this.setState({ openOpen: false }); },
+      openKey: e => { if (e.key === 'Escape') this.setState({ openOpen: false }); },
+      openDragOver: e => { e.preventDefault(); if (!s.openDragging) this.setState({ openDragging: true }); },
+      openDragLeave: () => this.setState({ openDragging: false }),
+      openDrop: e => { e.preventDefault(); this.setState({ openDragging: false }); this.openFile(e.dataTransfer.files[0]); },
+      openDropBorder: s.openDragging ? C.accent : 'var(--line-2)', openDropBg: s.openDragging ? C.accentSoft : 'var(--raised)',
+      onJsonFile: e => this.onJsonFile(e),
+      openUrl: s.openUrl, onOpenUrl: e => this.setState({ openUrl: e.target.value }),
+      openUrlSubmit: e => { e.preventDefault(); this.submitOpenUrl(); },
+      openUrlDisabled: s.openUrl.trim() === '' || s.openBusy, openUrlOpacity: s.openUrl.trim() === '' || s.openBusy ? .4 : 1, openUrlLabel: s.openBusy ? 'Opening…' : 'Open',
+      hasOpenError: !!s.openError, openError: s.openError,
       ...this.dashVals(),
-      pv: s.view === 'poll' ? this.pollVals() : {},
-      ed: s.view === 'editor' ? this.editorVals() : {}
+      pv: view === 'poll' ? this.pollVals() : {},
+      ed: view === 'editor' ? this.editorVals() : {}
     };
   }
 }
