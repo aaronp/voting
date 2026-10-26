@@ -171,3 +171,37 @@ test("final review: a mint needs subjects, and every subject a key", () => {
   expect(bad(d => { d.polls[0][0].subjects[0].keys = []; })).toThrow("polls[0][0].subjects[0].keys: needs at least one");
   expect(bad(d => { d.polls[0][0].subjects = []; })).toThrow("polls[0][0].subjects: needs at least one");
 });
+
+test("merkle groups and rolls up", () => {
+  const leaves = Array.from({ length: 5 }, (_, i) => L.said({ v: "tally/1", t: "close", d: "", p: String(i), dt: "t" }));
+  expect(L.merkle(leaves, 2).map((l: string[]) => l.length)).toEqual([5, 3, 2, 1]);
+  expect(L.merkle(leaves, 10).map((l: string[]) => l.length)).toEqual([5, 1]);
+  expect(L.merkle(leaves.slice(0, 1), 10).map((l: string[]) => l.length)).toEqual([1, 1]);
+  for (const level of L.merkle(leaves, 2).slice(1)) for (const n of level) expect(n).toMatch(/^E[A-Za-z0-9_-]{43}$/);
+});
+
+test("close records the signed root", () => {
+  const { chain, keys } = demo();
+  chain.push(voteAs(chain, keys, "alice", { 0: 1 }));
+  const root = L.rootOf(chain), close = L.makeClose(chain, "t", keys.org.secret);
+  expect(close).toMatchObject({ root, group: 10 });
+  chain.push(close);
+  expect(L.verify(chain).ok).toBe(true);
+});
+
+test("a wrong root fails rule root", () => {
+  const { chain, keys } = demo();
+  const c = L.makeClose(chain, "t", keys.org.secret);
+  c.root = L.said({ v: "tally/1", t: "close", d: "", p: "x", dt: "t" }); c.d = L.said(c); c.sig = L.sign(c, keys.org.secret);
+  chain.push(c);
+  expect(rules(chain)).toEqual(["root"]);
+});
+
+test("old closes without a root still verify", () => {
+  const { chain, keys } = demo();
+  const c: any = L.makeClose(chain, "t", keys.org.secret);
+  delete c.root; delete c.group; c.d = L.said(c); c.sig = L.sign(c, keys.org.secret);
+  chain.push(c);
+  expect(L.verify(chain).ok).toBe(true);
+  expect(L.parseFile(L.serializeFile({ polls: [chain], drafts: [] })).polls[0][1]).not.toHaveProperty("root");
+});

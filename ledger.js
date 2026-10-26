@@ -27,7 +27,7 @@ export function cesrDecode(s) {
 export const FIELDS = {
   mint: ['v', 't', 'd', 'title', 'desc', 'options', 'quadratic', 'organiser', 'subjects', 'total', 'dt'],
   vote: ['v', 't', 'd', 'p', 'subject', 'alloc', 'dt', 'key'],
-  close: ['v', 't', 'd', 'p', 'dt']
+  close: ['v', 't', 'd', 'p', 'root', 'group', 'dt']
 };
 const ordered = (k, v) =>
   k === 'organiser' ? { id: v.id, keys: v.keys } :
@@ -55,6 +55,22 @@ export function verifySig(entry, pub, sig) {
   } catch (e) { return false; }
 }
 
+// ---- Merkle tree ----
+// Leaves (entry SAIDs) roll up k at a time; each node is the blake3 SAID-style hash of its children joined.
+// A short last group hashes what it has, and even a single leaf gets a parent, so there is always a root above the leaves.
+export const ROOT_GROUP = 10;
+export function merkle(leaves, k) {
+  const levels = [leaves];
+  do {
+    const lvl = levels[levels.length - 1], up = [];
+    for (let i = 0; i < lvl.length; i += k) up.push(cesrEncode('E', blake3(utf8(lvl.slice(i, i + k).join('')))));
+    levels.push(up);
+  } while (levels[levels.length - 1].length > 1);
+  return levels;
+}
+const top = levels => levels[levels.length - 1][0];
+export const rootOf = (chain, k = ROOT_GROUP) => top(merkle(chain.map(e => e.d), k));
+
 // ---- Entries ----
 const V = 'tally/1';
 const sealed = (entry, secret) => { entry.d = said(entry); entry.sig = sign(entry, secret); return entry; };
@@ -69,7 +85,7 @@ export function makeVote(chain, { subject, alloc, key, dt }, secret) {
   return sealed({ v: V, t: 'vote', d: '', p: chain[chain.length - 1].d, subject, alloc, dt, key }, secret);
 }
 export function makeClose(chain, dt, organiserSecret) {
-  return sealed({ v: V, t: 'close', d: '', p: chain[chain.length - 1].d, dt }, organiserSecret);
+  return sealed({ v: V, t: 'close', d: '', p: chain[chain.length - 1].d, root: rootOf(chain), group: ROOT_GROUP, dt }, organiserSecret);
 }
 
 // ---- Verification ----
@@ -93,6 +109,7 @@ export function verify(chain) {
     if (i === 0) return;
     if (e.t === 'mint') { fail(i, 'first', 'only the first entry can be a mint'); return; }
     if (closedAt >= 0) fail(i, 'close', 'comes after the poll was closed (entry #' + closedAt + ')');
+    if (e.root !== undefined && e.root !== rootOf(chain.slice(0, i), e.group)) fail(i, 'root', 'its signed root does not match the tree of the entries before it');
     if (e.t === 'close') {
       if (!signedBy(e, mint.organiser.keys)) fail(i, 'mint-sig', 'close not signed by an organiser key');
       closedAt = i; return;
@@ -128,7 +145,9 @@ export function parseFile(text) {
   const shape = (o, path, spec, defaults = {}) => {
     obj(o, path);
     Object.keys(o).forEach(k => { if (!(k in spec)) fail(path + '.' + k, 'unknown field'); });
-    return Object.fromEntries(Object.entries(spec).map(([k, check]) => [k, o[k] === undefined && k in defaults ? defaults[k] : check(o[k], path + '.' + k)]));
+    // A default of undefined marks an optional field that is left out when absent.
+    return Object.fromEntries(Object.entries(spec).filter(([k]) => !(o[k] === undefined && k in defaults && defaults[k] === undefined))
+      .map(([k, check]) => [k, o[k] === undefined && k in defaults ? defaults[k] : check(o[k], path + '.' + k)]));
   };
   const strs = (v, path) => list(v, path, str);
   const some = check => (v, path) => { const out = check(v, path); return out.length ? out : fail(path, 'needs at least one'); };
@@ -145,9 +164,10 @@ export function parseFile(text) {
     mint: { v: version, t: str, d: str, title: str, desc: str, options: strs, quadratic: bool,
       organiser: (v, p) => shape(v, p, { id: str, keys: strs }), subjects: subjects(1), total: int(0), dt: str, sig: str },
     vote: { v: version, t: str, d: str, p: str, subject: str, alloc, dt: str, key: str, sig: str },
-    close: { v: version, t: str, d: str, p: str, dt: str, sig: str }
+    close: { v: version, t: str, d: str, p: str, root: str, group: int(2), dt: str, sig: str }
   };
-  const entry = (e, path) => { obj(e, path); return ENTRY[e.t] ? shape(e, path, ENTRY[e.t]) : fail(path + '.t', 'expected "mint", "vote" or "close"'); };
+  const OPTIONAL = { close: { root: undefined, group: undefined } };
+  const entry = (e, path) => { obj(e, path); return ENTRY[e.t] ? shape(e, path, ENTRY[e.t], OPTIONAL[e.t]) : fail(path + '.t', 'expected "mint", "vote" or "close"'); };
   obj(d, 'file');
   const polls = list(d.polls, 'polls', (chain, p) => list(chain, p, entry));
   polls.forEach((c, i) => { if (c.length && polls.findIndex(x => x.length && x[0].d === c[0].d) !== i) fail('polls[' + i + '][0].d', 'duplicate poll'); });
