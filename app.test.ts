@@ -244,7 +244,27 @@ test("the modal shows the exact bytes", () => {
   expect(entry.d).toBe(L.said(entry)); expect(r.said).toBe(entry.d);
   expect(r.principal).toBe("alice");
   const real = app.renderVals().real;
-  expect(real.script).toContain("ssh-keygen -t ed25519 -f tally_key -N '' -C alice");
-  expect(real.script).toContain("ssh-keygen -Y verify -f allowed_signers -I alice -n tally -s entry.json.sig < entry.json");
+  expect(real.script).toContain("ssh-keygen -t ed25519 -f tally_key -N '' -C 'alice'");
+  expect(real.script).toContain("ssh-keygen -Y verify -f allowed_signers -I 'alice' -n tally -s entry.json.sig < entry.json");
   real.close(); expect(app.state.realOpen).toBeNull();
+});
+
+test("final review: the ssh script quotes ids from the file", () => {
+  const f = fixture(), { app } = pollApp(f);
+  app.setState({ realOpen: { title: "t", bytes: "{}", said: "E", principal: "$(touch /tmp/pwned) it's" } });
+  const script = app.renderVals().real.script;
+  expect(script).toContain("-C '$(touch /tmp/pwned) it'\\''s'");
+  expect(script).not.toContain('echo "$(touch');
+});
+
+test("final review: editing a draft doesn't re-verify unchanged polls", () => {
+  const f = fixture();
+  let calls = 0;
+  const env = load("", { "tally:json:v2": L.serializeFile(f.doc) });
+  env.g.window.TallyLedger = { ...L, verify: (c: any) => { calls++; return L.verify(c); } };
+  const C = new Function("DCLogic", ...Object.keys(env.g), js + "\nreturn Component;")(DCLogic, ...Object.values(env.g));
+  const app = new C({}); app.componentDidMount();
+  const before = calls;
+  app.setDraft("d1", (x: any) => ({ ...x, title: "typing" }));
+  expect(calls).toBe(before);
 });

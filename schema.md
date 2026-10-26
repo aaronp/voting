@@ -49,7 +49,8 @@ and every vote was signed by a key allowed to vote, at most once per subject, wi
 ```
 
 Reading is strict about shapes. Malformed JSON, missing or mistyped fields, unknown fields and unknown entry types are
-rejected with their path, e.g. `polls[0][2].alloc.1: expected a whole number ≥ 0`. A well-formed chain that **fails
+rejected with their path, e.g. `polls[0][2].alloc.1: expected a whole number ≥ 0`. Two polls with the same mint `d`
+are rejected too. A well-formed chain that **fails
 verification still loads**, and the app shows every failure. The old v1 format (voters, ballots) is not read.
 
 ## Entries
@@ -65,7 +66,7 @@ Every entry has `"v": "tally/1"`, its type `t`, its own hash `d` and a signature
 | `options` | List of option labels |
 | `quadratic` | `true`: n votes on one option cost n² |
 | `organiser` | `{ "id": text, "keys": [Ed25519 key, …] }`. The mint is signed by one of these keys. |
-| `subjects` | `[{ "id": text, "keys": [Ed25519 key, …], "weight": whole number ≥ 1 }]`. Ids are unique (AIDs in real use, names in the demo). |
+| `subjects` | `[{ "id": text, "keys": [Ed25519 key, …], "weight": whole number ≥ 1 }]`: at least one subject, each with at least one key. Ids are unique (AIDs in real use, names in the demo). |
 | `total` | Must equal the sum of the weights |
 | `dt` | ISO-8601 time |
 
@@ -114,7 +115,7 @@ subject's weight; spending less than the full weight is allowed (the rest abstai
 | `subject` | A vote names a subject that wasn't minted |
 | `vote-sig` | A vote isn't signed by one of its subject's minted keys |
 | `double` | A subject votes a second time |
-| `options` | An allocation names an option that doesn't exist |
+| `options` | An allocation key isn't a plain option number (`0`, `1`, …) of an existing option |
 | `cost` | An allocation costs less than 1 or more than the subject's weight |
 | `close` | An entry comes after the close |
 

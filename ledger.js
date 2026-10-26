@@ -102,7 +102,7 @@ export function verify(chain) {
     else if (!s.keys.includes(e.key) || !verifySig(e, e.key, e.sig)) fail(i, 'vote-sig', 'not signed by one of ' + e.subject + "'s keys");
     if (e.subject in voted) fail(i, 'double', e.subject + ' already voted (entry #' + voted[e.subject] + ')');
     else voted[e.subject] = i;
-    const bad = Object.keys(e.alloc).filter(o => !(Number(o) < mint.options.length));
+    const bad = Object.keys(e.alloc).filter(o => !/^(0|[1-9]\d*)$/.test(o) || Number(o) >= mint.options.length);
     if (bad.length) fail(i, 'options', 'no option ' + bad.join(', '));
     const c = cost(e.alloc, mint.quadratic);
     if (s && (c < 1 || c > s.weight)) fail(i, 'cost', 'costs ' + c + ' but ' + e.subject + ' holds ' + s.weight);
@@ -131,8 +131,10 @@ export function parseFile(text) {
     return Object.fromEntries(Object.entries(spec).map(([k, check]) => [k, o[k] === undefined && k in defaults ? defaults[k] : check(o[k], path + '.' + k)]));
   };
   const strs = (v, path) => list(v, path, str);
+  const some = check => (v, path) => { const out = check(v, path); return out.length ? out : fail(path, 'needs at least one'); };
+  // A mint needs subjects, each with a key and a weight ≥ 1; a draft can be incomplete.
   const subjects = min => (v, path) => {
-    const out = list(v, path, (s, p) => shape(s, p, { id: str, keys: strs, weight: int(min) }, min ? {} : { keys: [], weight: 1 }));
+    const out = (min ? some : x => x)((v2, p2) => list(v2, p2, (s, p) => shape(s, p, { id: str, keys: min ? some(strs) : strs, weight: int(min) }, min ? {} : { keys: [], weight: 1 })))(v, path);
     // Drafts are saved while being typed, so only a mint insists on unique ids.
     if (min) out.forEach((s, i) => { if (out.findIndex(x => x.id === s.id) !== i) fail(path + '[' + i + '].id', 'duplicate subject "' + s.id + '"'); });
     return out;
@@ -148,6 +150,7 @@ export function parseFile(text) {
   const entry = (e, path) => { obj(e, path); return ENTRY[e.t] ? shape(e, path, ENTRY[e.t]) : fail(path + '.t', 'expected "mint", "vote" or "close"'); };
   obj(d, 'file');
   const polls = list(d.polls, 'polls', (chain, p) => list(chain, p, entry));
+  polls.forEach((c, i) => { if (c.length && polls.findIndex(x => x.length && x[0].d === c[0].d) !== i) fail('polls[' + i + '][0].d', 'duplicate poll'); });
   const drafts = d.drafts === undefined ? [] : list(d.drafts, 'drafts', (x, p) => shape(x, p,
     { id: str, title: str, desc: str, options: strs, quadratic: bool, organiser: str, subjects: subjects(0) },
     { desc: '', options: [], quadratic: false, organiser: 'Organiser', subjects: [] }));

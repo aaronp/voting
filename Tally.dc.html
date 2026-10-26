@@ -348,6 +348,7 @@ class Component extends DCLogic {
   }
   L = window.TallyLedger;
   _blobs = new Map();
+  _verified = new WeakMap();
   state = this.init();
 
   componentDidMount() {
@@ -413,7 +414,9 @@ class Component extends DCLogic {
   }
 
   // ---- The document: every change goes through setDoc, so verdicts always match the chains ----
-  withDoc(doc) { return { doc, verdicts: Object.fromEntries(doc.polls.map(c => [c[0].d, this.L.verify(c)])) }; }
+  // Chains only change by being replaced (append), so each chain array is verified once.
+  verdictOf(c) { if (!this._verified.has(c)) this._verified.set(c, this.L.verify(c)); return this._verified.get(c); }
+  withDoc(doc) { return { doc, verdicts: Object.fromEntries(doc.polls.map(c => [c[0].d, this.verdictOf(c)])) }; }
   setDoc(doc) { this.setState(this.withDoc(doc)); }
   append(pollId, entry) { const d = this.state.doc; this.setDoc({ ...d, polls: d.polls.map(c => c[0].d === pollId ? [...c, entry] : c) }); }
   poll(pollId) {
@@ -578,12 +581,14 @@ class Component extends DCLogic {
   realVals() {
     const r = this.state.realOpen;
     if (!r) return {};
+    // Ids come from the file, so they are single-quoted for the shell.
+    const who = "'" + r.principal.replace(/'/g, "'\\''") + "'";
     const script = [
-      "ssh-keygen -t ed25519 -f tally_key -N '' -C " + r.principal,
+      "ssh-keygen -t ed25519 -f tally_key -N '' -C " + who,
       '# Save the entry above as entry.json, then:',
       'ssh-keygen -Y sign -f tally_key -n tally entry.json          # writes entry.json.sig',
-      'echo "' + r.principal + ' $(cat tally_key.pub)" > allowed_signers',
-      'ssh-keygen -Y verify -f allowed_signers -I ' + r.principal + ' -n tally -s entry.json.sig < entry.json'
+      'printf "%s %s\\n" ' + who + ' "$(cat tally_key.pub)" > allowed_signers',
+      'ssh-keygen -Y verify -f allowed_signers -I ' + who + ' -n tally -s entry.json.sig < entry.json'
     ].join('\n');
     const copy = text => { try { navigator.clipboard.writeText(text); this.flash('Copied.'); } catch (e) { this.flash('Copy failed; select the text instead.'); } };
     return { ...r, script,

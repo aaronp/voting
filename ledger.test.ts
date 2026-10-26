@@ -152,3 +152,22 @@ test("the example verifies, and schema.md's example parses and verifies", async 
   const small = L.parseFile(schema.split("```json\n")[1].split("```")[0]);
   expect(small.polls.every((c: any) => L.verify(c).ok)).toBe(true);
 });
+
+test("final review: a repeated poll id is rejected", () => {
+  const d = sampleDoc(), text = L.serializeFile({ polls: [d.polls[0], d.polls[0]], drafts: [] });
+  expect(() => L.parseFile(text)).toThrow("polls[1][0].d: duplicate poll");
+});
+
+test("final review: option keys must be plain option numbers", () => {
+  for (const o of ["-1", "", "01", "1.0", " 1"]) {
+    const { chain, keys } = demo();
+    chain.push(voteAs(chain, keys, "alice", { [o]: 1 }));
+    expect(rules(chain)).toContain("options");
+  }
+});
+
+test("final review: a mint needs subjects, and every subject a key", () => {
+  const bad = (mutate: (d: any) => void) => () => { const d = JSON.parse(L.serializeFile(sampleDoc())); mutate(d); L.parseFile(JSON.stringify(d)); };
+  expect(bad(d => { d.polls[0][0].subjects[0].keys = []; })).toThrow("polls[0][0].subjects[0].keys: needs at least one");
+  expect(bad(d => { d.polls[0][0].subjects = []; })).toThrow("polls[0][0].subjects: needs at least one");
+});
