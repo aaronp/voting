@@ -141,3 +141,14 @@ test("drafts may have blank or repeated subject ids while being edited", () => {
   const draft = { id: "d", title: "x", subjects: [{ id: "", keys: [], weight: 0 }, { id: "a" }, { id: "a" }] };
   expect(L.parseFile(JSON.stringify({ polls: [], drafts: [draft] })).drafts[0].subjects).toHaveLength(3);
 });
+
+test("the example verifies, and schema.md's example parses and verifies", async () => {
+  const doc = L.parseFile(await Bun.file(import.meta.dir + "/examples/harbor-commons/tally.json").text());
+  expect(doc.polls.length).toBeGreaterThanOrEqual(2);
+  const verdicts = doc.polls.map((c: any) => L.verify(c));
+  expect(verdicts.every((v: any) => v.ok)).toBe(true);
+  expect(verdicts.some((v: any) => v.status === "closed")).toBe(true);
+  const schema = await Bun.file(import.meta.dir + "/schema.md").text();
+  const small = L.parseFile(schema.split("```json\n")[1].split("```")[0]);
+  expect(small.polls.every((c: any) => L.verify(c).ok)).toBe(true);
+});

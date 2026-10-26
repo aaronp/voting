@@ -1,6 +1,6 @@
 PORT ?= 8000
 
-.PHONY: dev test vendor
+.PHONY: dev test vendor example
 
 test:
 	bun test
@@ -15,3 +15,7 @@ vendor: node_modules/@noble/curves
 	bun build vendor/noble.entry.js --outfile vendor/noble.js --format esm --minify
 node_modules/@noble/curves: package.json
 	bun install
+
+# Regenerates the example's signed polls with fresh keys (the private keys are thrown away).
+example:
+	bun scripts/make-example.ts

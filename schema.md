@@ -1,83 +1,141 @@
-# tally.json format
+# tally.json format (v2)
 
-All the polls live in **one JSON file**. The app reads it, and every change made in the UI (voting, editing
-drafts, publishing) writes it back. Reading is strict: anything wrong is reported with its path, e.g.
-`polls[2].ballots[0].voter: this poll is open to keys 0–9`, and the app keeps what it had.
-
-## Minimal example
+A `tally.json` holds **signed polls** and **unsigned drafts**. Each poll is a chain of entries that anyone can check
+from the file alone, without trusting whoever hosts it: the subjects and weights were fixed when the poll was minted,
+and every vote was signed by a key allowed to vote, at most once per subject, within that subject's weight.
 
 ```json
 {
-  "title": "Book club",
-  "voters": [{ "name": "Sam Rivera" }, { "name": "Maya Chen" }],
   "polls": [
-    {
-      "id": "next-book",
-      "status": "live",
-      "title": "What do we read next?",
-      "options": ["Piranesi", "Middlemarch"],
-      "ballots": [{ "voter": 1, "alloc": { "0": 1 } }]
-    }
-  ]
+    [
+      {
+        "v": "tally/1",
+        "t": "mint",
+        "d": "EOKaKN4NVvCmeZhYTZjD28kJH4ycZalFLBuC7YClfhYX",
+        "title": "What do we read next?",
+        "desc": "",
+        "options": [ "Piranesi", "Middlemarch" ],
+        "quadratic": false,
+        "organiser": { "id": "Book club", "keys": [ "DN8BWO_SeRMAnKW_qL5br3vKXMLEXwMF1h7VmODTkzFq" ] },
+        "subjects": [
+          { "id": "alice", "keys": [ "DNy5jOhgey5c3DahnjW_EszPK0qxanT8AkUhtF3IvLAU" ], "weight": 4 },
+          { "id": "bob", "keys": [ "DIXI9ktaHJKYU5DwlGmK2yoQIM5zJwYV_zVn3CYCDJ3n" ], "weight": 8 }
+        ],
+        "total": 12,
+        "dt": "2026-10-26T09:00:00.000Z",
+        "sig": "0BAZqLu-cWhxSu1tq4C0hvcSVSngLFuZ5tOs8yyFZM1GwpGuIzoYAdSg38hNHj2YkPTMmVIO8cGMWve3VAfYlH8D"
+      },
+      {
+        "v": "tally/1",
+        "t": "vote",
+        "d": "ENqlici5zJA57TfBPu5GtP7MB1sJSYC8YZBQVuiQkg9T",
+        "p": "EOKaKN4NVvCmeZhYTZjD28kJH4ycZalFLBuC7YClfhYX",
+        "subject": "alice",
+        "alloc": { "0": 3, "1": 1 },
+        "dt": "2026-10-26T09:05:00.000Z",
+        "key": "DNy5jOhgey5c3DahnjW_EszPK0qxanT8AkUhtF3IvLAU",
+        "sig": "0BAusZ4_61FFbM55rk-Q6CzdxDfRQYc0sGRvcKxLBXg-ERPeb5ybH8lzDrf6cOOaY-9tD0mURLuHcC78OxizG8kM"
+      }
+    ]
+  ],
+  "drafts": []
 }
 ```
 
-## Top level
-
-| Key | Value | Required |
-| --- | --- | --- |
-| `title` | Shown as the dashboard heading | No |
-| `attributes` | `[{ "key": "near", "label": "Lives within 1 mile" }]`: facts about voters that weight rules can use. Keys are unique. | No |
-| `voters` | The listed public keys. **The first voter is you**: the one who votes in the UI. | Yes, at least one |
-| `polls` | The polls, in any order | Yes |
-
-### Voters
+## The file
 
 ```json
-{ "name": "Maya Chen", "attrs": ["near", "stake"] }
+{ "polls": [ [mint, vote…, close?], … ], "drafts": [ draft, … ] }
 ```
 
-`name` is unique; the voter's public key is derived from it. `attrs` (optional) must be keys from `attributes`.
-Ballots refer to voters by their position in this list, starting at 0.
+Reading is strict about shapes. Malformed JSON, missing or mistyped fields, unknown fields and unknown entry types are
+rejected with their path, e.g. `polls[0][2].alloc.1: expected a whole number ≥ 0`. A well-formed chain that **fails
+verification still loads**, and the app shows every failure. The old v1 format (voters, ballots) is not read.
 
-## Polls
+## Entries
 
-| Key | Value | Default |
-| --- | --- | --- |
-| `id` | Unique, non-empty. Used in the address: `?poll=<id>` | required |
-| `status` | `"draft"`, `"live"` or `"closed"` | required |
-| `title` | Text | required |
-| `options` | List of option labels. Live and closed polls need at least two. | required |
-| `desc` | Text under the title | `""` |
-| `anonymous` | `true` hides voter identities | `false` |
-| `showWeights` | `true` shows everyone's token allocation | `false` |
-| `quadratic` | `true`: n votes on one option cost n² tokens | `false` |
-| `base` | Tokens every eligible key gets (≥ 1) | `1` |
-| `rules` | `[{ "attr": "near", "tokens": 8 }]`: extra tokens for voters with that attribute | `[]` |
-| `closes` | Free text, e.g. `"Closes in 2 days"` | `""` |
-| `created` | A number; the dashboard's "Newest" sort uses it | the poll's position |
-| `eligible` | How many keys can vote: the first `eligible` voters. If that is more than the listed voters, the rest are generated (`Voter 0011`, …) so large polls need no list | the number of voters |
-| `ballots` | The votes, in ledger order | `[]` |
+Every entry has `"v": "tally/1"`, its type `t`, its own hash `d` and a signature `sig`. Votes and the close also carry
+`p`, the previous entry's `d`, which makes the poll a hash chain. The mint's `d` is the poll's id (`?poll=<d>`).
 
-### Ballots
+### mint (first entry)
+
+| Field | Value |
+| --- | --- |
+| `title`, `desc` | Text |
+| `options` | List of option labels |
+| `quadratic` | `true`: n votes on one option cost n² |
+| `organiser` | `{ "id": text, "keys": [Ed25519 key, …] }`. The mint is signed by one of these keys. |
+| `subjects` | `[{ "id": text, "keys": [Ed25519 key, …], "weight": whole number ≥ 1 }]`. Ids are unique (AIDs in real use, names in the demo). |
+| `total` | Must equal the sum of the weights |
+| `dt` | ISO-8601 time |
+
+### vote
+
+| Field | Value |
+| --- | --- |
+| `p` | The previous entry's `d` |
+| `subject` | A minted subject id |
+| `alloc` | Votes per option, keyed by the option's position as text, e.g. `{ "0": 3, "2": 1 }` |
+| `dt` | ISO-8601 time |
+| `key` | Which of the subject's minted keys signed |
+
+The cost is the sum of the votes, or the sum of their squares if the mint is `quadratic`. It must be between 1 and the
+subject's weight; spending less than the full weight is allowed (the rest abstains).
+
+### close (optional, last)
+
+`p` and `dt`, signed by an organiser key. No votes may follow it.
+
+## Hashes, keys and signatures
+
+- **Canonical form**: the entry as compact JSON with its fields in the order listed below, `sig` left out, nested
+  `organiser` as `id, keys`, each subject as `id, keys, weight`, and `alloc` keys in ascending numeric order. The order
+  fields appear in the file doesn't matter.
+  - mint: `v, t, d, title, desc, options, quadratic, organiser, subjects, total, dt`
+  - vote: `v, t, d, p, subject, alloc, dt, key`
+  - close: `v, t, d, p, dt`
+- **SAID** (`d`): blake3-256 of the canonical form with `d` set to 44 `#` characters, CESR-encoded with code `E`
+  (44 characters). This is KERI's self-addressing identifier.
+- **Keys**: Ed25519 public keys, CESR code `D` (44 characters).
+- **Signatures** (`sig`): Ed25519 over the canonical form with `d` filled in, CESR code `0B` (88 characters). Any one of
+  the signer's listed keys may sign.
+
+## Verification rules
+
+`verify` checks every entry and reports all failures, each with its entry number and rule:
+
+| Rule | Fails when |
+| --- | --- |
+| `first` | The chain doesn't start with a mint, or a later entry is a mint |
+| `said` | An entry's `d` isn't the SAID of its contents |
+| `link` | An entry's `p` isn't the previous entry's `d` |
+| `mint-sig` | The mint or close isn't signed by an organiser key |
+| `total` | `total` isn't the sum of the weights |
+| `subject` | A vote names a subject that wasn't minted |
+| `vote-sig` | A vote isn't signed by one of its subject's minted keys |
+| `double` | A subject votes a second time |
+| `options` | An allocation names an option that doesn't exist |
+| `cost` | An allocation costs less than 1 or more than the subject's weight |
+| `close` | An entry comes after the close |
+
+Results count only votes that pass every rule. A failed vote still uses up its subject's one vote.
+
+## Drafts
 
 ```json
-{ "voter": 3, "alloc": { "0": 2, "2": 1 } }
+{ "id": "neighborhood-fund", "title": "…", "desc": "", "options": ["…"], "quadratic": false,
+  "organiser": "Harbor Commons board", "subjects": [{ "id": "alice", "keys": [], "weight": 4 }] }
 ```
 
-- `voter`: a voter's position (0 is you), below the poll's `eligible`. Each voter votes at most once per poll.
-- `alloc`: votes per option, keyed by the option's position as text. The cost (votes, or votes² when
-  `quadratic`) can't exceed the voter's tokens (`base` plus their matching `rules`).
+Unsigned and editable. Only `id` and `title` are required; subjects may be incomplete while being edited. Minting checks
+the draft, generates any missing keys (demo), signs the mint and moves it from `drafts` into `polls`.
 
-Only who voted and how is stored. Each ballot's leaf (salt, commitment, vote token, signature) and the Merkle root are
-derived from it when the file is read, so the ledger always matches the file.
+## Private keys
 
-## How the app writes the file
-
-Download (or the browser's saved copy) writes every poll key above in the order listed, with short lists and each
-ballot on one line. `parse(serialize(doc))` gives back the same document.
+Never in `tally.json`. In the demo, keys generated in the browser are kept in its storage (`tally:keys:v1`). In real
+use, subjects sign with their own wallets; the app's "Sign it for real" window shows the exact bytes to sign.
 
 ## Complete example
 
-`examples/harbor-commons/tally.json` uses everything: attributes, weight rules, quadratic and anonymous polls,
-drafts, and a closed poll open to 1,300 keys.
+`examples/harbor-commons/tally.json`: five polls (quadratic and plain, one closed) for ten subjects, and one draft.
+Regenerate it with `make example` (fresh keys each time; the private keys are discarded).
