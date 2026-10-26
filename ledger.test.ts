@@ -205,3 +205,26 @@ test("old closes without a root still verify", () => {
   expect(L.verify(chain).ok).toBe(true);
   expect(L.parseFile(L.serializeFile({ polls: [chain], drafts: [] })).polls[0][1]).not.toHaveProperty("root");
 });
+
+test("seals add up", () => {
+  const r1 = L.randomBlind(), r2 = L.randomBlind();
+  expect(L.addSeals([L.seal(3, r1), L.seal(4, r2)])).toBe(L.seal(7, (r1 + r2) % L.L_ORDER));
+  expect(L.seal(0, 0n)).toBe(L.addSeals([]));
+});
+
+test("a seal hides nothing it shouldn't reveal", () => {
+  const r = L.randomBlind();
+  expect(L.seal(3, r)).not.toBe(L.seal(4, r));
+  expect(L.seal(3, r)).not.toBe(L.seal(3, L.randomBlind()));
+});
+
+test("openings round-trip only for the right key", async () => {
+  const k = L.newEncKeypair(), other = L.newEncKeypair();
+  const payload = await L.encrypt(k.pub, "hi");
+  expect(await L.decrypt(k.secret, payload)).toBe("hi");
+  await expect(L.decrypt(other.secret, payload)).rejects.toThrow();
+});
+
+test("C keys are CESR", () => {
+  expect(L.newEncKeypair().pub).toMatch(/^C[A-Za-z0-9_-]{43}$/);
+});

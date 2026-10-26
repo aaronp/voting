@@ -1,11 +1,11 @@
 // The signed vote ledger: a poll is a chain of entries (mint, votes, close) that anyone can verify from the file
 // alone. No DOM here; Tally.dc.html loads this module as window.TallyLedger and the tests import it directly.
-import { blake3, ed25519 } from './vendor/noble.js';
+import { blake3, ed25519, hkdf, ristretto255, ristretto255_hasher, sha256, x25519 } from './vendor/noble.js';
 
 // ---- CESR ----
-// Codes from the CESR master code table (ToIP CESR spec): D = Ed25519 verification key, E = Blake3-256 digest
-// (both 1-char codes over 32 bytes, 44 chars), 0B = Ed25519 signature (2-char code over 64 bytes, 88 chars).
-const SIZES = { D: 32, E: 32, '0B': 64 };
+// Codes from the CESR master code table (ToIP CESR spec): C = X25519 public encryption key, D = Ed25519 verification
+// key, E = Blake3-256 digest (1-char codes over 32 bytes, 44 chars), 0B = Ed25519 signature (2-char code over 64 bytes, 88 chars).
+const SIZES = { C: 32, D: 32, E: 32, '0B': 64 };
 const b64u = bytes => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64u = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
 
@@ -53,6 +53,38 @@ export function verifySig(entry, pub, sig) {
     const k = cesrDecode(pub), s = cesrDecode(sig);
     return k.code === 'D' && s.code === '0B' && ed25519.verify(s.raw, utf8(canonical(entry)), k.raw);
   } catch (e) { return false; }
+}
+
+// ---- Seals (Pedersen commitments) and encrypted openings ----
+// A seal is G·v + H·r on ristretto255, hex-encoded; seals add up, so the sum of the counted seals must equal the seal of
+// the published total. G and H are the generators confidential-ledger uses.
+export const L_ORDER = 2n ** 252n + 27742317777372353535851937790883648493n;
+const G = ristretto255.Point.BASE, H = ristretto255_hasher.hashToCurve(utf8('conf-ledger:H:v1')), ZERO = ristretto255.Point.ZERO;
+const mod = n => ((n % L_ORDER) + L_ORDER) % L_ORDER;
+const toHex = bytes => Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+const fromHex = h => Uint8Array.from(h.match(/../g) || [], x => parseInt(x, 16));
+const times = (P, n) => (n === 0n ? ZERO : P.multiply(n));
+export const seal = (v, r) => toHex(times(G, mod(BigInt(v))).add(times(H, mod(BigInt(r)))).toBytes());
+export const addSeals = hexes => toHex(hexes.reduce((sum, h) => sum.add(ristretto255.Point.fromBytes(fromHex(h))), ZERO).toBytes());
+// 64 random bytes reduced mod the group order, so the blind is uniform.
+export const randomBlind = () => mod(BigInt('0x' + toHex(crypto.getRandomValues(new Uint8Array(64)))));
+
+export function newEncKeypair() {
+  const { secretKey, publicKey } = x25519.keygen();
+  return { pub: cesrEncode('C', publicKey), secret: b64u(secretKey) };
+}
+// ECIES: X25519 with a fresh ephemeral key, HKDF-SHA256, AES-GCM. Payload = base64url(ephemeral pub ‖ nonce ‖ ciphertext).
+const aesKey = async (shared, use) => crypto.subtle.importKey('raw', hkdf(sha256, shared, utf8('tally/1'), utf8('opening'), 32), 'AES-GCM', false, [use]);
+export async function encrypt(pub, text) {
+  const eph = x25519.keygen(), nonce = crypto.getRandomValues(new Uint8Array(12));
+  const key = await aesKey(x25519.getSharedSecret(eph.secretKey, cesrDecode(pub).raw), 'encrypt');
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce }, key, utf8(text)));
+  const out = new Uint8Array(32 + 12 + ct.length); out.set(eph.publicKey, 0); out.set(nonce, 32); out.set(ct, 44);
+  return b64u(out);
+}
+export async function decrypt(secret, payload) {
+  const bytes = unb64u(payload), key = await aesKey(x25519.getSharedSecret(unb64u(secret), bytes.slice(0, 32)), 'decrypt');
+  return new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes.slice(32, 44) }, key, bytes.slice(44)));
 }
 
 // ---- Merkle tree ----
