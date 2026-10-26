@@ -158,7 +158,7 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--muted)">{{ pv.ruleNote }}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{ pv.spent }} / {{ pv.budget }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--muted)">{{ pv.ruleNote }}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{ pv.spentText }}</span></div>
         <div style="height:6px;border-radius:3px;background:var(--well)"><div style="height:6px;border-radius:3px;background:var(--accent);width:{{ pv.budgetW }}"></div></div>
       </div>
       <sc-for list="{{ pv.options }}" as="o" hint-placeholder-count="2">
@@ -258,7 +258,7 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
       <button onClick="{{ ed.toggleQuad }}" aria-label="Quadratic voting" style="display:flex;align-items:center;gap:10px;background:none;border:none;padding:0;cursor:pointer;color:var(--ink);font-size:14px">
         <span style="width:38px;height:22px;border-radius:11px;padding:2px;display:flex;justify-content:{{ ed.quadJ }};background:{{ ed.quadBg }}"><span style="width:18px;height:18px;border-radius:9px;background:var(--surface)"></span></span>
-        Quadratic voting (n votes on one option cost n²)
+        Quadratic voting: each subject's weight is a budget of tokens, and n votes on one option cost n² of them
       </button>
       <label style="display:flex;align-items:center;gap:8px;font-size:14px;margin-left:auto"><span style="color:var(--muted)">Organiser</span>
         <input value="{{ ed.organiser }}" onChange="{{ ed.onOrganiser }}" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;width:160px"></label>
@@ -658,11 +658,15 @@ class Component extends DCLogic {
       noKeys: !held, noKeysText: "This browser holds none of this poll's keys.",
       doneText: v.status === 'closed' ? 'This poll is closed.' : held && !offered.length ? 'Every subject you hold keys for has voted.' : '',
       spent, budget, budgetW: budget ? Math.min(100, spent / budget * 100) + '%' : '0%',
-      ruleNote: m.quadratic ? 'Quadratic: n votes on one option cost n² tokens.' : 'Each vote costs one token of weight.',
+      spentText: spent + ' / ' + budget + ' token' + (budget === 1 ? '' : 's'),
+      ruleNote: !who ? (m.quadratic ? 'Quadratic: n votes on one option cost n² tokens.' : 'Each vote costs one token.')
+        : m.quadratic ? `Quadratic: ${who.id}'s weight of ${who.weight} is a budget of ${who.weight} token${who.weight === 1 ? '' : 's'}. n votes on one option cost n² tokens (1, 4, 9…), so spreading votes goes further than stacking them.`
+        : `Each vote costs one token, so ${who.id}'s weight of ${who.weight} is ${who.weight} vote${who.weight === 1 ? '' : 's'}.`,
       options: m.options.map((label, i) => {
         const k = alloc[i] || 0, next = m.quadratic ? (k + 1) ** 2 - k * k : 1, canUp = !!who && spent + next <= budget, c = m.quadratic ? k * k : k;
         return { label, k, next, canUp, countColor: k ? C.accent : 'var(--faint-2)', upOpacity: canUp ? 1 : .4, downOpacity: k ? 1 : .35,
-          costText: k ? `${k} vote${k > 1 ? 's' : ''} · ${c} token${c > 1 ? 's' : ''}` : canUp ? `+1 costs ${next}` : who ? 'Not enough weight' : '',
+          costText: !who ? '' : (k ? `${k} vote${k > 1 ? 's' : ''} · ${c} token${c > 1 ? 's' : ''}` + (canUp && !m.quadratic ? '' : ' · ') : '')
+            + (canUp ? (k ? (m.quadratic ? `next costs ${next}` : '') : `+1 costs ${next}`) : `next costs ${next}, ${budget - spent} left`),
           onUp: () => canUp && setK(i, k + 1), onDown: () => k > 0 && setK(i, k - 1) };
       }),
       canCast: !!who && spent > 0, castDisabled: !(who && spent > 0), castOpacity: who && spent > 0 ? 1 : .4, cast: () => who && this.castAs(id, who.id, alloc),

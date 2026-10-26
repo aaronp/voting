@@ -287,3 +287,14 @@ test("a row's generate button adds a key the mint keeps", () => {
   app.mintDraft(id);
   expect(app.state.doc.polls[0][0].subjects[0].keys).toEqual([key]);
 });
+
+test("quadratic costs are spelled out, including why + is disabled", () => {
+  const org = L.newKeypair(), c = L.newKeypair();
+  const mint = L.makeMint({ title: "Q", desc: "", options: ["A", "B", "C"], quadratic: true, organiser: { id: "o", keys: [org.pub] }, subjects: [{ id: "carol", keys: [c.pub], weight: 3 }], dt: "t" }, org.secret);
+  const { app } = pollApp({ doc: { polls: [[mint]], drafts: [] }, pollId: mint.d }, c);
+  app.setState({ voteAs: "carol", allocs: { [mint.d]: { 1: 1, 2: 1 } } });
+  const pv = app.renderVals().pv;
+  expect(pv.options.map((o: any) => o.costText)).toEqual(["+1 costs 1", "1 vote · 1 token · next costs 3, 1 left", "1 vote · 1 token · next costs 3, 1 left"]);
+  expect(pv.spentText).toBe("2 / 3 tokens");
+  expect(pv.ruleNote).toBe("Quadratic: carol's weight of 3 is a budget of 3 tokens. n votes on one option cost n² tokens (1, 4, 9…), so spreading votes goes further than stacking them.");
+});
