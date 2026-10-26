@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script type="module">import * as L from "./ledger.js"; window.TallyLedger = L;</script>
-<script src="./support.js"></script>
+<style>x-dc{display:none}</style>
+<script type="module">
+// The dc runtime boots as soon as it loads, so it is loaded only once the ledger is ready.
+import * as L from "./ledger.js";
+window.TallyLedger = L;
+document.head.appendChild(Object.assign(document.createElement("script"), { src: "./support.js" }));
+</script>
 </head>
 <body>
 <x-dc>
@@ -261,13 +266,14 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
   </div>
   <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
     <div><div style="font-weight:700;font-size:16px">Mint subjects</div>
-      <div style="font-size:13.5px;color:var(--muted);margin-top:4px">Each subject (an AID in real use, a name in this demo) gets a fixed weight. Leave keys blank to generate demo keys in this browser, or paste the subject's Ed25519 public keys (D…). Once minted, subjects and weights can't change.</div></div>
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1.6fr) 36px;gap:8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)"><span>Subject</span><span>Weight</span><span>Public keys</span><span></span></div>
+      <div style="font-size:13.5px;color:var(--muted);margin-top:4px">Each subject (an AID in real use, a name in this demo) gets a fixed weight. Paste the subject's Ed25519 public keys (D…), or generate a demo key in this browser with the key button. Rows still without a key get one when you mint. Once minted, subjects and weights can't change.</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1.6fr) 36px 36px;gap:8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)"><span>Subject</span><span>Weight</span><span>Public keys</span><span></span><span></span></div>
     <sc-for list="{{ ed.rows }}" as="r" hint-placeholder-count="3">
-      <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1.6fr) 36px;gap:8px;align-items:center">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1.6fr) 36px 36px;gap:8px;align-items:center">
         <input value="{{ r.id }}" onChange="{{ r.onId }}" placeholder="alice" aria-label="Subject" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0">
         <input type="number" min="1" step="1" value="{{ r.weight }}" onChange="{{ r.onWeight }}" aria-label="Weight" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;font-variant-numeric:tabular-nums">
-        <input value="{{ r.keys }}" onChange="{{ r.onKeys }}" placeholder="generate in this browser" aria-label="Public keys" spellCheck="false" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;font-family:'JetBrains Mono',monospace;font-size:12px">
+        <input value="{{ r.keys }}" onChange="{{ r.onKeys }}" placeholder="paste a D… key, or generate →" aria-label="Public keys" spellCheck="false" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;font-family:'JetBrains Mono',monospace;font-size:12px">
+        <button aria-label="Generate a demo key in this browser" title="Generate a demo key in this browser" onClick="{{ r.onGenerate }}" style="width:36px;height:36px;flex-shrink:0;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--accent-hover);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"></path></svg></button>
         <button aria-label="Remove subject" onClick="{{ r.onRemove }}" style="width:36px;height:36px;flex-shrink:0;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--muted);cursor:pointer;font-size:16px">×</button>
       </div>
     </sc-for>
@@ -717,6 +723,7 @@ class Component extends DCLogic {
         return { id: r.id, weight: String(r.weight), keys: r.keys.join(', '),
           onId: e => set({ id: val(e) }), onWeight: e => set({ weight: Math.max(0, parseInt(val(e), 10) || 0) }),
           onKeys: e => set({ keys: val(e).split(/[\s,]+/).filter(Boolean) }),
+          onGenerate: () => { const k = this.L.newKeypair(); this.remember(k.pub, k.secret); set({ keys: [...r.keys, k.pub] }); },
           onRemove: () => up(x => ({ ...x, subjects: x.subjects.filter((_, k) => k !== i) })) };
       }),
       addRow: () => up(x => ({ ...x, subjects: [...x.subjects, { id: '', keys: [], weight: 1 }] })),

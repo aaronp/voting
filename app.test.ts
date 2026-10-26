@@ -268,3 +268,22 @@ test("final review: editing a draft doesn't re-verify unchanged polls", () => {
   app.setDraft("d1", (x: any) => ({ ...x, title: "typing" }));
   expect(calls).toBe(before);
 });
+
+test("the runtime only starts after the ledger module has loaded", () => {
+  const head = html.split("<x-dc>")[0];
+  expect(head).not.toContain('<script src="./support.js">');
+  const mod = head.split('<script type="module">')[1].split("</script>")[0];
+  expect(mod.indexOf("window.TallyLedger = L")).toBeLessThan(mod.indexOf("support.js"));
+  expect(head).toContain("x-dc{display:none}");
+});
+
+test("a row's generate button adds a key the mint keeps", () => {
+  const { app, id, store } = withDraft();
+  fill(app, id, READY);
+  app.renderVals().ed.rows[0].onGenerate();
+  const key = app.state.doc.drafts[0].subjects[0].keys[0];
+  expect(key).toMatch(/^D/);
+  expect(JSON.parse(store["tally:keys:v1"])[key]).toBeTruthy();
+  app.mintDraft(id);
+  expect(app.state.doc.polls[0][0].subjects[0].keys).toEqual([key]);
+});
