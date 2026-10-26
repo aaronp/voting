@@ -155,24 +155,25 @@ const chainOf = (app: any) => app.state.doc.polls[0];
 
 test("a subject can vote once", () => {
   const f = fixture(), { app } = pollApp(f, f.keys.alice, f.keys.bob);
-  expect(app.renderVals().pv.voters.map((v: any) => v.id)).toEqual(["alice", "bob"]);
-  app.setState({ voteAs: "alice", allocs: { [f.pollId]: { 0: 3 } } });
+  expect(app.renderVals().pv.chooser.map((v: any) => v.id)).toEqual(["alice", "bob"]);
+  app.setAs(f.pollId, "alice"); app.setState({ allocs: { [f.pollId]: { 0: 3 } } });
   app.renderVals().pv.cast();
   expect(chainOf(app)).toHaveLength(2);
   expect(L.verify(chainOf(app))).toMatchObject({ ok: true, totals: [3, 0] });
   app.castAs(f.pollId, "alice", { 0: 1 }); app.castAs(f.pollId, "alice", { 0: 1 });
   expect(chainOf(app)).toHaveLength(2);
-  expect(app.renderVals().pv.voters.map((v: any) => v.id)).toEqual(["bob"]);
+  expect(app.renderVals().pv.canCast).toBe(false);
+  expect(app.renderVals().pv.doneText).toBe("alice has voted.");
 });
 
 test("allocations are limited by weight", () => {
   const f = fixture(), { app } = pollApp(f, f.keys.alice);
-  app.setState({ voteAs: "alice", allocs: { [f.pollId]: { 0: 4 } } });
+  app.setAs(f.pollId, "alice"); app.setState({ allocs: { [f.pollId]: { 0: 4 } } });
   expect(app.renderVals().pv.options[0].canUp).toBe(false);
   const org = L.newKeypair(), a = L.newKeypair();
   const mint = L.makeMint({ title: "Q", desc: "", options: ["A", "B"], quadratic: true, organiser: { id: "o", keys: [org.pub] }, subjects: [{ id: "alice", keys: [a.pub], weight: 9 }], dt: "t" }, org.secret);
   const q = pollApp({ doc: { polls: [[mint]], drafts: [] }, pollId: mint.d }, a).app;
-  q.setState({ voteAs: "alice", allocs: { [mint.d]: { 0: 1 } } });
+  q.setAs(mint.d, "alice"); q.setState({ allocs: { [mint.d]: { 0: 1 } } });
   expect(q.renderVals().pv.options[0].next).toBe(3);
   q.setState({ allocs: { [mint.d]: { 0: 3 } } });
   expect(q.renderVals().pv.options[1].canUp).toBe(false);
@@ -180,7 +181,7 @@ test("allocations are limited by weight", () => {
 
 test("without keys the vote tab is read-only", () => {
   const pv = pollApp(fixture()).app.renderVals().pv;
-  expect(pv.voters).toEqual([]);
+  expect(pv.chooser).toEqual([]);
   expect(pv.noKeys).toBe(true); expect(pv.noKeysText).toBe("This browser holds none of this poll's keys.");
   expect(pv.canCast).toBe(false);
 });
@@ -201,7 +202,7 @@ test("the organiser can close", () => {
   app.renderVals().pv.close();
   expect(L.verify(chainOf(app))).toMatchObject({ ok: true, status: "closed" });
   const pv = app.renderVals().pv;
-  expect(pv.status).toBe("Closed"); expect(pv.canClose).toBe(false); expect(pv.canCast).toBe(false); expect(pv.voters).toEqual([]);
+  expect(pv.status).toBe("Closed"); expect(pv.canClose).toBe(false); expect(pv.canCast).toBe(false);
 });
 
 const short = (s: string) => s.slice(0, 8) + "…" + s.slice(-4);
@@ -236,7 +237,7 @@ test("rows mirror the chain", () => {
 
 test("the modal shows the exact bytes", () => {
   const f = fixture(), { app } = pollApp(f, f.keys.alice);
-  app.setState({ voteAs: "alice", allocs: { [f.pollId]: { 0: 3 } } });
+  app.setAs(f.pollId, "alice"); app.setState({ allocs: { [f.pollId]: { 0: 3 } } });
   app.renderVals().pv.showReal();
   const r = app.state.realOpen, entry = JSON.parse(r.bytes);
   expect(entry).toMatchObject({ v: "tally/1", t: "vote", p: f.pollId, subject: "alice", alloc: { 0: 3 }, key: f.keys.alice.pub });
@@ -292,9 +293,58 @@ test("quadratic costs are spelled out, including why + is disabled", () => {
   const org = L.newKeypair(), c = L.newKeypair();
   const mint = L.makeMint({ title: "Q", desc: "", options: ["A", "B", "C"], quadratic: true, organiser: { id: "o", keys: [org.pub] }, subjects: [{ id: "carol", keys: [c.pub], weight: 3 }], dt: "t" }, org.secret);
   const { app } = pollApp({ doc: { polls: [[mint]], drafts: [] }, pollId: mint.d }, c);
-  app.setState({ voteAs: "carol", allocs: { [mint.d]: { 1: 1, 2: 1 } } });
+  app.setAs(mint.d, "carol"); app.setState({ allocs: { [mint.d]: { 1: 1, 2: 1 } } });
   const pv = app.renderVals().pv;
   expect(pv.options.map((o: any) => o.costText)).toEqual(["+1 costs 1", "1 vote · 1 token · next costs 3, 1 left", "1 vote · 1 token · next costs 3, 1 left"]);
   expect(pv.spentText).toBe("2 / 3 tokens");
   expect(pv.ruleNote).toBe("Quadratic: carol's weight of 3 is a budget of 3 tokens. n votes on one option cost n² tokens (1, 4, 9…), so spreading votes goes further than stacking them.");
+});
+
+test("generate N adds accounts with held keys", () => {
+  const { app, store } = mount();
+  app.generateAccounts(3);
+  expect(app.accounts().map((a: any) => a.name)).toEqual(["voter-001", "voter-002", "voter-003"]);
+  const ring = JSON.parse(store["tally:keys:v1"]);
+  for (const a of app.accounts()) expect(ring[a.pub]).toBeTruthy();
+  app.generateAccounts(2);
+  expect(app.accounts().map((a: any) => a.name).slice(3)).toEqual(["voter-004", "voter-005"]);
+  app.addAccount("alice"); expect(app.accounts().at(-1).name).toBe("alice");
+  app.removeAccount(app.accounts()[0].pub); expect(app.accounts()).toHaveLength(5);
+});
+
+test("drafts can take subjects from accounts", () => {
+  const { app, id } = withDraft();
+  app.generateAccounts(2);
+  app.renderVals().ed.fromAccounts();
+  const subs = app.state.doc.drafts[0].subjects;
+  expect(subs.slice(-2).map((x: any) => [x.id, x.keys, x.weight])).toEqual(app.accounts().map((a: any) => [a.name, [a.pub], 1]));
+  app.renderVals().ed.fromAccounts();
+  expect(app.state.doc.drafts[0].subjects).toHaveLength(subs.length);
+});
+
+test("choosing an account sets who you are", () => {
+  const f = fixture(), { app } = pollApp(f, f.keys.alice, f.keys.bob);
+  let rv = app.renderVals();
+  expect(rv.pv.showChooser).toBe(true);
+  expect(rv.pv.chooser.map((c: any) => c.id)).toEqual(["alice", "bob"]);
+  rv.pv.chooser[0].pick();
+  rv = app.renderVals();
+  expect(app.currentAs(f.pollId)).toBe("alice");
+  expect(rv.pv.showChooser).toBe(false); expect(rv.pv.voteAsText).toBe("Voting as alice");
+  expect(rv.asText).toBe("as alice");
+  rv.switchAs(); expect(app.currentAs(f.pollId)).toBeNull(); expect(app.renderVals().pv.showChooser).toBe(true);
+  app.renderVals().pv.browse(); expect(app.renderVals().pv.showChooser).toBe(false); expect(app.currentAs(f.pollId)).toBeNull();
+});
+
+test("browsing without an account is read-only", () => {
+  const f = fixture(), pv = pollApp(f).app.renderVals().pv;
+  expect(pv.showChooser).toBe(false); expect(pv.noKeys).toBe(true);
+  expect(pv.tabs.map((t: any) => t.label)).toContain("Ledger");
+});
+
+test("the accounts page has an address", () => {
+  const { app, g } = mount("?page=accounts");
+  expect(app.state.view).toBe("accounts");
+  app.setState({ view: "dashboard" }); app.setState({ view: "accounts" });
+  expect(g.location.search).toBe("?page=accounts");
 });

@@ -66,9 +66,11 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
           </button>
         </sc-for>
       </div>
-      <span class="tl-link tl-mono" title="Demo private keys kept in this browser (never in tally.json)" style="cursor:default;font-size:12.5px;color:var(--chrome-muted)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"></path></svg>{{ keysHeld }}
-      </span>
+      <sc-if value="{{ asText }}" hint-placeholder-val="{{ false }}">
+        <span class="tl-link tl-mono" style="cursor:default;font-size:12.5px;color:var(--on-chrome)">{{ asText }}</span>
+        <button class="tl-link" onClick="{{ switchAs }}" style="color:var(--chrome-muted)">Switch</button>
+      </sc-if>
+      <button class="tl-link" onClick="{{ goAccounts }}" title="{{ keysHeld }} in this browser (never in tally.json)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"></path></svg> Test accounts</button>
       <button class="tl-link" onClick="{{ goHome }}">All polls</button>
       <button class="tl-link" onClick="{{ showOpen }}" title="Open a tally.json from a file or URL"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"></path></svg> Open</button>
       <button class="tl-link" onClick="{{ download }}" title="Download the polls as tally.json"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg> Download</button>
@@ -141,6 +143,16 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
     <sc-if value="{{ pv.isLive }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.showRealClose }}" style="background:none;border:none;padding:0;font-size:13.5px;font-weight:600;color:var(--accent-hover);cursor:pointer;margin-top:8px">Sign the close for real…</button></sc-if>
     <sc-if value="{{ pv.canClose }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.close }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">Close poll</button></sc-if>
   </div>
+  <sc-if value="{{ pv.showChooser }}" hint-placeholder-val="{{ false }}">
+  <div style="background:var(--surface);border:1px solid var(--accent);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px">
+    <div><div style="font-weight:700;font-size:16px">Who are you?</div>
+      <div style="font-size:13.5px;color:var(--muted);margin-top:4px">This browser holds keys for these subjects. Choosing one stands in for signing in; the rest of the poll then acts as that subject.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <sc-for list="{{ pv.chooser }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.pick }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for>
+      <button onClick="{{ pv.browse }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;border-style:dashed;color:var(--muted)">Just browsing</button>
+    </div>
+  </div>
+  </sc-if>
   <div style="display:flex;gap:22px;border-bottom:1px solid var(--line)">
     <sc-for list="{{ pv.tabs }}" as="t" hint-placeholder-count="3"><button onClick="{{ t.onClick }}" style="background:none;border:none;border-bottom:2px solid {{ t.line }};margin-bottom:-1px;padding:10px 0;font-size:15px;font-weight:600;color:{{ t.fg }};cursor:pointer">{{ t.label }}</button></sc-for>
   </div>
@@ -151,11 +163,7 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
     <sc-if value="{{ pv.noKeys }}" hint-placeholder-val="{{ false }}"><div style="color:var(--muted);font-size:14.5px">{{ pv.noKeysText }} Votes can only be signed by a subject's key; open the poll in the browser that minted it, or sign for real.</div></sc-if>
     <sc-if value="{{ pv.doneText }}" hint-placeholder-val="{{ false }}"><div style="color:var(--muted);font-size:14.5px">{{ pv.doneText }}</div></sc-if>
     <sc-if value="{{ pv.hasVoter }}" hint-placeholder-val="{{ false }}">
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Vote as</span>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <sc-for list="{{ pv.voters }}" as="w" hint-placeholder-count="2"><button onClick="{{ w.pick }}" aria-pressed="{{ w.on }}" style="padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:{{ w.bg }};color:{{ w.fg }};font-size:13.5px;font-weight:600;cursor:pointer">{{ w.label }}</button></sc-for>
-        </div>
+      <div style="font-size:14.5px;font-weight:600">{{ pv.voteAsText }}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--muted)">{{ pv.ruleNote }}</span><span style="font-weight:600;font-variant-numeric:tabular-nums">{{ pv.spentText }}</span></div>
@@ -278,10 +286,35 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
       </div>
     </sc-for>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <sc-if value="{{ ed.hasAccounts }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ed.fromAccounts }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">+ Add test accounts</button></sc-if>
       <button onClick="{{ ed.addRow }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">+ Add row</button>
       <span style="margin-left:auto;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ ed.totalText }}</span>
     </div>
     <sc-if value="{{ ed.problem }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--warn-fg);background:var(--warn-bg);padding:8px 10px;border-radius:8px">{{ ed.problem }}</div></sc-if>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ isAccounts }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:20px;max-width:820px">
+  <div>
+    <h1 style="margin:0;font-size:28px;letter-spacing:-0.02em">Test accounts</h1>
+    <p style="margin:8px 0 0;color:var(--muted);font-size:14.5px;line-height:1.5">This page stands in for real sign-in. Each account is a name and an Ed25519 key kept in this browser, never in tally.json. Add them to a draft's mint table, then choose one when you open a poll. In real use, each subject is a single-use AID created for one poll, with its key in the voter's own wallet.</p>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <form onSubmit="{{ av.add }}" style="display:flex;gap:8px;flex:1 1 280px"><input value="{{ av.newName }}" onChange="{{ av.onNewName }}" placeholder="Name, e.g. alice" aria-label="New account name" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;flex:1"><button type="submit" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">Add</button></form>
+      <div style="display:flex;gap:8px;align-items:center"><span style="font-size:14px;color:var(--muted)">Generate</span><input type="number" min="1" max="1000" value="{{ av.genN }}" onChange="{{ av.onGenN }}" aria-label="How many to generate" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;width:80px"><button onClick="{{ av.generate }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">Generate</button></div>
+    </div>
+    <span style="font-size:13.5px;color:var(--faint)">{{ av.count }}</span>
+    <sc-if value="{{ av.none }}" hint-placeholder-val="{{ false }}"><div style="color:var(--muted);font-size:14px">No test accounts yet.</div></sc-if>
+    <sc-for list="{{ av.list }}" as="a" hint-placeholder-count="3">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line-soft)">
+        <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><path d="{{ a.blobA }}" fill="{{ a.c1 }}"></path><path d="{{ a.blobB }}" fill="{{ a.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+        <span style="font-weight:600;flex:1">{{ a.name }}</span>
+        <span title="{{ a.keyFull }}" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">{{ a.key }}</span>
+        <button aria-label="Remove account" onClick="{{ a.remove }}" style="width:32px;height:32px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--muted);cursor:pointer">×</button>
+      </div>
+    </sc-for>
   </div>
 </div>
 </sc-if>
@@ -347,7 +380,7 @@ class Component extends DCLogic {
     { value:'warm', label:'Warm ledger', bg:'#f5f0e6', primary:'#7a2e1c', accent:'#c8642b' }
   ];
   // The document is tally:json:v2 (the old v1 format is not read). Demo private keys live apart from it, in tally:keys:v1.
-  static KEYS = { json: 'tally:json:v2', keys: 'tally:keys:v1', theme: 'tally:theme:v1' };
+  static KEYS = { json: 'tally:json:v2', keys: 'tally:keys:v1', theme: 'tally:theme:v1', accounts: 'tally:accounts:v1', as: 'tally:as:v1' };
   // localStorage can be missing or blocked (private mode); the app still works, it just doesn't remember.
   static store(op, key, value) {
     try { return op === 'get' ? localStorage.getItem(key) : localStorage.setItem(key, value); } catch (err) { return null; }
@@ -382,7 +415,7 @@ class Component extends DCLogic {
   fromQuery(search) {
     const q = new URLSearchParams(search), pick = (k, ok, def) => ok.includes(q.get(k)) ? q.get(k) : def, theme = q.get('theme');
     return {
-      view: q.get('edit') ? 'editor' : q.get('poll') ? 'poll' : 'dashboard', pollId: q.get('poll'), editId: q.get('edit'),
+      view: q.get('edit') ? 'editor' : q.get('poll') ? 'poll' : q.get('page') === 'accounts' ? 'accounts' : 'dashboard', pollId: q.get('poll'), editId: q.get('edit'),
       tab: pick('tab', ['vote', 'ledger', 'results'], 'vote'),
       filter: pick('filter', ['all', 'todo', 'voted', 'drafts', 'closed'], 'all'), q: q.get('q') ?? '', sort: pick('sort', ['new', 'votes'], 'new'),
       ...(this.THEMES.some(t => t.value === theme) ? { theme } : {})
@@ -390,9 +423,10 @@ class Component extends DCLogic {
   }
   toQuery(s, search) {
     const q = new URLSearchParams(search);
-    ['poll', 'tab', 'layout', 'group', 'edit', 'filter', 'q', 'sort', 'theme'].forEach(k => q.delete(k));
+    ['poll', 'tab', 'layout', 'group', 'edit', 'page', 'filter', 'q', 'sort', 'theme'].forEach(k => q.delete(k));
     if (s.view === 'poll') { q.set('poll', s.pollId); if (s.tab !== 'vote') q.set('tab', s.tab); }
     else if (s.view === 'editor') q.set('edit', s.editId);
+    else if (s.view === 'accounts') q.set('page', 'accounts');
     else {
       if (s.filter !== 'all') q.set('filter', s.filter);
       if (s.q !== '') q.set('q', s.q);
@@ -402,7 +436,7 @@ class Component extends DCLogic {
     const out = q.toString().replace(/%2F/gi, '/').replace(/%3A/gi, ':');
     return out === '' ? '' : '?' + out;
   }
-  pageKey(s) { return s.view === 'poll' ? 'poll:' + s.pollId + ':' + s.tab : s.view === 'editor' ? 'edit:' + s.editId : 'dashboard'; }
+  pageKey(s) { return s.view === 'poll' ? 'poll:' + s.pollId + ':' + s.tab : s.view === 'editor' ? 'edit:' + s.editId : s.view; }
 
   init() {
     // ?src= shows that file (not autosaved, so it never overwrites the saved one); otherwise the doc saved in this browser, or none.
@@ -413,7 +447,7 @@ class Component extends DCLogic {
     if (saved !== null) { try { doc = this.L.parseFile(saved); } catch (e) { toast = 'The polls saved in this browser could not be read. ' + e.message; } }
     this.savedDoc = doc;
     const theme = [q.get('theme'), Component.store('get', Component.KEYS.theme)].find(t => this.THEMES.some(x => x.value === t)) || 'paper';
-    const st = { ...this.withDoc(doc), allocs: {}, voteAs: null, realOpen: null, toast, theme,
+    const st = { ...this.withDoc(doc), allocs: {}, realOpen: null, toast, theme, newAccount: '', genN: '10', tick: 0,
       openOpen: false, openUrl: this.src || '', openBusy: false, openError: null, openDragging: false, ...this.fromQuery(location.search) };
     this.pageKeyWas = this.pageKey(st);   // so tidying the address on load replaces it rather than adding history
     return st;
@@ -461,7 +495,7 @@ class Component extends DCLogic {
       const q = new URLSearchParams(location.search); q.delete('src');
       history.replaceState(null, '', location.pathname + (q.toString() === '' ? '' : '?' + q) + location.hash);
     }
-    this.setState({ ...this.withDoc(doc), allocs: {}, voteAs: null, openOpen: false, openError: null, openDragging: false });
+    this.setState({ ...this.withDoc(doc), allocs: {}, openOpen: false, openError: null, openDragging: false });
     if (!fromSrc) this.flash('Opened ' + name);
   }
   submitOpenUrl() {
@@ -539,6 +573,43 @@ class Component extends DCLogic {
       q: s.q, sort: s.sort, onQ: e => this.setState({ q: e.target.value }), onSort: e => this.setState({ sort: e.target.value }), newPoll: () => this.newDraft() };
   }
 
+  // ---- Test accounts: the demo's stand-in for signing in ----
+  accounts() { try { return JSON.parse(Component.store('get', Component.KEYS.accounts)) || []; } catch (e) { return []; } }
+  saveAccounts(list) { Component.store('set', Component.KEYS.accounts, JSON.stringify(list)); this.setState(st => ({ tick: st.tick + 1 })); }
+  addAccount(name) {
+    const n = String(name).trim(); if (!n || this.accounts().some(a => a.name === n)) return;
+    const k = this.L.newKeypair(); this.remember(k.pub, k.secret);
+    this.saveAccounts([...this.accounts(), { name: n, pub: k.pub }]);
+  }
+  // voter-001, voter-002, … continuing after the highest number already used.
+  generateAccounts(n) {
+    const list = this.accounts(), next = Math.max(0, ...list.map(a => (/^voter-(\d+)$/.exec(a.name) || [0, 0])[1] * 1)) + 1;
+    const made = Array.from({ length: Math.max(0, Math.min(1000, n | 0)) }, (_, i) => {
+      const k = this.L.newKeypair(); this.remember(k.pub, k.secret); return { name: 'voter-' + String(next + i).padStart(3, '0'), pub: k.pub };
+    });
+    this.saveAccounts([...list, ...made]);
+  }
+  removeAccount(pub) { this.saveAccounts(this.accounts().filter(a => a.pub !== pub)); }
+  // Who you are in each poll: a subject id, '' for "just browsing", or absent (not chosen yet).
+  asMap() { try { return JSON.parse(Component.store('get', Component.KEYS.as)) || {}; } catch (e) { return {}; } }
+  currentAs(pollId) { const a = this.asMap()[pollId]; return a && this.mine(pollId).some(x => x.id === a) ? a : null; }
+  needsChooser(pollId) { const a = this.asMap()[pollId]; return this.mine(pollId).length > 0 && a !== '' && !this.currentAs(pollId); }
+  setAs(pollId, subject) {
+    const m = this.asMap(); if (subject === null) delete m[pollId]; else m[pollId] = subject;
+    Component.store('set', Component.KEYS.as, JSON.stringify(m));
+    this.setState(st => ({ tick: st.tick + 1, allocs: { ...st.allocs, [pollId]: {} } }));
+  }
+  accountsVals() {
+    const s = this.state, list = this.accounts();
+    return {
+      list: list.map(a => ({ name: a.name, key: this.short(a.pub), keyFull: a.pub, ...this.avatar(a.pub), remove: () => this.removeAccount(a.pub) })),
+      count: list.length + ' test account' + (list.length === 1 ? '' : 's'), none: !list.length,
+      newName: s.newAccount, onNewName: e => this.setState({ newAccount: e.target.value }),
+      add: e => { if (e && e.preventDefault) e.preventDefault(); this.addAccount(s.newAccount); this.setState({ newAccount: '' }); },
+      genN: s.genN, onGenN: e => this.setState({ genN: e.target.value }), generate: () => this.generateAccounts(parseInt(s.genN, 10) || 0)
+    };
+  }
+
   // ---- Voting and closing ----
   // Subjects this browser can still vote as in a live poll.
   canVoteAs(pollId) { const p = this.poll(pollId); return p && p.mint && p.verdict.status === 'live' ? this.mine(pollId).filter(x => !(x.id in p.verdict.voted)) : []; }
@@ -548,7 +619,7 @@ class Component extends DCLogic {
     if (!s || spent < 1 || spent > s.weight) return false;
     const keys = this.keyring(), key = s.keys.find(k => k in keys);
     this.append(pollId, this.L.makeVote(p.chain, { subject, alloc: clean, key, dt: new Date().toISOString() }, keys[key]));
-    this.setState(st => ({ allocs: { ...st.allocs, [pollId]: {} }, voteAs: null }));
+    this.setState(st => ({ allocs: { ...st.allocs, [pollId]: {} } }));
     this.flash('Signed as ' + subject + ' and added to the ledger.');
     return true;
   }
@@ -575,7 +646,7 @@ class Component extends DCLogic {
       const p = this.poll(s.pollId), m = p.mint;
       if (kind === 'close') { principal = m.organiser.id; entry = { v: 'tally/1', t: 'close', d: '', p: p.chain[p.chain.length - 1].d, dt }; }
       else {
-        const offered = this.canVoteAs(s.pollId), who = offered.find(x => x.id === s.voteAs) || offered[0] || m.subjects.find(x => !(x.id in p.verdict.voted)) || m.subjects[0];
+        const offered = this.canVoteAs(s.pollId), who = offered.find(x => x.id === this.currentAs(s.pollId)) || m.subjects.find(x => !(x.id in p.verdict.voted)) || m.subjects[0];
         const a = Object.fromEntries(Object.entries(s.allocs[s.pollId] || {}).filter(([, k]) => k > 0));
         principal = who.id;
         entry = { v: 'tally/1', t: 'vote', d: '', p: p.chain[p.chain.length - 1].d, subject: who.id, alloc: Object.keys(a).length ? a : { 0: 1 }, dt, key: who.keys[0] };
@@ -642,7 +713,7 @@ class Component extends DCLogic {
     if (!m) return { title: '(not a poll)', desc: 'This chain does not start with a mint.', tabs: [], isLedger: true, lv: this.ledgerVals(id) };
     const [status, stBg, stFg] = this.statusOf(v.status);
     const tabs = [['vote', 'Vote'], ['ledger', 'Ledger'], ['results', 'Results']].map(([k, l]) => ({ label: l, fg: s.tab === k ? C.ink : C.muted, line: s.tab === k ? C.ink : 'transparent', onClick: () => this.setState({ tab: k }) }));
-    const offered = this.canVoteAs(id), who = offered.find(x => x.id === s.voteAs) || offered[0], held = this.mine(id).length > 0;
+    const as = this.currentAs(id), who = this.canVoteAs(id).find(x => x.id === as), held = this.mine(id).length > 0;
     const alloc = s.allocs[id] || {}, spent = this.L.cost(alloc, m.quadratic), budget = who ? who.weight : 0;
     const setK = (i, k) => this.setState(st => ({ allocs: { ...st.allocs, [id]: { ...(st.allocs[id] || {}), [i]: k } } }));
     const max = Math.max(1, ...v.totals);
@@ -651,12 +722,11 @@ class Component extends DCLogic {
       meta: `${Object.keys(v.voted).length} of ${m.subjects.length} subjects voted · minted by ${m.organiser.id}`,
       tabs, isVote: s.tab === 'vote', isLedger: s.tab === 'ledger', isResults: s.tab === 'results',
       canClose: v.status === 'live' && !!this.organiserSecret(id), close: () => this.closePoll(id),
-      voters: offered.map(x => ({ id: x.id, label: x.id + ' · weight ' + x.weight, on: who && x.id === who.id,
-        bg: who && x.id === who.id ? 'var(--ink)' : 'var(--surface)', fg: who && x.id === who.id ? 'var(--on-ink)' : C.ink,
-        pick: () => this.setState(st => ({ voteAs: x.id, allocs: { ...st.allocs, [id]: {} } })) })),
+      chooser: this.mine(id).map(x => ({ id: x.id, label: x.id + ' · weight ' + x.weight + (x.id in v.voted ? ' · voted' : ''), pick: () => this.setAs(id, x.id) })),
+      showChooser: this.needsChooser(id), browse: () => this.setAs(id, ''),
       hasVoter: !!who, voteAsText: who ? 'Voting as ' + who.id : '',
       noKeys: !held, noKeysText: "This browser holds none of this poll's keys.",
-      doneText: v.status === 'closed' ? 'This poll is closed.' : held && !offered.length ? 'Every subject you hold keys for has voted.' : '',
+      doneText: v.status === 'closed' ? 'This poll is closed.' : as && !who ? as + ' has voted.' : held && !as ? 'Choose who you are to vote.' : '',
       spent, budget, budgetW: budget ? Math.min(100, spent / budget * 100) + '%' : '0%',
       spentText: spent + ' / ' + budget + ' token' + (budget === 1 ? '' : 's'),
       ruleNote: !who ? (m.quadratic ? 'Quadratic: n votes on one option cost n² tokens.' : 'Each vote costs one token.')
@@ -731,6 +801,9 @@ class Component extends DCLogic {
           onRemove: () => up(x => ({ ...x, subjects: x.subjects.filter((_, k) => k !== i) })) };
       }),
       addRow: () => up(x => ({ ...x, subjects: [...x.subjects, { id: '', keys: [], weight: 1 }] })),
+      hasAccounts: this.accounts().length > 0,
+      fromAccounts: () => up(x => ({ ...x, subjects: [...x.subjects.filter(r => r.id.trim() || r.keys.length),
+        ...this.accounts().filter(a => !x.subjects.some(r => r.id === a.name || r.keys.includes(a.pub))).map(a => ({ id: a.name, keys: [a.pub], weight: 1 }))] })),
       totalText: total + ' weight across ' + d.subjects.length + ' subject' + (d.subjects.length === 1 ? '' : 's'),
       problem: this.mintProblem(d) || '', ready: !this.mintProblem(d), mintOpacity: this.mintProblem(d) ? .5 : 1,
       mint: () => this.mintDraft(d.id), showReal: () => this.openReal('mint'),
@@ -744,7 +817,9 @@ class Component extends DCLogic {
     const view = s.view === 'poll' && !this.poll(s.pollId) || s.view === 'editor' && !s.doc.drafts.some(d => d.id === s.editId) ? 'dashboard' : s.view;
     const held = Object.keys(this.keyring()).length;
     return {
-      isDash: view === 'dashboard', isPoll: view === 'poll', isEditor: view === 'editor',
+      isDash: view === 'dashboard', isPoll: view === 'poll', isEditor: view === 'editor', isAccounts: view === 'accounts',
+      goAccounts: () => { this.setState({ view: 'accounts' }); window.scrollTo(0, 0); }, av: view === 'accounts' ? this.accountsVals() : {},
+      asText: view === 'poll' && this.currentAs(s.pollId) ? 'as ' + this.currentAs(s.pollId) : '', switchAs: () => this.setAs(s.pollId, null),
       goHome: () => { this.setState({ view: 'dashboard' }); window.scrollTo(0, 0); },
       keysHeld: held === 1 ? '1 key held' : held + ' keys held', docTitle: 'Polls',
       toast: s.toast, hasToast: !!s.toast,
