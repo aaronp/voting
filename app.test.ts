@@ -405,3 +405,58 @@ test("sealed votes show as sealed in the ledger and the sign-for-real preview", 
   await app.tallyPoll(pollId);
   expect(app.ledgerVals(pollId).entries.at(-1)).toMatchObject({ kind: "tally", allocText: "Yes ×3" });
 });
+
+// A poll with n subjects (weight 1) where the first `votes` of them have voted; optionally closed.
+function bigPoll(n: number, votes: number, close = false) {
+  const org = L.newKeypair(), ks = Array.from({ length: n }, () => L.newKeypair());
+  const chain: any[] = [L.makeMint({ title: "Big", desc: "", options: ["Yes", "No"], quadratic: false, organiser: { id: "Organiser", keys: [org.pub] },
+    subjects: ks.map((k, i) => ({ id: "s" + i, keys: [k.pub], weight: 1 })), dt: "t" }, org.secret)];
+  for (let i = 0; i < votes; i++) chain.push(L.makeVote(chain, { subject: "s" + i, alloc: { [i % 2]: 1 }, key: ks[i].pub, dt: "t" }, ks[i].secret));
+  if (close) chain.push(L.makeClose(chain, "t", org.secret));
+  return { doc: { polls: [chain], drafts: [] }, pollId: chain[0].d, keys: { org, ks }, chain };
+}
+
+test("the tree is built from entry SAIDs", () => {
+  const b = bigPoll(4, 3), { app } = pollApp(b);
+  app.setState({ tab: "tree", groupSize: 2 });
+  const tv = app.renderVals().pv;
+  expect(tv.leafHashes).toEqual(b.chain.map((e: any) => e.d));
+  const levels = L.merkle(b.chain.map((e: any) => e.d), 2);
+  expect(tv.computed).toBe(levels[levels.length - 1][0]);
+});
+
+test("the signed root is only compared at group size 10", () => {
+  const b = bigPoll(4, 3, true), { app } = pollApp(b);
+  app.setState({ tab: "tree", groupSize: 10 });
+  expect(app.renderVals().pv.rootCheck).toMatchObject({ ok: true, signed: b.chain.at(-1).root });
+  app.setState({ groupSize: 2 });
+  expect(app.renderVals().pv.rootCheck).toMatchObject({ ok: null, note: "The signed root uses groups of 10." });
+});
+
+test("big trees start collapsed", () => {
+  const b = bigPoll(29, 29), { app } = pollApp(b);
+  app.setState({ tab: "tree", groupSize: 10 });
+  const pv = app.renderVals().pv;
+  expect(pv.leafHashes).toHaveLength(30);
+  expect(pv.hasCards).toBe(false);
+});
+
+test("layouts and groups have addresses", () => {
+  const { app, g } = mount("?poll=Eabc&tab=tree&layout=radial&group=4");
+  expect(app.state).toMatchObject({ tab: "tree", layout: "radial", groupSize: 4 });
+  expect(g.location.search).toBe("?poll=Eabc&tab=tree&layout=radial&group=4");
+  app.setState({ tab: "ledger" });
+  expect(g.location.search).toBe("?poll=Eabc&tab=ledger");
+});
+
+test("every layout renders for open and sealed polls", async () => {
+  const b = bigPoll(5, 4, true), { app } = pollApp(b);
+  const s = sealedDraft(); const sid = s.app.mintDraft(s.id);
+  s.app.setAs(sid, "alice"); await s.app.castAs(sid, "alice", { 0: 2 }); await s.app.tallyPoll(sid);
+  for (const a of [app, s.app]) for (const layout of ["tree", "fisheye", "carousel", "radial"]) for (const groupSize of [2, 10]) {
+    a.setState({ tab: "tree", layout, groupSize, tamperMode: layout === "radial" });
+    const pv = a.renderVals().pv;
+    expect(pv.layout).toBe(layout);
+    expect(pv.leafHashes.length).toBeGreaterThan(1);
+  }
+});

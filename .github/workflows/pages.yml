@@ -28,7 +28,7 @@ jobs:
         run: |
           mkdir _site
           cp Tally.dc.html _site/index.html
-          cp -R ledger.js vendor support.js examples schema.md _site/
+          cp -R ledger.js vendor support.js BallotCard.dc.html examples schema.md _site/
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:

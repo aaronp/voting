@@ -93,11 +93,12 @@ export async function decrypt(secret, payload) {
 // Leaves (entry SAIDs) roll up k at a time; each node is the blake3 SAID-style hash of its children joined.
 // A short last group hashes what it has, and even a single leaf gets a parent, so there is always a root above the leaves.
 export const ROOT_GROUP = 10;
+export const nodeHash = children => cesrEncode('E', blake3(utf8(children.join(''))));
 export function merkle(leaves, k) {
   const levels = [leaves];
   do {
     const lvl = levels[levels.length - 1], up = [];
-    for (let i = 0; i < lvl.length; i += k) up.push(cesrEncode('E', blake3(utf8(lvl.slice(i, i + k).join('')))));
+    for (let i = 0; i < lvl.length; i += k) up.push(nodeHash(lvl.slice(i, i + k)));
     levels.push(up);
   } while (levels[levels.length - 1].length > 1);
   return levels;

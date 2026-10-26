@@ -208,6 +208,185 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
   </div>
   </sc-if>
 
+  <sc-if value="{{ pv.isTree }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;font-size:14px;font-weight:600;background:{{ pv.okBg }};color:{{ pv.okFg }}"><span style="width:8px;height:8px;border-radius:4px;background:{{ pv.okFg }}"></span>{{ pv.okText }}</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <sc-if value="{{ pv.voted }}"><button onClick="{{ pv.toggleProof }}" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;cursor:pointer;white-space:nowrap;color:var(--ink)"><span style="width:28px;height:16px;border-radius:8px;padding:2px;display:flex;background:{{ pv.proofBg }};justify-content:{{ pv.proofJ }}"><span style="width:12px;height:12px;border-radius:6px;background:var(--surface)"></span></span>My inclusion proof</button></sc-if>
+          <button onClick="{{ pv.toggleTamper }}" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;cursor:pointer;white-space:nowrap;color:var(--ink)"><span style="width:28px;height:16px;border-radius:8px;padding:2px;display:flex;background:{{ pv.tamperBg }};justify-content:{{ pv.tamperJ }}"><span style="width:12px;height:12px;border-radius:6px;background:var(--surface)"></span></span>Tamper mode</button>
+          <sc-if value="{{ pv.hasTamper }}"><button onClick="{{ pv.resetTamper }}" style="padding:7px 12px;border-radius:9px;border:none;background:var(--ink);white-space:nowrap;color:var(--on-ink);font-size:13.5px;font-weight:600;cursor:pointer">Reset edits</button></sc-if>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)">
+        <div style="display:flex;align-items:center;gap:8px;white-space:nowrap">Layout<div style="display:flex;gap:2px;padding:2px;background:var(--well);border-radius:8px"><sc-for list="{{ pv.layouts }}" as="g"><button onClick="{{ g.onClick }}" style="border:none;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.shadow }}">{{ g.label }}</button></sc-for></div></div>
+        <div style="display:flex;align-items:center;gap:8px;white-space:nowrap">Group size<div style="display:flex;gap:2px;padding:2px;background:var(--well);border-radius:8px"><sc-for list="{{ pv.groups }}" as="g"><button onClick="{{ g.onClick }}" style="border:none;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.shadow }}">{{ g.label }}</button></sc-for></div></div>
+        <span style="font-variant-numeric:tabular-nums">{{ pv.shape }}</span>
+        <div style="flex:1"></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-if value="{{ pv.voted }}"><button onClick="{{ pv.goMine }}" style="padding:6px 11px;border:1px solid var(--line);white-space:nowrap;border-radius:8px;background:var(--surface);font-size:13px;cursor:pointer;color:var(--ink)">Go to my ballot</button></sc-if>
+          <sc-if value="{{ pv.hasChanged }}"><button onClick="{{ pv.goTampered }}" style="padding:6px 11px;border:1px solid var(--danger);white-space:nowrap;border-radius:8px;background:var(--surface);font-size:13px;cursor:pointer;color:var(--danger)">Go to tampered</button></sc-if>
+          <sc-if value="{{ pv.canCollapse }}"><button onClick="{{ pv.goRoot }}" style="padding:6px 11px;border:1px solid var(--line);white-space:nowrap;border-radius:8px;background:var(--surface);font-size:13px;cursor:pointer;color:var(--ink)">Collapse all</button></sc-if>
+        </div>
+      </div>
+      <div style="font-size:14px;color:var(--ink-2);line-height:1.5;max-width:760px;text-wrap:pretty">{{ pv.ledgerNote }}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Root of the entries as saved</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;color:var(--ink)">{{ pv.published }}</span>
+        </div>
+        <div style="background:var(--surface);border:1.5px solid {{ pv.rootBorder }};border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Computed from the leaves below</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;color:{{ pv.okFg }}">{{ pv.computed }}</span>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Signed root</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;color:var(--ink)">{{ pv.rootCheck.signed }}</span>
+          <span style="font-size:13px;color:{{ pv.rootCheckColor }}">{{ pv.rootCheck.note }}</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <nav style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ pv.crumbs }}" as="cr" hint-placeholder-count="1">
+            <span style="display:flex;align-items:center;gap:6px">
+              <span style="color:var(--line-strong);font-size:16px">{{ cr.sep }}</span>
+              <button onClick="{{ cr.onClick }}" title="{{ cr.full }}" style="display:flex;align-items:center;gap:7px;padding:3px 11px 3px 4px;border-radius:999px;cursor:pointer;font-size:13px;white-space:nowrap;background:{{ cr.bg }};color:{{ cr.fg }};border:1.5px solid {{ cr.border }}">
+                <svg width="22" height="22" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ cr.blobA }}" fill="{{ cr.c1 }}"></path><path d="{{ cr.blobB }}" fill="{{ cr.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                <span style="font-weight:600;font-variant-numeric:tabular-nums">{{ cr.label }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ cr.hashFg }}">{{ cr.short }}</span>
+              </button>
+            </span>
+          </sc-for>
+        </nav>
+
+        <sc-if value="{{ pv.isGrid }}">
+        <div ref="{{ pv.scrollRef }}" data-tree-box="1" style="overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:24px 16px 20px">
+          <div style="min-width:{{ pv.treeMin }};display:flex;flex-direction:column">
+            <sc-for list="{{ pv.rows }}" as="row" hint-placeholder-count="1">
+              <div style="display:grid;transition:grid-template-columns .45s cubic-bezier(.2,.8,.2,1);grid-template-columns:{{ pv.cols }}">
+                <sc-for list="{{ row.nodes }}" as="n">
+                  <div style="grid-column:{{ n.span }};display:flex;flex-direction:column;align-items:center;min-width:0">
+                    <sc-if value="{{ n.hasStub }}"><div style="width:1.5px;height:12px;background:{{ n.stub }}"></div></sc-if>
+                    <div onClick="{{ n.onZoom }}" data-sel="{{ n.selAttr }}" title="{{ n.tip }}" style="display:flex;align-items:center;gap:8px;max-width:calc(100% - 4px);border-radius:10px;transition:background .2s, border-color .2s, box-shadow .2s, padding .3s;padding:{{ n.pad }};background:{{ n.bg }};border:{{ n.border }};color:{{ n.fg }};cursor:pointer;box-shadow:{{ n.selRing }}">
+                      <svg width="{{ n.bs }}" height="{{ n.bs }}" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ n.blobA }}" fill="{{ n.c1 }}"></path><path d="{{ n.blobB }}" fill="{{ n.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                      <sc-if value="{{ n.showText }}">
+                      <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                        <span style="font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:11.5px;color:{{ n.sub }}">{{ n.lbl }} <span style="color:var(--danger)">{{ n.note }}</span></span>
+                        <sc-if value="{{ n.showRo }}"><span style="font-family:'JetBrains Mono',monospace;white-space:nowrap;font-size:{{ n.fs }}">{{ n.short }}</span></sc-if>
+                        <sc-if value="{{ n.showEdit }}"><input value="{{ n.full }}" onChange="{{ n.onEdit }}" onClick="{{ n.stop }}" spellCheck="false" style="width:120px;font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 5px;border-radius:5px;outline:none;border:1px dashed var(--faint-2);background:var(--surface);color:var(--ink)"></sc-if>
+                      </div>
+                      </sc-if>
+                    </div>
+                    <sc-if value="{{ n.hasKids }}"><div style="width:1.5px;height:12px;background:{{ n.line }}"></div>
+                    <div style="align-self:stretch;height:0;border-top:1.5px solid {{ n.line }};margin-left:{{ n.busL }};margin-right:{{ n.busR }}"></div></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <sc-if value="{{ pv.hasCards }}">
+              <div style="display:grid;transition:grid-template-columns .45s cubic-bezier(.2,.8,.2,1);grid-template-columns:{{ pv.cols }}">
+                <sc-for list="{{ pv.cards2 }}" as="c">
+                  <div onClick="{{ c.onSelect }}" data-sel="{{ c.selAttr }}" style="grid-column:{{ c.col }};padding:0 {{ c.gutter }};display:flex;flex-direction:column;align-items:center;min-width:0">
+                    <div style="width:1.5px;height:12px;background:{{ c.stub }}"></div>
+                    <sc-if value="{{ c.full }}"><dc-import name="BallotCard" c="{{ c }}" hint-size="100%,290px" style="width:100%"></dc-import></sc-if>
+                    <sc-if value="{{ c.mini }}">
+                      <div title="{{ c.tip }}" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:4px;padding:{{ c.mpad }};border-radius:8px;cursor:pointer;background:var(--surface);border:{{ c.border }};box-shadow:{{ c.ring }}">
+                        <svg width="{{ c.ms }}" height="{{ c.ms }}" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ c.blobA }}" fill="{{ c.c1 }}"></path><path d="{{ c.blobB }}" fill="{{ c.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                        <sc-if value="{{ c.showNum }}"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint)">#{{ c.num }}</span></sc-if>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ pv.noBallots }}"><div style="padding:28px;text-align:center;color:var(--faint);font-size:14px">No ballots yet.</div></sc-if>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ pv.isCarousel }}">
+        <div style="border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:18px 0 22px;display:flex;flex-direction:column">
+          <sc-for list="{{ pv.crows }}" as="row" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:10px;padding:0 18px">
+                <span style="font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)">{{ row.title }}</span>
+                <span style="font-size:12.5px;color:var(--faint);font-variant-numeric:tabular-nums">{{ row.sub }}</span>
+                <div style="flex:1"></div>
+                <button onClick="{{ row.prev }}" style="width:28px;height:28px;border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);font-size:14px;opacity:{{ row.prevOp }}">‹</button>
+                <button onClick="{{ row.next }}" style="width:28px;height:28px;border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);font-size:14px;opacity:{{ row.nextOp }}">›</button>
+              </div>
+              <div style="overflow:hidden;padding:8px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)">
+                <div style="position:relative;left:50%;display:flex;align-items:center;gap:14px;width:max-content;transition:transform .5s cubic-bezier(.2,.8,.2,1);transform:{{ row.tx }}">
+                  <sc-for list="{{ row.items }}" as="it">
+                    <div onClick="{{ it.pick }}" style="flex-shrink:0;cursor:pointer;transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .5s;width:{{ it.w }};transform:{{ it.tf }};opacity:{{ it.op }}">
+                      <sc-if value="{{ it.isCard }}"><dc-import name="BallotCard" c="{{ it }}" hint-size="100%,290px" style="width:100%"></dc-import></sc-if>
+                      <sc-if value="{{ it.isNode }}">
+                        <div title="{{ it.full }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px 10px 10px;border-radius:12px;background:{{ it.bg }};border:{{ it.border }};color:{{ it.fg }};box-shadow:{{ it.selRing }}">
+                          <svg width="36" height="36" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ it.blobA }}" fill="{{ it.c1 }}"></path><path d="{{ it.blobB }}" fill="{{ it.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                            <span style="font-weight:600;font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums;color:{{ it.sub }}">{{ it.rangeText }}</span>
+                            <sc-if value="{{ it.ro }}"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">{{ it.short }}</span></sc-if>
+                            <sc-if value="{{ it.editable }}"><input value="{{ it.full }}" onChange="{{ it.onEdit }}" onClick="{{ it.stop }}" spellCheck="false" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:3px 5px;border-radius:5px;outline:none;border:1px dashed var(--faint-2);background:var(--surface);color:var(--ink)"></sc-if>
+                            <span style="font-size:11px;white-space:nowrap;color:{{ it.sub }}">{{ it.countText }} <span style="color:var(--danger);font-weight:600">{{ it.note }}</span></span>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <sc-if value="{{ row.hasLine }}"><div style="align-self:center;width:1.5px;height:22px;background:{{ row.line }}"></div></sc-if>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ pv.isRadial }}">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+          <div style="flex:1 1 460px;max-width:760px;position:relative;aspect-ratio:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">
+              <sc-for list="{{ pv.rings }}" as="rg"><circle cx="50" cy="50" r="{{ rg.r }}" fill="none" stroke="var(--well)" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke"></circle></sc-for>
+              <sc-for list="{{ pv.links }}" as="ln"><line x1="{{ ln.x1 }}" y1="{{ ln.y1 }}" x2="{{ ln.x2 }}" y2="{{ ln.y2 }}" stroke="{{ ln.color }}" strokeWidth="{{ ln.w }}" vectorEffect="non-scaling-stroke"></line></sc-for>
+            </svg>
+            <sc-for list="{{ pv.rnodes }}" as="rn">
+              <button onClick="{{ rn.onClick }}" title="{{ rn.tip }}" style="position:absolute;transform:translate(-50%,-50%);border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:left .45s cubic-bezier(.2,.8,.2,1), top .45s cubic-bezier(.2,.8,.2,1), box-shadow .2s;left:{{ rn.x }};top:{{ rn.y }};width:{{ rn.size }};height:{{ rn.size }};background:{{ rn.bg }};border:{{ rn.border }};box-shadow:{{ rn.selRing }}">
+                <svg width="{{ rn.bs }}" height="{{ rn.bs }}" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ rn.blobA }}" fill="{{ rn.c1 }}"></path><path d="{{ rn.blobB }}" fill="{{ rn.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+              </button>
+            </sc-for>
+            <sc-for list="{{ pv.rlabels }}" as="rl">
+              <span style="position:absolute;transform:translateX(-50%);pointer-events:none;padding:2px 7px;border-radius:6px;background:color-mix(in srgb,var(--surface) 92%,transparent);font-size:11.5px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;color:{{ rl.fg }};left:{{ rl.x }};top:{{ rl.y }}">{{ rl.text }}</span>
+            </sc-for>
+          </div>
+          <div style="flex:1 1 240px;max-width:320px;display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ pv.panelCards }}" as="c"><div style="width:220px"><dc-import name="BallotCard" c="{{ c }}" hint-size="220px,290px" style="width:100%"></dc-import></div></sc-for>
+            <sc-for list="{{ pv.panelNodes }}" as="pn">
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <svg width="56" height="56" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ pn.blobA }}" fill="{{ pn.c1 }}"></path><path d="{{ pn.blobB }}" fill="{{ pn.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)">{{ pn.pTitle }}</span>
+                    <span style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ pn.rangeText }}</span>
+                    <span style="font-size:12.5px;color:var(--muted)">{{ pn.countText }} · {{ pn.kidsText }}</span>
+                  </div>
+                </div>
+                <sc-if value="{{ pn.ro }}"><span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;word-break:break-all;padding:8px 10px;border-radius:8px;background:var(--raised);color:{{ pn.hashColor }}">{{ pn.full }}</span></sc-if>
+                <sc-if value="{{ pn.editable }}"><textarea value="{{ pn.full }}" onChange="{{ pn.onEdit }}" spellCheck="false" rows="3" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:8px 10px;border-radius:8px;outline:none;border:1px dashed var(--faint-2);resize:none;color:var(--ink)"></textarea></sc-if>
+                <sc-if value="{{ pn.hasNote }}"><span style="font-size:12.5px;font-weight:600;color:var(--danger)">{{ pn.noteText }}</span></sc-if>
+                <button onClick="{{ pn.onZoom }}" style="align-self:flex-start;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)">{{ pn.actLabel }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:var(--accent)"></span>Your path to the root</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;border:1.5px dashed var(--accent);background:var(--accent-soft)"></span>Proof sibling</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:var(--danger-soft);border:1.5px solid var(--danger)"></span>Hash changed by tampering</span>
+      </div>
+    </div>
+  </sc-if>
+
   <sc-if value="{{ pv.isLedger }}" hint-placeholder-val="{{ false }}">
   <div style="display:flex;flex-direction:column;gap:16px">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -414,11 +593,13 @@ class Component extends DCLogic {
   componentDidMount() {
     this._onPop = () => this.setState(this.fromQuery(location.search));
     window.addEventListener('popstate', this._onPop);
+    this._onResize = () => { const el = typeof document.querySelector === 'function' && document.querySelector('[data-tree-box]'); if (el) this.measureTree(el); };
+    window.addEventListener('resize', this._onResize);
     if (this.state.toast) this.flash(this.state.toast);
     if (this.src !== null) this.openUrl(this.src, true).catch(err => this.setState({ openOpen: true, openError: "Can't load " + this.src + ': ' + err.message }));
     this.componentDidUpdate();
   }
-  componentWillUnmount() { window.removeEventListener('popstate', this._onPop); }
+  componentWillUnmount() { window.removeEventListener('popstate', this._onPop); window.removeEventListener('resize', this._onResize); }
   componentDidUpdate() {
     const s = this.state;
     document.documentElement.dataset.theme = s.theme;
@@ -437,7 +618,8 @@ class Component extends DCLogic {
     const q = new URLSearchParams(search), pick = (k, ok, def) => ok.includes(q.get(k)) ? q.get(k) : def, theme = q.get('theme');
     return {
       view: q.get('edit') ? 'editor' : q.get('poll') ? 'poll' : q.get('page') === 'accounts' ? 'accounts' : 'dashboard', pollId: q.get('poll'), editId: q.get('edit'),
-      tab: pick('tab', ['vote', 'ledger', 'results'], 'vote'),
+      tab: pick('tab', ['vote', 'tree', 'ledger', 'results'], 'vote'),
+      layout: pick('layout', ['tree', 'fisheye', 'carousel', 'radial'], 'tree'), groupSize: Number(pick('group', ['2', '4', '10', '16'], '10')),
       filter: pick('filter', ['all', 'todo', 'voted', 'drafts', 'closed'], 'all'), q: q.get('q') ?? '', sort: pick('sort', ['new', 'votes'], 'new'),
       ...(this.THEMES.some(t => t.value === theme) ? { theme } : {})
     };
@@ -445,7 +627,12 @@ class Component extends DCLogic {
   toQuery(s, search) {
     const q = new URLSearchParams(search);
     ['poll', 'tab', 'layout', 'group', 'edit', 'page', 'filter', 'q', 'sort', 'theme'].forEach(k => q.delete(k));
-    if (s.view === 'poll') { q.set('poll', s.pollId); if (s.tab !== 'vote') q.set('tab', s.tab); }
+    if (s.view === 'poll') {
+      q.set('poll', s.pollId);
+      if (s.tab !== 'vote') q.set('tab', s.tab);
+      if (s.tab === 'tree' && s.layout !== 'tree') q.set('layout', s.layout);
+      if (s.tab === 'tree' && s.groupSize !== 10) q.set('group', s.groupSize);
+    }
     else if (s.view === 'editor') q.set('edit', s.editId);
     else if (s.view === 'accounts') q.set('page', 'accounts');
     else {
@@ -469,6 +656,7 @@ class Component extends DCLogic {
     this.savedDoc = doc;
     const theme = [q.get('theme'), Component.store('get', Component.KEYS.theme)].find(t => this.THEMES.some(x => x.value === t)) || 'paper';
     const st = { ...this.withDoc(doc), allocs: {}, realOpen: null, toast, theme, newAccount: '', genN: '10', tick: 0,
+      expanded: {}, sel: {}, tamper: {}, ntamper: {}, flipped: {}, tamperMode: false, showProof: true, treeW: 0, highlight: null,
       openOpen: false, openUrl: this.src || '', openBusy: false, openError: null, openDragging: false, ...this.fromQuery(location.search) };
     this.pageKeyWas = this.pageKey(st);   // so tidying the address on load replaces it rather than adding history
     return st;
@@ -744,6 +932,254 @@ class Component extends DCLogic {
       key: e => { if (e.key === 'Escape') this.setState({ realOpen: null }); } };
   }
 
+  // ---- Tree views (restored from the pre-ledger Tally, now over the chain's real entry hashes) ----
+  // A tree over leaf hashes, with optional overwritten nodes ("d:i" → hash) for tamper mode.
+  ktree(leafHashes, k, ov) {
+    ov = ov || {};
+    let lvl = leafHashes.map((h, j) => ov['0:' + j] || h); const levels = [lvl];
+    do { const D = levels.length, nx = []; for (let i = 0; i < lvl.length; i += k) nx.push(ov[D + ':' + (i / k)] || this.L.nodeHash(lvl.slice(i, i + k))); levels.push(nx); lvl = nx; } while (lvl.length > 1);
+    return levels;
+  }
+  levelsFor(n, k) { let len = n, H = 0; do { len = Math.ceil(len / k); H++; } while (len > 1); return H; }
+  // Small trees start fully open; big ones (over 16 entries) start with only the root open.
+  expOf(tkey, H, n, k, st) {
+    st = st || this.state; if (st.expanded[tkey]) return st.expanded[tkey];
+    const e = { [H + ':0']: true };
+    if (n <= 16) for (let d = 1; d <= H; d++) { const L = Math.ceil(n / Math.pow(k, d)); for (let i = 0; i < L; i++) e[d + ':' + i] = true; }
+    return e;
+  }
+  reveal(tkey, H, n, k, d, i, extra) {
+    this.scrollToSel();
+    this.setState(st => { const e = { ...this.expOf(tkey, H, n, k, st) }; for (let dd = d + 1; dd <= H; dd++) e[dd + ':' + Math.floor(i / Math.pow(k, dd - d))] = true;
+      return { ...(extra || {}), expanded: { ...st.expanded, [tkey]: e }, sel: { ...st.sel, [tkey]: { d, i } } }; });
+  }
+  measureTree(el) { const w = el.clientWidth; if (w && Math.abs(w - (this.state.treeW || 0)) > 8) window.setTimeout(() => this.setState({ treeW: w }), 0); }
+  scrollToSel() {
+    if (typeof document.querySelector !== 'function') return;
+    const deep = (root) => { const hit = root.querySelector('[data-sel="1"]'); if (hit) return hit; for (const n of root.querySelectorAll('*')) if (n.shadowRoot) { const x = deep(n.shadowRoot); if (x) return x; } return null; };
+    const run = () => {
+      const el = deep(document); if (!el || !el.isConnected) return;
+      let sc = el.parentElement; while (sc && getComputedStyle(sc).overflowX !== 'auto') sc = sc.parentElement;
+      if (sc) { const r = el.getBoundingClientRect(), sr = sc.getBoundingClientRect(); sc.scrollLeft = Math.max(0, r.left - sr.left + sc.scrollLeft - sc.clientWidth / 2 + r.width / 2); }
+      const r = el.getBoundingClientRect();
+      if (r.top < 80 || r.bottom > window.innerHeight) { let w = el.parentElement; while (w && !(w.scrollHeight > w.clientHeight && /auto|scroll/.test(getComputedStyle(w).overflowY))) w = w.parentElement;
+        const top = r.top - window.innerHeight / 2 + r.height / 2; if (w) w.scrollTop += top; else window.scrollBy(0, top); }
+    };
+    window.setTimeout(run, 80); window.setTimeout(run, 350);
+  }
+  // The chain as tamper mode has edited it (in memory only): each edited entry is a copy with the typed values,
+  // object fields (alloc, seals, …) parsed as JSON when they parse.
+  tampered(pollId) {
+    const p = this.poll(pollId), tam = this.state.tamper[pollId] || {};
+    return p.chain.map((e, j) => {
+      if (!tam[j]) return e;
+      const out = { ...e };
+      Object.entries(tam[j]).forEach(([key, val]) => { let v = val; if (typeof e[key] !== 'string') { try { v = JSON.parse(val); } catch (err) { v = val; } } out[key] = v; });
+      return out;
+    });
+  }
+  // The card for one entry, front and back (BallotCard.dc.html).
+  entryCard(pollId, j, h, h0, e, myIdx, proof, k, failsAt) {
+    const s = this.state, C = this.C, p = this.poll(pollId), m = p.mint, orig = p.chain[j], mine = j === myIdx, changed = h !== h0;
+    const fk = pollId + ':' + j, flipped = !!s.flipped[fk];
+    const sigOk = !failsAt(j).some(f => /sig$/.test(f.rule)), sib = proof && !mine && Math.floor(j / k) === Math.floor(myIdx / k), hl = s.highlight === j;
+    const setT = (key, val) => this.setState(st => { const pt = { ...(st.tamper[pollId] || {}) }; pt[j] = { ...(pt[j] || {}), [key]: val }; return { tamper: { ...st.tamper, [pollId]: pt } }; });
+    const text = v => typeof v === 'string' ? v : JSON.stringify(v);
+    const allocText = a => Object.entries(a || {}).filter(([, x]) => x > 0).map(([o, x]) => (m && m.options[o] !== undefined ? m.options[o] : 'option ' + o) + ' ×' + x).join(', ');
+    const own = mine && e.seals ? this.openings()[orig.d] : null;
+    const opens = own ? own.values.every((x, i) => this.L.seal(x, BigInt(own.blinds[i])) === e.seals[i]) : null;
+    return { ...this.avatar(h), anon: true, named: false, num: String(j), mine, kind: e.t,
+      stub: changed ? C.danger : (mine && proof) ? C.accent : 'var(--line-2)',
+      label: e.t === 'vote' ? String(e.subject) : (m ? m.organiser.id : '') + ' · ' + e.t,
+      rot: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+      border: changed ? `1.5px solid ${C.danger}` : mine && proof ? `1.5px solid ${C.accent}` : sib ? `1.5px dashed ${C.accent}` : '1.5px solid var(--line)',
+      backBorder: changed ? `1.5px solid ${C.danger}` : '1.5px solid #1f2227',
+      ring: hl ? `0 0 0 4px ${C.accentSoft}, 0 6px 20px rgba(0,0,0,.08)` : '0 1px 2px rgba(0,0,0,.03)',
+      spentText: e.t === 'vote' ? (e.seals ? 'sealed' : allocText(e.alloc) || '—') : e.t === 'mint' ? (e.subjects || []).length + ' subjects' : e.t === 'tally' ? allocText(Object.assign({}, e.totals)) : 'closed',
+      spentColor: changed ? C.danger : C.accent,
+      sigText: sigOk ? '✓ Valid' : '✗ Invalid', sigColor: sigOk ? C.accent : C.danger,
+      leafShort: this.short(h), leafColor: changed ? C.danger : 'var(--ink-2)',
+      flipLabel: s.tamperMode ? 'Flip to edit' : 'Flip to inspect', flipCursor: 'pointer', flipColor: C.ink,
+      flip: () => this.setState(st => ({ flipped: { ...st.flipped, [fk]: !st.flipped[fk] } })),
+      fields: [...this.L.FIELDS[orig.t].filter(key => key !== 'v' && key !== 't' && key in orig), 'sig'].map(key => {
+        const ch = text(e[key]) !== text(orig[key]);
+        return { label: key, value: text(e[key]), ro: !s.tamperMode, onChange: ev => setT(key, ev.target.value),
+          labelColor: ch ? '#ff9a85' : 'var(--faint)', bg: ch ? '#3a2522' : '#2b2f35', fg: ch ? '#ffb4a4' : '#e8e6e0',
+          border: ch ? `1px solid ${C.danger}` : s.tamperMode ? '1px dashed #5b6068' : '1px solid transparent' };
+      }),
+      choice: own ? allocText(Object.assign({}, own.values)) : e.alloc ? allocText(e.alloc) : '',
+      hasOpen: opens !== null, openText: opens ? '✓ Your opening matches these seals' : '✗ Your opening no longer matches', openColor: opens ? '#7fd6ae' : '#ff9a85' };
+  }
+  treeVals(pollId) {
+    const s = this.state, C = this.C, k = s.groupSize, fmt = x => x.toLocaleString(), tkey = pollId + ':' + k, p = this.poll(pollId);
+    const tam = s.tamper[pollId] || {}, ov = s.ntamper[tkey] || {};
+    const as = this.currentAs(pollId), myIdx = as ? p.chain.findIndex(e => e.t === 'vote' && e.subject === as) : -1, voted = myIdx >= 0;
+    const leaves = this.tampered(pollId), tv = s.tamperMode || Object.keys(tam).length ? this.L.verify(leaves) : p.verdict;
+    const failsAt = j => tv.failures.filter(f => f.index === j);
+    const leafOf = (e, j) => tam[j] ? (tam[j].d !== undefined ? e.d : this.L.said(e)) : e.d;
+    const T0 = this.ktree(p.chain.map(e => e.d), k), T1 = this.ktree(leaves.map(leafOf), k, ov), H = T1.length - 1, n = leaves.length;
+    const published = T0[H][0], computed = T1[H][0], ok = published === computed, proof = s.showProof && voted;
+    const pw = d => Math.pow(k, d);
+    const cnt = (d, i) => Math.max(0, Math.min((i + 1) * pw(d), n) - i * pw(d));
+    const rng = (d, i) => { const a = i * pw(d), b = a + cnt(d, i) - 1; return a >= b ? '#' + fmt(a) : '#' + fmt(a) + '–' + fmt(b); };
+    const anc = (d, i) => proof && Math.floor(myIdx / pw(d)) === i;
+    const forged = (d, i) => ov[d + ':' + i] !== undefined && ov[d + ':' + i] !== T0[d][i];
+    const setOv = (d, i, v) => this.setState(st => ({ ntamper: { ...st.ntamper, [tkey]: { ...(st.ntamper[tkey] || {}), [d + ':' + i]: v } } }));
+    const stop = e => e.stopPropagation();
+    const look = (ch, a, sib) => ({ bg: ch ? C.dangerSoft : a ? C.accent : sib ? C.accentSoft : 'var(--surface)', fg: ch ? C.danger : a ? 'var(--on-ink)' : C.ink, sub: ch ? C.danger : a ? 'var(--on-ink)' : 'var(--muted)',
+      border: ch ? '1.5px solid ' + C.danger : a ? '1.5px solid ' + C.accent : sib ? '1.5px dashed ' + C.accent : '1.5px solid var(--line)', line: ch ? C.danger : a ? C.accent : 'var(--line-2)' });
+    const exp = this.expOf(tkey, H, n, k), isExp = (d, i) => d > 0 && !!exp[d + ':' + i];
+    let sel = s.sel[tkey] || { d: H, i: 0 }; if (sel.d > H || sel.i >= T1[sel.d].length) sel = { d: H, i: 0 };
+    const onPath = (d, i) => d >= sel.d && Math.floor(sel.i / pw(d - sel.d)) === i;
+    const select = (d, i) => this.setState(st => ({ sel: { ...st.sel, [tkey]: { d, i } } }));
+    const toggle = (d, i) => this.setState(st => { const e = { ...this.expOf(tkey, H, n, k, st) }, key = d + ':' + i; if (e[key]) delete e[key]; else e[key] = true; return { expanded: { ...st.expanded, [tkey]: e }, sel: { ...st.sel, [tkey]: { d, i } } }; });
+    const reveal = (d, i) => this.reveal(tkey, H, n, k, d, i, d === 0 ? { highlight: i } : null);
+    const kids = (d, i) => [i * k, Math.min(i * k + k, T1[d - 1].length)];
+    const units = (d, i) => { if (!isExp(d, i)) return 1; const [c0, c1] = kids(d, i); let u = 0; for (let c = c0; c < c1; c++) u += units(d - 1, c); return Math.max(1, u); };
+    const ring = '0 0 0 3px ' + C.ink, layout = s.layout || 'tree';
+    const nodeView = (d, i) => {
+      const h = T1[d][i], ch = h !== T0[d][i], a = anc(d, i), sib = proof && !a && d < H && anc(d + 1, Math.floor(i / k)), lk = look(ch, a, sib);
+      const e = isExp(d, i), root = d === H, isSel = sel.d === d && sel.i === i, c = cnt(d, i);
+      return { ...lk, ...this.avatar(h), d, i, e, root, isSel, short: this.short(h), full: h, tip: rng(d, i) + ' · ' + h,
+        rangeText: rng(d, i), countText: fmt(c) + ' entr' + (c === 1 ? 'y' : 'ies'),
+        label: (e ? '▾ ' : '▸ ') + (root ? 'Root · ' : '') + rng(d, i), note: forged(d, i) ? 'forged' : '',
+        stub: lk.line, selRing: isSel ? ring : onPath(d, i) ? '0 0 0 2px var(--line-strong)' : 'none', selAttr: isSel ? '1' : '0',
+        onZoom: () => toggle(d, i), ro: !s.tamperMode, editable: s.tamperMode, onEdit: ev => setOv(d, i, ev.target.value), stop };
+    };
+    const cardView = j => { const c = this.entryCard(pollId, j, T1[0][j], T0[0][j], leaves[j], myIdx, proof, k, failsAt), isSel = sel.d === 0 && sel.i === j;
+      return { ...c, isSel, selAttr: isSel ? '1' : '0', ring: isSel ? ring : c.ring, onSelect: () => select(0, j), tip: 'Entry #' + j }; };
+    // The root signed into the close/tally entry is over the entries before it, in groups of 10.
+    const end = p.chain.findIndex(e => e.t === 'close' || e.t === 'tally'), signed = end >= 0 && p.chain[end].root ? p.chain[end].root : null;
+    const atTen = k === this.L.ROOT_GROUP;
+    const rootNow = signed && atTen ? this.ktree(leaves.slice(0, end).map(leafOf), k, ov) : null;
+    const rootCheck = !signed ? { signed: null, computed, ok: null, note: 'Not closed yet, so no root has been signed.' }
+      : !atTen ? { signed, computed, ok: null, note: 'The signed root uses groups of 10.' }
+      : { signed, computed: rootNow[rootNow.length - 1][0], ok: rootNow[rootNow.length - 1][0] === signed, note: rootNow[rootNow.length - 1][0] === signed ? 'Matches the root signed in entry #' + end + '.' : 'Does not match the root signed in entry #' + end + '.' };
+    const out = { layout, leafHashes: T1[0], rootCheck, rootCheckColor: rootCheck.ok === false ? C.danger : rootCheck.ok ? C.accent : 'var(--muted)', voted, myIdx };
+    if (layout === 'tree' || layout === 'fisheye') {
+      const fish = layout === 'fisheye', rows = Array.from({ length: H }, () => ({ nodes: [] })), cards = [];
+      let selSpan = null;
+      const place = (d, i, start) => {
+        if (d === 0) { const c = cardView(i); if (c.isSel) selSpan = [start, 1]; cards.push({ ...c, start }); return 1; }
+        const sp = units(d, i), [c0, c1] = kids(d, i), nv = nodeView(d, i), node = { ...nv, start, sp, hasStub: !nv.root, hasKids: nv.e && c1 > c0 };
+        if (nv.isSel) selSpan = [start, sp];
+        rows[H - d].nodes.push(node);
+        if (node.hasKids) { let cur = start; for (let c = c0; c < c1; c++) { const u = units(d - 1, c); if (c === c0) node.fc = [cur, u]; if (c === c1 - 1) node.lc = [cur, u]; cur += place(d - 1, c, cur); } }
+        return sp;
+      };
+      place(H, 0, 1);
+      const totalCols = units(H, 0), avail = Math.max(320, (s.treeW || 1000) - 34);
+      let wts = Array(totalCols).fill(1);
+      if (fish && totalCols * 150 > avail) {
+        const [ss, sp] = selSpan || [1, totalCols], center = ss + (sp - 1) / 2, sig = 1.25;
+        const g = wts.map((_, ci) => Math.exp(-Math.pow(ci + 1 - center, 2) / (2 * sig * sig))), G = g.reduce((x, y) => x + y, 0);
+        const floor = Math.max(0.035, Math.min(1, (avail / 175 - G) / totalCols));
+        wts = g.map(x => floor + (1 - floor) * x);
+      }
+      const pref = [0]; wts.forEach(w => pref.push(pref[pref.length - 1] + w));
+      const wsum = (st, sp) => pref[st - 1 + sp] - pref[st - 1], Wt = pref[totalCols];
+      const pxOf = (st, sp) => fish ? wsum(st, sp) / Wt * avail : sp * 150;
+      rows.forEach(r => r.nodes.forEach(nd => {
+        const px = pxOf(nd.start, nd.sp), full = px >= 150, mid = px >= 70, ws = wsum(nd.start, nd.sp);
+        Object.assign(nd, { span: nd.start + ' / span ' + nd.sp, lbl: full ? nd.label : nd.rangeText, showText: mid, showRo: full && nd.ro, showEdit: full && nd.editable,
+          bs: nd.root && full ? 34 : mid ? 24 : Math.max(6, Math.min(22, Math.round(px - 10))),
+          pad: nd.root && full ? '8px 14px 8px 8px' : mid ? '6px 10px 6px 7px' : px < 20 ? '1px' : '3px', fs: nd.root ? '12.5px' : '11px' });
+        if (nd.hasKids) { nd.busL = (wsum(nd.fc[0], nd.fc[1]) / 2 / ws * 100) + '%'; nd.busR = (wsum(nd.lc[0], nd.lc[1]) / 2 / ws * 100) + '%'; }
+      }));
+      cards.forEach(c => { const px = pxOf(c.start, 1), full = !fish || px >= 150;
+        Object.assign(c, { col: c.start + ' / span 1', full, mini: !full, ms: Math.max(6, Math.min(40, Math.round(px - 12))), showNum: px >= 44, mpad: px >= 30 ? '8px 2px' : '2px 0', gutter: px >= 30 ? '5px' : '1px' }); });
+      Object.assign(out, { isGrid: true, rows, cards2: cards, hasCards: cards.length > 0,
+        cols: fish ? wts.map(w => 'minmax(0, ' + w.toFixed(4) + 'fr)').join(' ') : 'repeat(' + totalCols + ', minmax(150px, 1fr))',
+        treeMin: fish ? '0px' : totalCols * 150 + 'px' });
+    }
+
+    if (layout === 'carousel' && n) {
+      const crows = [], path = [];
+      for (let d = H; d >= sel.d; d--) path.push({ d, i: Math.floor(sel.i / pw(d - sel.d)) });
+      const mkRow = (d, a, b, activeI) => {
+        let idx; if (activeI != null) idx = activeI - a;
+        else { const m = proof ? Math.floor(myIdx / pw(d)) : -1; idx = m >= a && m < b ? m - a : Math.floor((b - a - 1) / 2); }
+        const W = d === 0 ? 180 : 170, G = 14, items = [];
+        for (let i = a; i < b; i++) {
+          const dist = Math.abs(i - a - idx), sc = dist === 0 ? 1 : dist === 1 ? .86 : .72, op = dist === 0 ? 1 : dist === 1 ? .92 : dist === 2 ? .6 : .35;
+          const base = d === 0 ? { ...cardView(i), isCard: true, isNode: false } : { ...nodeView(d, i), isCard: false, isNode: true };
+          items.push({ ...base, w: W + 'px', tf: 'scale(' + sc + ')', op, pick: () => select(d, i) });
+        }
+        const act = items[idx];
+        return { items, tx: 'translateX(-' + (idx * (W + G) + W / 2) + 'px)',
+          title: d === H ? 'Root' : d === 0 ? 'Entries' : 'Level ' + d,
+          sub: d === H ? fmt(n) + ' entries' : (idx + 1) + ' of ' + (b - a) + (activeI == null ? ' · choose one' : ''),
+          prev: () => idx > 0 && select(d, a + idx - 1), next: () => idx < b - a - 1 && select(d, a + idx + 1),
+          prevOp: idx > 0 ? 1 : .3, nextOp: idx < b - a - 1 ? 1 : .3, line: act ? act.stub : 'var(--line-2)', hasLine: true };
+      };
+      path.forEach(({ d, i }) => { const [a, b] = d === H ? [0, 1] : kids(d + 1, Math.floor(i / k)); crows.push(mkRow(d, a, b, i)); });
+      if (sel.d > 0) { const [a, b] = kids(sel.d, sel.i); crows.push(mkRow(sel.d - 1, a, b, null)); }
+      crows[crows.length - 1].hasLine = false;
+      Object.assign(out, { isCarousel: true, crows });
+    }
+
+    if (layout === 'radial') {
+      const vis = []; let maxR = 0;
+      const walk = (d, i, a0, a1, r, par) => {
+        const me = vis.length; vis.push({ d, i, ang: (a0 + a1) / 2, r, par }); maxR = Math.max(maxR, r);
+        if (d > 0 && isExp(d, i)) { const [c0, c1] = kids(d, i), tot = units(d, i); let acc = a0; for (let c = c0; c < c1; c++) { const span = (a1 - a0) * units(d - 1, c) / tot; walk(d - 1, c, acc, acc + span, r + 1, me); acc += span; } }
+      };
+      walk(H, 0, -Math.PI / 2, Math.PI * 1.5, 0, -1);
+      const R = r => maxR ? r / maxR * 43 : 0;
+      vis.forEach(v => { v.x = 50 + R(v.r) * Math.cos(v.ang); v.y = 50 + R(v.r) * Math.sin(v.ang); });
+      const rnodes = [], links = [], rlabels = [];
+      vis.forEach(v => {
+        const { d, i } = v, h = T1[d][i], ch = h !== T0[d][i], a = anc(d, i), sib = proof && !a && d < H && anc(d + 1, Math.floor(i / k)), lk = look(ch, a, sib);
+        const isSel = sel.d === d && sel.i === i, size = d === H ? 60 : d === 0 ? 24 : Math.max(24, 46 - v.r * 7), av = this.avatar(h);
+        rnodes.push({ ...av, x: v.x + '%', y: v.y + '%', size: size + 'px', bs: Math.round(size * .68), bg: lk.bg, border: lk.border,
+          selRing: isSel ? '0 0 0 3px ' + C.ink : onPath(d, i) ? '0 0 0 2px var(--line-strong)' : 'none',
+          tip: (d === 0 ? 'Entry #' + i : (n ? rng(d, i) : 'empty')) + ' · ' + h,
+          onClick: d === 0 ? () => select(0, i) : () => toggle(d, i) });
+        if (v.par >= 0) { const pp = vis[v.par]; links.push({ x1: pp.x, y1: pp.y, x2: v.x, y2: v.y, color: lk.line, w: a || ch ? 2 : 1.25 }); }
+        if (isSel || d === H) rlabels.push({ x: v.x + '%', y: 'calc(' + v.y + '% + ' + (size / 2 + 5) + 'px)', text: d === H ? 'Root' : d === 0 ? 'Entry #' + i : rng(d, i), fg: ch ? C.danger : C.ink });
+      });
+      links.reverse();
+      const rings = []; for (let r = 1; r <= maxR; r++) rings.push({ r: R(r) });
+      let panelCards = [], panelNodes = [];
+      if (sel.d === 0 && n) panelCards = [cardView(sel.i)];
+      else { const nv = nodeView(sel.d, sel.i), [c0, c1] = kids(sel.d, sel.i), nk = c1 - c0;
+        panelNodes = [{ ...nv, pTitle: nv.root ? 'Root' : 'Level ' + sel.d + ' group', kidsText: nk + ' ' + (sel.d === 1 ? 'entry' : 'group') + (nk === 1 ? '' : 's') + ' below',
+          hashColor: T1[sel.d][sel.i] !== T0[sel.d][sel.i] ? C.danger : C.ink, hasNote: T1[sel.d][sel.i] !== T0[sel.d][sel.i], noteText: forged(sel.d, sel.i) ? 'This hash was overwritten.' : 'Something below this group was changed.',
+          actLabel: nv.e ? 'Collapse' : 'Expand' }]; }
+      Object.assign(out, { isRadial: true, rnodes, links, rings, rlabels, panelCards, panelNodes });
+    }
+    const crumbs = [];
+    for (let d = H; d >= sel.d; d--) {
+      const i = Math.floor(sel.i / pw(d - sel.d)), h = T1[d][i], cur = d === sel.d, ch = h !== T0[d][i];
+      crumbs.push({ ...this.avatar(h), sep: d === H ? '' : '›', label: d === H ? 'Root' : d === 0 ? 'Entry #' + i : rng(d, i), short: this.short(h), full: h, onClick: () => reveal(d, i),
+        bg: cur ? 'var(--ink)' : 'var(--surface)', fg: cur ? 'var(--on-ink)' : C.ink, border: ch ? C.danger : cur ? 'var(--ink)' : 'var(--line)', hashFg: cur ? 'var(--line-2)' : 'var(--faint)' });
+    }
+    if (!this._setScroller) this._setScroller = el => { this._scroller = el; if (el) this.measureTree(el); };
+    const changedLeaves = Object.keys(tam).map(Number).filter(j => T1[0][j] !== T0[0][j]);
+    const forgedKeys = Object.keys(ov).filter(key => { const [d, i] = key.split(':').map(Number); return forged(d, i); });
+    const seg = on => ({ bg: on ? 'var(--surface)' : 'transparent', fg: on ? C.ink : C.muted, shadow: on ? '0 1px 2px rgba(0,0,0,.08)' : 'none' });
+    const nBad = changedLeaves.length + forgedKeys.length;
+    return {
+      ...out, noBallots: n === 0, crumbs, scrollRef: this._setScroller,
+      layouts: [['tree', 'Tree'], ['fisheye', 'Fisheye'], ['carousel', 'Carousel'], ['radial', 'Radial']].map(([key, label]) => ({ label, ...seg(key === layout), onClick: () => this.setState({ layout: key }) })),
+      shape: fmt(n) + ' entries · ' + H + ' level' + (H > 1 ? 's' : '') + ' of roll-ups',
+      canCollapse: n > 0, goRoot: () => { this.scrollToSel(); this.setState(st => ({ expanded: { ...st.expanded, [tkey]: { [H + ':0']: true } }, sel: { ...st.sel, [tkey]: { d: H, i: 0 } } })); },
+      goMine: () => reveal(0, myIdx),
+      goTampered: () => { if (changedLeaves.length) reveal(0, changedLeaves[0]); else if (forgedKeys.length) { const [d, i] = forgedKeys[0].split(':').map(Number); reveal(d, i); } },
+      hasChanged: nBad > 0,
+      published, computed, rootBorder: ok ? 'var(--line)' : C.danger, okBg: ok ? C.accentSoft : C.dangerSoft, okFg: ok ? C.accent : C.danger,
+      okText: ok ? 'Tree valid · computed root matches the saved entries' : `Tampered · ${nBad} edit${nBad === 1 ? '' : 's'} in the tree, root no longer matches`,
+      ledgerNote: s.tamperMode ? 'Tamper mode: flip an entry card and edit its data, or overwrite any group hash. Every hash above it is recomputed and the change shows up at the root.'
+        : `Every ${k} entries roll up into one hash, and every ${k} hashes into the next level, up to the root. ` + ({ tree: 'Click a group to expand or collapse it; the breadcrumb shows the path to your selection.', fisheye: 'The selected node is magnified and the rest of the tree shrinks around it, so the whole tree fits. Click any node to move the focus and expand it.', carousel: 'Each row is one level. The centred item is on your selected path; pick a sibling to switch branches, and the row below shows its children.', radial: 'The root sits in the centre and each ring is one level down. Click a group to expand or collapse it; click a entry to open its card.' })[layout] + (proof ? ' Your path is highlighted; dashed hashes are the siblings that prove your entry is counted without revealing it.' : ''),
+      groups: [2, 4, 10, 16].map(g => ({ label: String(g), ...seg(g === k), onClick: () => this.setState({ groupSize: g }) })),
+      proofBg: s.showProof ? C.accent : 'var(--line-2)', proofJ: s.showProof ? 'flex-end' : 'flex-start',
+      tamperBg: s.tamperMode ? C.danger : 'var(--line-2)', tamperJ: s.tamperMode ? 'flex-end' : 'flex-start',
+      toggleProof: () => this.setState(st => ({ showProof: !st.showProof })), toggleTamper: () => this.setState(st => ({ tamperMode: !st.tamperMode })),
+      hasTamper: Object.keys(tam).length > 0 || Object.keys(ov).length > 0,
+      resetTamper: () => this.setState(st => { const nt = { ...st.ntamper }; Object.keys(nt).forEach(x => { if (x.startsWith(pollId + ':')) delete nt[x]; }); return { tamper: { ...st.tamper, [pollId]: {} }, ntamper: nt }; })
+    };
+  }
+
   // ---- The ledger table ----
   ledgerVals(pollId) {
     const s = this.state, p = this.poll(pollId), m = p.mint, v = p.verdict, n = v.failures.length;
@@ -782,7 +1218,7 @@ class Component extends DCLogic {
     const s = this.state, C = this.C, id = s.pollId, p = this.poll(id), m = p.mint, v = p.verdict;
     if (!m) return { title: '(not a poll)', desc: 'This chain does not start with a mint.', tabs: [], isLedger: true, lv: this.ledgerVals(id) };
     const [status, stBg, stFg] = this.statusOf(v.status);
-    const tabs = [['vote', 'Vote'], ['ledger', 'Ledger'], ['results', 'Results']].map(([k, l]) => ({ label: l, fg: s.tab === k ? C.ink : C.muted, line: s.tab === k ? C.ink : 'transparent', onClick: () => this.setState({ tab: k }) }));
+    const tabs = [['vote', 'Vote'], ['tree', 'Tree'], ['ledger', 'Ledger'], ['results', 'Results']].map(([k, l]) => ({ label: l, fg: s.tab === k ? C.ink : C.muted, line: s.tab === k ? C.ink : 'transparent', onClick: () => this.setState({ tab: k }) }));
     const as = this.currentAs(id), who = this.canVoteAs(id).find(x => x.id === as), held = this.mine(id).length > 0;
     const alloc = s.allocs[id] || {}, spent = this.L.cost(alloc, m.quadratic), budget = who ? who.weight : 0;
     const setK = (i, k) => this.setState(st => ({ allocs: { ...st.allocs, [id]: { ...(st.allocs[id] || {}), [i]: k } } }));
@@ -790,7 +1226,8 @@ class Component extends DCLogic {
     return {
       title: m.title, desc: m.desc, status, stBg, stFg, chips: [v.ok ? 'Verified' : 'Broken', m.quadratic ? 'Quadratic' : ''].filter(Boolean),
       meta: `${Object.keys(v.voted).length} of ${m.subjects.length} subjects voted · minted by ${m.organiser.id}`,
-      tabs, isVote: s.tab === 'vote', isLedger: s.tab === 'ledger', isResults: s.tab === 'results',
+      tabs, isVote: s.tab === 'vote', isTree: s.tab === 'tree', isLedger: s.tab === 'ledger', isResults: s.tab === 'results',
+      ...(s.tab === 'tree' ? this.treeVals(id) : {}),
       canClose: v.status === 'live' && m.kind !== 'sealed' && !!this.organiserSecret(id), close: () => this.closePoll(id),
       canTally: this.canTally(id), tally: () => this.tallyPoll(id), how: this.howItWorks(m.kind), hasLater: m.kind === 'sealed',
       resultsPending: v.sealed && v.status !== 'closed' ? 'Results appear when the organiser tallies.' : '',
