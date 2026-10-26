@@ -146,3 +146,60 @@ test("pasted keys are kept", () => {
   expect(bad.app.mintDraft(bad.id)).toBeNull();
   expect(bad.app.state.toast).toMatch(/alice/);
 });
+
+const pollApp = (f: any, ...held: any[]) => {
+  const env = mount("", { "tally:json:v2": L.serializeFile(f.doc), ...(held.length ? { "tally:keys:v1": keyring(...held) } : {}) });
+  env.app.openPoll(f.pollId); return env;
+};
+const chainOf = (app: any) => app.state.doc.polls[0];
+
+test("a subject can vote once", () => {
+  const f = fixture(), { app } = pollApp(f, f.keys.alice, f.keys.bob);
+  expect(app.renderVals().pv.voters.map((v: any) => v.id)).toEqual(["alice", "bob"]);
+  app.setState({ voteAs: "alice", allocs: { [f.pollId]: { 0: 3 } } });
+  app.renderVals().pv.cast();
+  expect(chainOf(app)).toHaveLength(2);
+  expect(L.verify(chainOf(app))).toMatchObject({ ok: true, totals: [3, 0] });
+  app.castAs(f.pollId, "alice", { 0: 1 }); app.castAs(f.pollId, "alice", { 0: 1 });
+  expect(chainOf(app)).toHaveLength(2);
+  expect(app.renderVals().pv.voters.map((v: any) => v.id)).toEqual(["bob"]);
+});
+
+test("allocations are limited by weight", () => {
+  const f = fixture(), { app } = pollApp(f, f.keys.alice);
+  app.setState({ voteAs: "alice", allocs: { [f.pollId]: { 0: 4 } } });
+  expect(app.renderVals().pv.options[0].canUp).toBe(false);
+  const org = L.newKeypair(), a = L.newKeypair();
+  const mint = L.makeMint({ title: "Q", desc: "", options: ["A", "B"], quadratic: true, organiser: { id: "o", keys: [org.pub] }, subjects: [{ id: "alice", keys: [a.pub], weight: 9 }], dt: "t" }, org.secret);
+  const q = pollApp({ doc: { polls: [[mint]], drafts: [] }, pollId: mint.d }, a).app;
+  q.setState({ voteAs: "alice", allocs: { [mint.d]: { 0: 1 } } });
+  expect(q.renderVals().pv.options[0].next).toBe(3);
+  q.setState({ allocs: { [mint.d]: { 0: 3 } } });
+  expect(q.renderVals().pv.options[1].canUp).toBe(false);
+});
+
+test("without keys the vote tab is read-only", () => {
+  const pv = pollApp(fixture()).app.renderVals().pv;
+  expect(pv.voters).toEqual([]);
+  expect(pv.noKeys).toBe(true); expect(pv.noKeysText).toBe("This browser holds none of this poll's keys.");
+  expect(pv.canCast).toBe(false);
+});
+
+test("results come from the verdict", () => {
+  const f = fixture(), c = f.doc.polls[0];
+  c.push(L.makeVote(c, { subject: "alice", alloc: { 0: 3 }, key: f.keys.alice.pub, dt: "t" }, f.keys.alice.secret));
+  c.push(L.makeVote(c, { subject: "bob", alloc: { 1: 8 }, key: f.keys.bob.pub, dt: "t" }, f.keys.bob.secret));
+  const pv = pollApp(f).app.renderVals().pv;
+  expect(pv.results.map((r: any) => [r.label, r.total])).toEqual([["Yes", 3], ["No", 8]]);
+  expect(pv.usedText).toBe("11 of 12 weight used");
+});
+
+test("the organiser can close", () => {
+  const f = fixture();
+  expect(pollApp(f, f.keys.alice).app.renderVals().pv.canClose).toBe(false);
+  const { app } = pollApp(f, f.keys.org, f.keys.alice);
+  app.renderVals().pv.close();
+  expect(L.verify(chainOf(app))).toMatchObject({ ok: true, status: "closed" });
+  const pv = app.renderVals().pv;
+  expect(pv.status).toBe("Closed"); expect(pv.canClose).toBe(false); expect(pv.canCast).toBe(false); expect(pv.voters).toEqual([]);
+});
