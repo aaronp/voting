@@ -233,3 +233,18 @@ test("rows mirror the chain", () => {
   expect(lv.totals.map((t: any) => [t.label, t.total])).toEqual([["Yes", 3], ["No", 0]]);
   expect(lv.usedText).toBe("3/12 weight used");
 });
+
+test("the modal shows the exact bytes", () => {
+  const f = fixture(), { app } = pollApp(f, f.keys.alice);
+  app.setState({ voteAs: "alice", allocs: { [f.pollId]: { 0: 3 } } });
+  app.renderVals().pv.showReal();
+  const r = app.state.realOpen, entry = JSON.parse(r.bytes);
+  expect(entry).toMatchObject({ v: "tally/1", t: "vote", p: f.pollId, subject: "alice", alloc: { 0: 3 }, key: f.keys.alice.pub });
+  expect(L.canonical(entry)).toBe(r.bytes);
+  expect(entry.d).toBe(L.said(entry)); expect(r.said).toBe(entry.d);
+  expect(r.principal).toBe("alice");
+  const real = app.renderVals().real;
+  expect(real.script).toContain("ssh-keygen -t ed25519 -f tally_key -N '' -C alice");
+  expect(real.script).toContain("ssh-keygen -Y verify -f allowed_signers -I alice -n tally -s entry.json.sig < entry.json");
+  real.close(); expect(app.state.realOpen).toBeNull();
+});
