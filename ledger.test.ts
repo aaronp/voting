@@ -31,3 +31,65 @@ test("signatures verify only for the signed entry and key", () => {
   expect(L.verifySig(e, other.pub, sig)).toBe(false);
   expect(L.verifySig(e, "Dnot-a-key", "0Bnope")).toBe(false);
 });
+
+// alice (weight 4) and bob (weight 8) on a Yes/No poll; keys holds every secret.
+function demo(quadratic = false) {
+  const org = L.newKeypair(), a = L.newKeypair(), b = L.newKeypair();
+  const mint = L.makeMint({ title: "Lunch?", desc: "", options: ["Yes", "No"], quadratic, organiser: { id: "org", keys: [org.pub] },
+    subjects: [{ id: "alice", keys: [a.pub], weight: 4 }, { id: "bob", keys: [b.pub], weight: 8 }], dt: "2026-10-26T00:00:00.000Z" }, org.secret);
+  return { chain: [mint] as any[], keys: { org, alice: a, bob: b } };
+}
+const voteAs = (chain: any[], keys: any, subject: string, alloc: any, signer = subject) =>
+  L.makeVote(chain, { subject, alloc, key: keys[subject]?.pub ?? keys.alice.pub, dt: "2026-10-26T01:00:00.000Z" }, keys[signer]?.secret ?? keys.alice.secret);
+const rules = (chain: any[]) => L.verify(chain).failures.map((f: any) => f.rule);
+
+test("a fresh mint verifies", () => {
+  expect(L.verify(demo().chain)).toMatchObject({ ok: true, status: "live", total: 12, used: 0, totals: [0, 0], failures: [] });
+});
+
+test("votes add up", () => {
+  const { chain, keys } = demo();
+  chain.push(voteAs(chain, keys, "alice", { 0: 3 }));
+  chain.push(voteAs(chain, keys, "bob", { 1: 8 }));
+  expect(L.verify(chain)).toMatchObject({ ok: true, totals: [3, 8], used: 11, voted: { alice: 1, bob: 2 } });
+});
+
+test("quadratic cost is the sum of squares", () => {
+  expect(L.cost({ 0: 2, 1: 1 }, true)).toBe(5); expect(L.cost({ 0: 2, 1: 1 }, false)).toBe(3);
+  const { chain, keys } = demo(true);
+  chain.push(voteAs(chain, keys, "alice", { 0: 3 }));
+  expect(rules(chain)).toEqual(["cost"]);
+});
+
+test("each rule reports", () => {
+  const one = (build: (chain: any[], keys: any) => void) => { const { chain, keys } = demo(); build(chain, keys); return rules(chain); };
+  expect(one((c, k) => { c[0] = voteAs(c, k, "alice", { 0: 1 }); })).toEqual(["first"]);
+  expect(one((c, k) => { const v = voteAs(c, k, "alice", { 0: 1 }); v.p = L.said({ ...v, t: "close" }); v.d = L.said(v); v.sig = L.sign(v, k.alice.secret); c.push(v); })).toEqual(["link"]);
+  expect(one((c, k) => { c[0].sig = L.sign(c[0], k.alice.secret); })).toEqual(["mint-sig"]);
+  expect(one((c, k) => { c[0].total = 13; c[0].d = L.said(c[0]); c[0].sig = L.sign(c[0], k.org.secret); })).toEqual(["total"]);
+  expect(one((c, k) => { c.push(L.makeVote(c, { subject: "carol", alloc: { 0: 1 }, key: k.alice.pub, dt: "t" }, k.alice.secret)); })).toEqual(["subject"]);
+  expect(one((c, k) => { c.push(voteAs(c, k, "alice", { 0: 1 }, "bob")); })).toEqual(["vote-sig"]);
+  expect(one((c, k) => { c.push(voteAs(c, k, "alice", { 0: 1 })); c.push(voteAs(c, k, "alice", { 1: 1 })); })).toEqual(["double"]);
+  expect(one((c, k) => { c.push(voteAs(c, k, "alice", { 5: 1 })); })).toEqual(["options"]);
+  expect(one((c, k) => { c.push(voteAs(c, k, "alice", { 0: 5 })); })).toEqual(["cost"]);
+  expect(one((c, k) => { c.push(voteAs(c, k, "alice", {})); })).toEqual(["cost"]);
+  expect(one((c, k) => { c.push(L.makeClose(c, "t", k.org.secret)); c.push(voteAs(c, k, "alice", { 0: 1 })); })).toEqual(["close"]);
+});
+
+test("a tampered vote is reported and later entries are still checked", () => {
+  const { chain, keys } = demo();
+  chain.push(voteAs(chain, keys, "alice", { 0: 3 }));
+  chain.push(voteAs(chain, keys, "bob", { 1: 8 }));
+  chain[1].alloc = { 1: 4 };
+  const v = L.verify(chain);
+  expect(v.ok).toBe(false);
+  expect(v.failures.map((f: any) => [f.index, f.rule])).toEqual([[1, "said"], [1, "vote-sig"]]);
+  expect(v.totals).toEqual([0, 8]);
+  expect(v.failures[0].message).toBeTruthy();
+});
+
+test("close ends the poll", () => {
+  const { chain, keys } = demo();
+  chain.push(L.makeClose(chain, "2026-10-27T00:00:00.000Z", keys.org.secret));
+  expect(L.verify(chain)).toMatchObject({ ok: true, status: "closed" });
+});
