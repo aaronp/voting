@@ -133,7 +133,8 @@ export function parseFile(text) {
   const strs = (v, path) => list(v, path, str);
   const subjects = min => (v, path) => {
     const out = list(v, path, (s, p) => shape(s, p, { id: str, keys: strs, weight: int(min) }, min ? {} : { keys: [], weight: 1 }));
-    out.forEach((s, i) => { if (out.findIndex(x => x.id === s.id) !== i) fail(path + '[' + i + '].id', 'duplicate subject "' + s.id + '"'); });
+    // Drafts are saved while being typed, so only a mint insists on unique ids.
+    if (min) out.forEach((s, i) => { if (out.findIndex(x => x.id === s.id) !== i) fail(path + '[' + i + '].id', 'duplicate subject "' + s.id + '"'); });
     return out;
   };
   const alloc = (v, path) => Object.fromEntries(Object.entries(obj(v, path)).map(([k, n]) => [k, int(0)(n, path + '.' + k)]));

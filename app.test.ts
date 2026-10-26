@@ -92,3 +92,57 @@ test("filters use the keys this browser holds", () => {
   app.setState({ filter: "voted" }); expect(app.renderVals().rows).toEqual([]);
   app.setState({ filter: "drafts" }); expect(app.renderVals().rows.map((r: any) => r.title)).toEqual(["Next?"]);
 });
+
+const withDraft = (store: Record<string, string> = {}) => { const env = mount("", store); const id = env.app.newDraft(); return { ...env, id }; };
+const fill = (app: any, id: string, d: any) => app.setDraft(id, (x: any) => ({ ...x, ...d }));
+const READY = { title: "Lunch?", options: ["Yes", "No"], subjects: [{ id: "alice", keys: [], weight: 4 }, { id: "bob", keys: [], weight: 8 }] };
+
+test("a new draft is saved in the file", () => {
+  const { app, id, store } = withDraft();
+  expect(app.state.view).toBe("editor");
+  expect(app.state.doc.drafts[0]).toMatchObject({ id, title: "", options: ["", ""], subjects: [{ id: "", keys: [], weight: 1 }] });
+  expect(L.parseFile(store["tally:json:v2"]).drafts[0].id).toBe(id);
+});
+
+test("minting turns the draft into a verified chain", () => {
+  const { app, id, store } = withDraft();
+  fill(app, id, READY);
+  const pollId = app.mintDraft(id);
+  expect(app.state.doc.drafts).toEqual([]);
+  const chain = app.state.doc.polls[0];
+  expect(chain).toHaveLength(1); expect(chain[0].d).toBe(pollId);
+  expect(L.verify(chain)).toMatchObject({ ok: true, total: 12 });
+  expect(chain[0].subjects.every((s: any) => s.keys.length === 1 && s.keys[0].startsWith("D"))).toBe(true);
+  const ring = JSON.parse(store["tally:keys:v1"]);
+  for (const k of [...chain[0].organiser.keys, ...chain[0].subjects.flatMap((s: any) => s.keys)]) expect(ring[k]).toBeTruthy();
+  for (const secret of Object.values(ring) as string[]) expect(store["tally:json:v2"]).not.toContain(secret);
+  expect(app.state).toMatchObject({ view: "poll", pollId });
+});
+
+test("minting is refused when the draft is incomplete", () => {
+  const cases: [any, RegExp][] = [
+    [{ title: " " }, /title/], [{ options: ["Yes", " "] }, /two options/], [{ subjects: [] }, /subject/],
+    [{ subjects: [{ id: " ", keys: [], weight: 1 }] }, /id/], [{ subjects: [{ id: "a", keys: [], weight: 1 }, { id: "a", keys: [], weight: 2 }] }, /"a" is listed twice/],
+    [{ subjects: [{ id: "a", keys: [], weight: 0 }] }, /at least 1/],
+  ];
+  for (const [change, msg] of cases) {
+    const { app, id } = withDraft();
+    fill(app, id, { ...READY, ...change });
+    expect(app.mintDraft(id)).toBeNull();
+    expect(app.state.toast).toMatch(msg);
+    expect(app.state.doc.polls).toEqual([]);
+  }
+});
+
+test("pasted keys are kept", () => {
+  const pasted = L.newKeypair();
+  const { app, id, store } = withDraft();
+  fill(app, id, { ...READY, subjects: [{ id: "alice", keys: [pasted.pub], weight: 4 }] });
+  app.mintDraft(id);
+  expect(app.state.doc.polls[0][0].subjects[0].keys).toEqual([pasted.pub]);
+  expect(JSON.parse(store["tally:keys:v1"])[pasted.pub]).toBeUndefined();
+  const bad = withDraft();
+  fill(bad.app, bad.id, { ...READY, subjects: [{ id: "alice", keys: ["not-a-key"], weight: 4 }] });
+  expect(bad.app.mintDraft(bad.id)).toBeNull();
+  expect(bad.app.state.toast).toMatch(/alice/);
+});

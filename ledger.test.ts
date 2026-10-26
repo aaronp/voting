@@ -136,3 +136,8 @@ test("drafts may be empty or incomplete", () => {
   expect(doc.drafts[0]).toEqual({ id: "d2", title: "", desc: "", options: [], quadratic: false, organiser: "Organiser", subjects: [] });
   expect(L.parseFile('{ "polls": [] }')).toEqual({ polls: [], drafts: [] });
 });
+
+test("drafts may have blank or repeated subject ids while being edited", () => {
+  const draft = { id: "d", title: "x", subjects: [{ id: "", keys: [], weight: 0 }, { id: "a" }, { id: "a" }] };
+  expect(L.parseFile(JSON.stringify({ polls: [], drafts: [draft] })).drafts[0].subjects).toHaveLength(3);
+});

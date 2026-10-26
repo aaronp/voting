@@ -129,8 +129,56 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
 </sc-if>
 
 <sc-if value="{{ isEditor }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;flex-direction:column;gap:12px">
-  <h1 style="margin:0;font-size:30px;letter-spacing:-0.02em">{{ ed.title }}</h1>
+<div style="display:flex;flex-direction:column;gap:20px;max-width:820px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <h1 style="margin:0;font-size:28px;letter-spacing:-0.02em">Draft poll</h1>
+    <div style="display:flex;gap:8px">
+      <button onClick="{{ ed.del }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;color:var(--danger)">Delete draft</button>
+      <button onClick="{{ ed.mint }}" title="{{ ed.problem }}" style="padding:8px 16px;border:none;border-radius:9px;background:var(--accent);color:var(--on-ink);font-size:14px;font-weight:600;cursor:pointer;opacity:{{ ed.mintOpacity }}">Mint</button>
+    </div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
+    <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Question</span>
+      <input value="{{ ed.title }}" onChange="{{ ed.onTitle }}" placeholder="What are we deciding?" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;font-size:16px;font-weight:600"></label>
+    <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Description</span>
+      <textarea value="{{ ed.desc }}" onChange="{{ ed.onDesc }}" rows="2" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;resize:vertical"></textarea></label>
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Options</span>
+      <sc-for list="{{ ed.options }}" as="o" hint-placeholder-count="2">
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="width:22px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--faint)">{{ o.n }}</span>
+          <input value="{{ o.value }}" onChange="{{ o.onChange }}" placeholder="Option" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;flex:1">
+          <button aria-label="Remove option" onClick="{{ o.onRemove }}" style="width:36px;height:36px;flex-shrink:0;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--muted);cursor:pointer;font-size:16px">×</button>
+        </div>
+      </sc-for>
+      <button onClick="{{ ed.addOption }}" style="align-self:flex-start;margin-left:30px;background:none;border:none;padding:4px 0;font-size:14px;font-weight:600;color:var(--accent-hover);cursor:pointer">+ Add option</button>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+      <button onClick="{{ ed.toggleQuad }}" aria-label="Quadratic voting" style="display:flex;align-items:center;gap:10px;background:none;border:none;padding:0;cursor:pointer;color:var(--ink);font-size:14px">
+        <span style="width:38px;height:22px;border-radius:11px;padding:2px;display:flex;justify-content:{{ ed.quadJ }};background:{{ ed.quadBg }}"><span style="width:18px;height:18px;border-radius:9px;background:var(--surface)"></span></span>
+        Quadratic voting (n votes on one option cost n²)
+      </button>
+      <label style="display:flex;align-items:center;gap:8px;font-size:14px;margin-left:auto"><span style="color:var(--muted)">Organiser</span>
+        <input value="{{ ed.organiser }}" onChange="{{ ed.onOrganiser }}" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;width:160px"></label>
+    </div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
+    <div><div style="font-weight:700;font-size:16px">Mint subjects</div>
+      <div style="font-size:13.5px;color:var(--muted);margin-top:4px">Each subject (an AID in real use, a name in this demo) gets a fixed weight. Leave keys blank to generate demo keys in this browser, or paste the subject's Ed25519 public keys (D…). Once minted, subjects and weights can't change.</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1.6fr) 36px;gap:8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)"><span>Subject</span><span>Weight</span><span>Public keys</span><span></span></div>
+    <sc-for list="{{ ed.rows }}" as="r" hint-placeholder-count="3">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1.6fr) 36px;gap:8px;align-items:center">
+        <input value="{{ r.id }}" onChange="{{ r.onId }}" placeholder="alice" aria-label="Subject" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0">
+        <input type="number" min="1" step="1" value="{{ r.weight }}" onChange="{{ r.onWeight }}" aria-label="Weight" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;font-variant-numeric:tabular-nums">
+        <input value="{{ r.keys }}" onChange="{{ r.onKeys }}" placeholder="generate in this browser" aria-label="Public keys" spellCheck="false" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;font-family:'JetBrains Mono',monospace;font-size:12px">
+        <button aria-label="Remove subject" onClick="{{ r.onRemove }}" style="width:36px;height:36px;flex-shrink:0;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--muted);cursor:pointer;font-size:16px">×</button>
+      </div>
+    </sc-for>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <button onClick="{{ ed.addRow }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">+ Add row</button>
+      <span style="margin-left:auto;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ ed.totalText }}</span>
+    </div>
+    <sc-if value="{{ ed.problem }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--warn-fg);background:var(--warn-bg);padding:8px 10px;border-radius:8px">{{ ed.problem }}</div></sc-if>
+  </div>
 </div>
 </sc-if>
 </main>
@@ -363,11 +411,70 @@ class Component extends DCLogic {
       };
     });
     return { tabs, rows, noRows: rows.length === 0, emptyText: all.length ? 'No polls match this filter.' : 'No polls yet. Start one with + New poll, or Open… a tally.json.',
-      q: s.q, sort: s.sort, onQ: e => this.setState({ q: e.target.value }), onSort: e => this.setState({ sort: e.target.value }), newPoll: () => this.newDraft && this.newDraft() };
+      q: s.q, sort: s.sort, onQ: e => this.setState({ q: e.target.value }), onSort: e => this.setState({ sort: e.target.value }), newPoll: () => this.newDraft() };
   }
 
   pollVals() { const p = this.poll(this.state.pollId); return { title: p.mint ? p.mint.title : '(not a poll)', desc: p.mint ? p.mint.desc : '' }; }
-  editorVals() { const d = this.state.doc.drafts.find(x => x.id === this.state.editId); return { title: d.title }; }
+  // ---- Drafts and minting ----
+  newDraft() {
+    const id = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), d = this.state.doc;
+    this.setDoc({ ...d, drafts: [{ id, title: '', desc: '', options: ['', ''], quadratic: false, organiser: 'Organiser', subjects: [{ id: '', keys: [], weight: 1 }] }, ...d.drafts] });
+    this.openEditor(id);
+    return id;
+  }
+  setDraft(id, fn) { const d = this.state.doc; this.setDoc({ ...d, drafts: d.drafts.map(x => x.id === id ? fn(x) : x) }); }
+  // Why a draft can't be minted yet, or null.
+  mintProblem(d) {
+    const ids = d.subjects.map(s => s.id.trim()), isKey = k => { try { return this.L.cesrDecode(k).code === 'D'; } catch (e) { return false; } };
+    if (!d.title.trim()) return 'Add a title before minting.';
+    if (d.options.filter(o => o.trim()).length < 2) return 'Add at least two options before minting.';
+    if (!d.subjects.length) return 'Add at least one subject before minting.';
+    if (ids.some(x => !x)) return 'Every subject needs an id.';
+    const dup = ids.find((x, i) => ids.indexOf(x) !== i); if (dup) return 'Subject "' + dup + '" is listed twice.';
+    const light = d.subjects.find(s => !Number.isInteger(s.weight) || s.weight < 1); if (light) return 'Weights must be whole numbers of at least 1 (check "' + light.id + '").';
+    const badKey = d.subjects.find(s => s.keys.some(k => !isKey(k))); if (badKey) return 'Subject "' + badKey.id + '" has a key that is not an Ed25519 public key (D…).';
+    return null;
+  }
+  // Signs the mint with a fresh organiser key, generating keys for subjects that have none; their secrets go to the keyring.
+  mintDraft(id) {
+    const doc = this.state.doc, d = doc.drafts.find(x => x.id === id), problem = this.mintProblem(d);
+    if (problem) { this.flash(problem); return null; }
+    const fresh = () => { const k = this.L.newKeypair(); this.remember(k.pub, k.secret); return k; }, org = fresh();
+    const subjects = d.subjects.map(s => ({ id: s.id.trim(), keys: s.keys.length ? s.keys : [fresh().pub], weight: s.weight }));
+    const mint = this.L.makeMint({ title: d.title.trim(), desc: d.desc, options: d.options.map(o => o.trim()).filter(Boolean), quadratic: d.quadratic,
+      organiser: { id: d.organiser.trim() || 'Organiser', keys: [org.pub] }, subjects, dt: new Date().toISOString() }, org.secret);
+    this.setDoc({ polls: [...doc.polls, [mint]], drafts: doc.drafts.filter(x => x.id !== id) });
+    this.openPoll(mint.d);
+    this.flash('Minted. The subjects and weights are now fixed.');
+    return mint.d;
+  }
+  editorVals() {
+    const s = this.state, C = this.C, d = s.doc.drafts.find(x => x.id === s.editId), up = fn => this.setDraft(d.id, fn);
+    const val = e => e.target.value, total = d.subjects.reduce((t, x) => t + (x.weight || 0), 0);
+    return {
+      title: d.title, desc: d.desc, organiser: d.organiser,
+      onTitle: e => { const v = val(e); up(x => ({ ...x, title: v })); },
+      onDesc: e => { const v = val(e); up(x => ({ ...x, desc: v })); },
+      onOrganiser: e => { const v = val(e); up(x => ({ ...x, organiser: v })); },
+      options: d.options.map((o, i) => ({ n: String.fromCharCode(65 + i), value: o,
+        onChange: e => { const v = val(e); up(x => ({ ...x, options: x.options.map((y, k) => k === i ? v : y) })); },
+        onRemove: () => up(x => ({ ...x, options: x.options.length > 2 ? x.options.filter((_, k) => k !== i) : x.options })) })),
+      addOption: () => up(x => ({ ...x, options: [...x.options, ''] })),
+      quadBg: d.quadratic ? C.accent : 'var(--line-2)', quadJ: d.quadratic ? 'flex-end' : 'flex-start', toggleQuad: () => up(x => ({ ...x, quadratic: !x.quadratic })),
+      rows: d.subjects.map((r, i) => {
+        const set = patch => up(x => ({ ...x, subjects: x.subjects.map((y, k) => k === i ? { ...y, ...patch } : y) }));
+        return { id: r.id, weight: String(r.weight), keys: r.keys.join(', '),
+          onId: e => set({ id: val(e) }), onWeight: e => set({ weight: Math.max(0, parseInt(val(e), 10) || 0) }),
+          onKeys: e => set({ keys: val(e).split(/[\s,]+/).filter(Boolean) }),
+          onRemove: () => up(x => ({ ...x, subjects: x.subjects.filter((_, k) => k !== i) })) };
+      }),
+      addRow: () => up(x => ({ ...x, subjects: [...x.subjects, { id: '', keys: [], weight: 1 }] })),
+      totalText: total + ' weight across ' + d.subjects.length + ' subject' + (d.subjects.length === 1 ? '' : 's'),
+      problem: this.mintProblem(d) || '', ready: !this.mintProblem(d), mintOpacity: this.mintProblem(d) ? .5 : 1,
+      mint: () => this.mintDraft(d.id),
+      del: () => { this.setDoc({ ...s.doc, drafts: s.doc.drafts.filter(x => x.id !== d.id) }); this.setState({ view: 'dashboard' }); this.flash('Draft deleted.'); }
+    };
+  }
 
   renderVals() {
     const s = this.state, C = this.C;
