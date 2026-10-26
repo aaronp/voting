@@ -390,6 +390,8 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
   <sc-if value="{{ pv.isLedger }}" hint-placeholder-val="{{ false }}">
   <div style="display:flex;flex-direction:column;gap:16px">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <sc-if value="{{ pv.lv.hasMine }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.lv.findMine }}" style="padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer">Find my vote in the tree</button></sc-if>
+      <sc-if value="{{ pv.lv.edited }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--danger)">Showing tamper-mode edits (not saved)</span></sc-if>
       <span title="{{ pv.lv.badgeTip }}" style="font-size:13.5px;font-weight:600;padding:5px 12px;border-radius:999px;background:{{ pv.lv.badgeBg }};color:{{ pv.lv.badgeFg }}">{{ pv.lv.badge }}</span>
     </div>
     <sc-for list="{{ pv.lv.failures }}" as="f" hint-placeholder-count="0">
@@ -1010,6 +1012,13 @@ class Component extends DCLogic {
       choice: own ? allocText(Object.assign({}, own.values)) : e.alloc ? allocText(e.alloc) : '',
       hasOpen: opens !== null, openText: opens ? '✓ Your opening matches these seals' : '✗ Your opening no longer matches', openColor: opens ? '#7fd6ae' : '#ff9a85' };
   }
+  // Opens the Tree tab on the current subject's vote: its path to the root expanded and selected.
+  findMine(pollId) {
+    const p = this.poll(pollId), as = this.currentAs(pollId), j = as ? p.chain.findIndex(e => e.t === 'vote' && e.subject === as) : -1;
+    if (j < 0) return;
+    const k = this.state.groupSize, n = p.chain.length;
+    this.reveal(pollId + ':' + k, this.levelsFor(n, k), n, k, 0, j, { tab: 'tree', highlight: j, showProof: true });
+  }
   treeVals(pollId) {
     const s = this.state, C = this.C, k = s.groupSize, fmt = x => x.toLocaleString(), tkey = pollId + ':' + k, p = this.poll(pollId);
     const tam = s.tamper[pollId] || {}, ov = s.ntamper[tkey] || {};
@@ -1182,7 +1191,10 @@ class Component extends DCLogic {
 
   // ---- The ledger table ----
   ledgerVals(pollId) {
-    const s = this.state, p = this.poll(pollId), m = p.mint, v = p.verdict, n = v.failures.length;
+    // While tamper edits exist, the table shows the edited chain and its failures (in memory only).
+    const s = this.state, p = this.poll(pollId), m = p.mint, edited = Object.keys(s.tamper[pollId] || {}).length > 0;
+    const chain = edited ? this.tampered(pollId) : p.chain, v = edited ? this.L.verify(chain) : p.verdict, n = v.failures.length;
+    const as = this.currentAs(pollId), myIdx = as ? p.chain.findIndex(e => e.t === 'vote' && e.subject === as) : -1;
     const badAt = i => v.failures.some(f => f.index === i), sigBad = i => v.failures.some(f => f.index === i && /sig$/.test(f.rule));
     const allocText = a => Object.entries(a).filter(([, k]) => k > 0).map(([o, k]) => (m && m.options[o] !== undefined ? m.options[o] : 'option ' + o) + ' ×' + k).join(', ');
     const highlight = i => {
@@ -1199,9 +1211,10 @@ class Component extends DCLogic {
       failures: v.failures.map(f => ({ text: '#' + f.index + ' ' + f.rule + ': ' + f.message, onClick: () => highlight(f.index) })),
       subjects: (m ? m.subjects : []).map(x => ({ id: x.id, keys: x.keys.map(k => this.short(k)).join(', '), keysFull: x.keys.join('\n'), weight: String(x.weight),
         voted: x.id in v.voted ? '✓' : '—', votedColor: x.id in v.voted ? 'var(--accent)' : 'var(--faint-2)' })),
-      entries: p.chain.map((e, i) => {
+      edited, hasMine: myIdx >= 0, findMine: () => this.findMine(pollId),
+      entries: chain.map((e, i) => {
         const subj = m && e.t === 'vote' ? m.subjects.find(x => x.id === e.subject) : null, bad = badAt(i);
-        return { n: i, kind: e.t, subject: e.t === 'vote' ? e.subject : m ? m.organiser.id : '',
+        return { n: i, mine: i === myIdx, kind: e.t, subject: e.t === 'vote' ? e.subject : m ? m.organiser.id : '',
           allocText: e.t === 'vote' ? (e.alloc ? allocText(e.alloc) : 'sealed') : e.t === 'mint' ? e.subjects.length + ' subjects'
             : e.t === 'tally' ? allocText(Object.assign({}, e.totals)) + (e.excluded.length ? ' · ' + e.excluded.length + ' excluded' : '') : 'closed',
           weight: e.t === 'mint' ? String(e.total) : subj ? String(subj.weight) : '',

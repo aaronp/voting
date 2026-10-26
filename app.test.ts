@@ -460,3 +460,62 @@ test("every layout renders for open and sealed polls", async () => {
     expect(pv.leafHashes.length).toBeGreaterThan(1);
   }
 });
+
+const card = (app: any, n: number) => app.renderVals().pv.cards2.find((c: any) => c.num === String(n));
+
+test("find my vote reveals the path", () => {
+  const b = bigPoll(5, 4), { app } = pollApp(b, b.keys.ks[2]);
+  app.setAs(b.pollId, "s2"); app.setState({ groupSize: 2 });
+  app.findMine(b.pollId);
+  expect(app.state.tab).toBe("tree");
+  expect(app.state.sel[b.pollId + ":2"]).toEqual({ d: 0, i: 3 });
+  const exp = app.state.expanded[b.pollId + ":2"];
+  expect(exp["1:1"] && exp["2:0"] && exp["3:0"]).toBe(true);
+  expect(card(app, 3).border).toContain("var(--accent)");
+  expect(card(app, 2).border).toContain("dashed");
+  expect(app.ledgerVals(b.pollId).entries[3].mine).toBe(true);
+});
+
+test("editing an entry turns its path red", () => {
+  const b = bigPoll(5, 4, true), { app } = pollApp(b);
+  app.setState({ tab: "tree", tamperMode: true, groupSize: 10 });
+  card(app, 1).fields.find((f: any) => f.label === "alloc").onChange({ target: { value: '{"1":1}' } });
+  const pv = app.renderVals().pv;
+  expect(pv.leafHashes[1]).not.toBe(b.chain[1].d);
+  expect(pv.computed).not.toBe(pv.published);
+  expect(pv.rootCheck.ok).toBe(false);
+  expect(card(app, 1).sigText).toBe("✗ Invalid");
+  expect(app.ledgerVals(b.pollId).failures.map((f: any) => f.text.split(":")[0])).toEqual(["#1 said", "#1 vote-sig"]);
+});
+
+test("overwriting a node hash breaks only its ancestors", () => {
+  const b = bigPoll(5, 4), { app } = pollApp(b);
+  app.setState({ tab: "tree", tamperMode: true, groupSize: 2 });
+  const node = app.renderVals().pv.rows.flatMap((r: any) => r.nodes).find((n: any) => n.d === 1 && n.i === 0);
+  node.onEdit({ target: { value: b.chain[4].d } });
+  const pv = app.renderVals().pv;
+  expect(pv.leafHashes).toEqual(b.chain.map((e: any) => e.d));
+  expect(pv.computed).not.toBe(pv.published);
+  expect(pv.hasChanged).toBe(true);
+});
+
+test("tamper mode never touches the saved document", () => {
+  const b = bigPoll(5, 4, true), env = pollApp(b), { app, store } = env;
+  const saved = store["tally:json:v2"], text = L.serializeFile(app.state.doc);
+  app.setState({ tab: "tree", tamperMode: true });
+  card(app, 2).fields.find((f: any) => f.label === "subject").onChange({ target: { value: "s4" } });
+  expect(store["tally:json:v2"]).toBe(saved); expect(L.serializeFile(app.state.doc)).toBe(text);
+  app.renderVals().pv.resetTamper();
+  const pv = app.renderVals().pv;
+  expect(pv.computed).toBe(pv.published); expect(pv.hasTamper).toBe(false);
+});
+
+test("only the owner sees their sealed opening", async () => {
+  const { app, id } = sealedDraft();
+  const pollId = app.mintDraft(id);
+  app.setAs(pollId, "alice"); await app.castAs(pollId, "alice", { 0: 2 });
+  app.setState({ tab: "tree" });
+  expect(card(app, 1)).toMatchObject({ hasOpen: true, choice: "Yes ×2", spentText: "sealed" });
+  app.setAs(pollId, "bob");
+  expect(card(app, 1)).toMatchObject({ hasOpen: false, choice: "" });
+});
