@@ -228,3 +228,70 @@ test("openings round-trip only for the right key", async () => {
 test("C keys are CESR", () => {
   expect(L.newEncKeypair().pub).toMatch(/^C[A-Za-z0-9_-]{43}$/);
 });
+
+// A sealed Yes/No poll for alice (4) and bob (8); keys.org.enc decrypts openings.
+function sealedDemo(quadratic = false) {
+  const org = L.newKeypair(), enc = L.newEncKeypair(), a = L.newKeypair(), b = L.newKeypair();
+  const mint = L.makeMint({ title: "Sealed", desc: "", options: ["Yes", "No"], quadratic, kind: "sealed", organiser: { id: "org", keys: [org.pub], enc: enc.pub },
+    subjects: [{ id: "alice", keys: [a.pub], weight: 4 }, { id: "bob", keys: [b.pub], weight: 8 }], dt: "t" }, org.secret);
+  return { chain: [mint] as any[], keys: { org, enc, alice: a, bob: b } as any };
+}
+const sealedVote = async (chain: any[], keys: any, subject: string, alloc: any, viaChain = chain) =>
+  (await L.makeSealedVote(viaChain, { subject, alloc, key: keys[subject].pub, dt: "t" }, keys[subject].secret)).entry;
+
+test("sealed votes verify without revealing allocations", async () => {
+  const { chain, keys } = sealedDemo();
+  const { entry, opening } = await L.makeSealedVote(chain, { subject: "alice", alloc: { 0: 3 }, key: keys.alice.pub, dt: "t" }, keys.alice.secret);
+  chain.push(entry); chain.push(await sealedVote(chain, keys, "bob", { 1: 8 }));
+  expect(opening.values).toEqual([3, 0]);
+  expect(entry.seals).toHaveLength(2);
+  expect(L.verify(chain)).toMatchObject({ ok: true, totals: [0, 0], used: 0, sealed: true, status: "live" });
+  const text = L.serializeFile({ polls: [chain], drafts: [] });
+  expect(text).not.toContain('"alloc"'); expect(text).not.toContain(opening.blinds[0]);
+  expect(L.parseFile(text).polls[0][1].seals).toEqual(entry.seals);
+});
+
+test("a tally publishes totals anyone can check", async () => {
+  const { chain, keys } = sealedDemo();
+  chain.push(await sealedVote(chain, keys, "alice", { 0: 3 }));
+  chain.push(await sealedVote(chain, keys, "bob", { 1: 8 }));
+  const tally = await L.makeTally(chain, { secret: keys.org.secret, encSecret: keys.enc.secret }, "t");
+  expect(tally).toMatchObject({ t: "tally", totals: [3, 8], used: 11, excluded: [], group: 10, root: L.rootOf(chain) });
+  chain.push(tally);
+  expect(L.verify(chain)).toMatchObject({ ok: true, status: "closed", totals: [3, 8], used: 11 });
+});
+
+test("a wrong total fails rule tally", async () => {
+  const { chain, keys } = sealedDemo();
+  chain.push(await sealedVote(chain, keys, "alice", { 0: 3 }));
+  const t = await L.makeTally(chain, { secret: keys.org.secret, encSecret: keys.enc.secret }, "t");
+  t.totals[0] = 4; t.d = L.said(t); t.sig = L.sign(t, keys.org.secret);
+  chain.push(t);
+  expect(rules(chain)).toEqual(["tally"]);
+});
+
+test("the tally excludes ballots that don't open", async () => {
+  const { chain, keys } = sealedDemo(true), other = L.newEncKeypair();
+  chain.push(await sealedVote(chain, keys, "alice", { 0: 1 }, [{ ...chain[0], organiser: { ...chain[0].organiser, enc: other.pub } }]));
+  chain.push(await sealedVote(chain, keys, "bob", { 1: 2 }));
+  const quad = sealedDemo(true);
+  quad.chain.push(await sealedVote(quad.chain, quad.keys, "alice", { 0: 3 }));
+  const t1 = await L.makeTally(chain, { secret: keys.org.secret, encSecret: keys.enc.secret }, "t");
+  expect(t1.excluded).toEqual([{ index: 1, reason: "does not open" }]); expect(t1.totals).toEqual([0, 2]);
+  chain.push(t1); expect(L.verify(chain).ok).toBe(true);
+  const t2 = await L.makeTally(quad.chain, { secret: quad.keys.org.secret, encSecret: quad.keys.enc.secret }, "t");
+  expect(t2.excluded).toEqual([{ index: 1, reason: "costs 9, holds 4" }]); expect(t2.totals).toEqual([0, 0]);
+  quad.chain.push(t2); expect(L.verify(quad.chain).ok).toBe(true);
+});
+
+test("a close is not allowed on a sealed poll", async () => {
+  const { chain, keys } = sealedDemo();
+  chain.push(L.makeClose(chain, "t", keys.org.secret));
+  expect(rules(chain)).toContain("close");
+});
+
+test("open polls are unchanged", () => {
+  const text = L.serializeFile(sampleDoc());
+  expect(L.serializeFile(L.parseFile(text))).toBe(text);
+  expect(L.verify(L.parseFile(text).polls[0])).toMatchObject({ ok: true, sealed: false });
+});
