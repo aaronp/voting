@@ -203,3 +203,33 @@ test("the organiser can close", () => {
   const pv = app.renderVals().pv;
   expect(pv.status).toBe("Closed"); expect(pv.canClose).toBe(false); expect(pv.canCast).toBe(false); expect(pv.voters).toEqual([]);
 });
+
+const short = (s: string) => s.slice(0, 8) + "…" + s.slice(-4);
+
+test("the badge names the organiser", () => {
+  const f = fixture();
+  const ok = pollApp(f).app.ledgerVals(f.pollId);
+  expect(ok.badge).toBe("Verified · minted by Organiser " + short(f.keys.org.pub)); expect(ok.badgeOk).toBe(true);
+  const c = f.doc.polls[0];
+  c.push(L.makeVote(c, { subject: "alice", alloc: { 0: 3 }, key: f.keys.alice.pub, dt: "t" }, f.keys.alice.secret));
+  c[1].alloc = { 0: 4 };
+  const bad = pollApp(f).app.ledgerVals(f.pollId);
+  expect(bad.badge).toBe("Broken · 2 problems"); expect(bad.badgeOk).toBe(false);
+  expect(bad.failures.map((x: any) => x.text)).toEqual(["#1 said: its hash (d) does not match its contents", "#1 vote-sig: not signed by one of alice's keys"]);
+});
+
+test("rows mirror the chain", () => {
+  const f = fixture(), c = f.doc.polls[0];
+  c.push(L.makeVote(c, { subject: "alice", alloc: { 0: 3 }, key: f.keys.alice.pub, dt: "t" }, f.keys.alice.secret));
+  c.push(L.makeVote(c, { subject: "bob", alloc: { 0: 1, 1: 7 }, key: f.keys.alice.pub, dt: "t" }, f.keys.alice.secret));
+  const lv = pollApp(f).app.ledgerVals(f.pollId);
+  expect(lv.entries.map((e: any) => [e.n, e.kind, e.subject, e.allocText, e.weight, e.sigText, e.bad])).toEqual([
+    [0, "mint", "Organiser", "2 subjects", "12", "✓", false],
+    [1, "vote", "alice", "Yes ×3", "4", "✓", false],
+    [2, "vote", "bob", "Yes ×1, No ×7", "8", "✗", true],
+  ]);
+  expect(lv.entries[1].link).toBe(short(c[0].d) + " → " + short(c[1].d));
+  expect(lv.subjects.map((x: any) => [x.id, x.keys, x.weight, x.voted])).toEqual([["alice", short(f.keys.alice.pub), "4", "✓"], ["bob", short(f.keys.bob.pub), "8", "✓"]]);
+  expect(lv.totals.map((t: any) => [t.label, t.total])).toEqual([["Yes", 3], ["No", 0]]);
+  expect(lv.usedText).toBe("3/12 weight used");
+});
