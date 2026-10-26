@@ -348,3 +348,60 @@ test("the accounts page has an address", () => {
   app.setState({ view: "dashboard" }); app.setState({ view: "accounts" });
   expect(g.location.search).toBe("?page=accounts");
 });
+
+const sealedDraft = () => { const env = withDraft(); fill(env.app, env.id, { ...READY, kind: "sealed" }); return env; };
+
+test("minting a sealed draft adds an encryption key", () => {
+  const { app, id, store } = sealedDraft();
+  app.mintDraft(id);
+  const mint = app.state.doc.polls[0][0];
+  expect(mint.kind).toBe("sealed"); expect(mint.organiser.enc).toMatch(/^C/);
+  expect(JSON.parse(store["tally:keys:v1"])[mint.organiser.enc]).toBeTruthy();
+  expect(L.verify(app.state.doc.polls[0]).ok).toBe(true);
+});
+
+test("a sealed vote keeps its opening only in this browser", async () => {
+  const { app, id, store } = sealedDraft();
+  const pollId = app.mintDraft(id);
+  app.setAs(pollId, "alice");
+  expect(await app.castAs(pollId, "alice", { 0: 3 })).toBe(true);
+  const vote = app.state.doc.polls[0][1];
+  expect(store["tally:json:v2"]).not.toContain('"alloc"');
+  expect(JSON.parse(store["tally:openings:v1"])[vote.d].values).toEqual([3, 0]);
+  expect(await app.castAs(pollId, "alice", { 0: 1 })).toBe(false);
+});
+
+test("the organiser tallies a sealed poll", async () => {
+  const { app, id } = sealedDraft();
+  const pollId = app.mintDraft(id);
+  app.setAs(pollId, "alice"); await app.castAs(pollId, "alice", { 0: 3 });
+  app.setAs(pollId, "bob"); await app.castAs(pollId, "bob", { 1: 8 });
+  let pv = app.renderVals().pv;
+  expect(pv.canTally).toBe(true); expect(pv.canClose).toBe(false);
+  expect(pv.resultsPending).toBe("Results appear when the organiser tallies.");
+  await app.tallyPoll(pollId);
+  expect(L.verify(app.state.doc.polls[0])).toMatchObject({ ok: true, status: "closed", totals: [3, 8] });
+  pv = app.renderVals().pv;
+  expect(pv.resultsPending).toBe(""); expect(pv.results.map((r: any) => r.total)).toEqual([3, 8]);
+});
+
+test("each kind explains itself", () => {
+  const app = mount().app;
+  expect(app.howItWorks("open").doesnt[0]).toBe("Hide how any subject voted. Privacy rests only on nobody knowing who is behind a subject's AID.");
+  expect(app.howItWorks("sealed").doesnt[0]).toBe("Hide votes from the tallier. Anyone can see which ballots were excluded, but must trust the tallier that each exclusion was right.");
+  expect(app.howItWorks("sealed").title).toBe("Sealed ballot");
+  const f = fixture(); expect(pollApp(f).app.renderVals().pv.how.title).toBe("Open ballot");
+});
+
+test("sealed votes show as sealed in the ledger and the sign-for-real preview", async () => {
+  const { app, id } = sealedDraft();
+  const pollId = app.mintDraft(id);
+  app.setAs(pollId, "alice"); await app.castAs(pollId, "alice", { 0: 3 });
+  app.setAs(pollId, "bob"); app.setState({ allocs: { [pollId]: { 1: 2 } } });
+  expect(app.ledgerVals(pollId).entries[1].allocText).toBe("sealed");
+  await app.openReal("vote");
+  const entry = JSON.parse(app.state.realOpen.bytes);
+  expect(entry.alloc).toBeUndefined(); expect(entry.seals).toHaveLength(2); expect(typeof entry.opening).toBe("string");
+  await app.tallyPoll(pollId);
+  expect(app.ledgerVals(pollId).entries.at(-1)).toMatchObject({ kind: "tally", allocText: "Yes ×3" });
+});

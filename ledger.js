@@ -253,8 +253,8 @@ export function parseFile(text) {
   const polls = list(d.polls, 'polls', (chain, p) => list(chain, p, entry));
   polls.forEach((c, i) => { if (c.length && polls.findIndex(x => x.length && x[0].d === c[0].d) !== i) fail('polls[' + i + '][0].d', 'duplicate poll'); });
   const drafts = d.drafts === undefined ? [] : list(d.drafts, 'drafts', (x, p) => shape(x, p,
-    { id: str, title: str, desc: str, options: strs, quadratic: bool, organiser: str, subjects: subjects(0) },
-    { desc: '', options: [], quadratic: false, organiser: 'Organiser', subjects: [] }));
+    { id: str, title: str, desc: str, options: strs, quadratic: bool, kind: (v, p) => v === 'open' || v === 'sealed' ? v : fail(p, 'expected "open" or "sealed"'), organiser: str, subjects: subjects(0) },
+    { desc: '', options: [], quadratic: false, kind: undefined, organiser: 'Organiser', subjects: [] }));
   Object.keys(d).forEach(k => { if (k !== 'polls' && k !== 'drafts') fail(k, 'unknown field'); });
   return { polls, drafts };
 }

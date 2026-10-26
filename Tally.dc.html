@@ -139,8 +139,17 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
       <h1 style="margin:0;font-size:30px;letter-spacing:-0.02em;line-height:1.15">{{ pv.title }}</h1>
       <p style="margin:0;color:var(--muted);font-size:15px">{{ pv.desc }}</p>
       <span style="font-size:13.5px;color:var(--faint)">{{ pv.meta }}</span>
+      <details style="margin-top:4px"><summary style="cursor:pointer;font-size:13.5px;font-weight:600;color:var(--accent-hover)">How this poll works: {{ pv.how.title }}</summary>
+        <div style="margin-top:10px"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:14px;border-radius:10px;background:var(--raised);border:1px solid var(--line-soft)">
+      <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px">Guarantees</div><ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.5"><sc-for list="{{ pv.how.guarantees }}" as="g" hint-placeholder-count="3"><li>{{ g }}</li></sc-for></ul></div>
+      <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px">Doesn't</div><ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.5"><sc-for list="{{ pv.how.doesnt }}" as="g" hint-placeholder-count="1"><li>{{ g }}</li></sc-for></ul></div>
+      <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px">For</div><div style="font-size:13.5px;line-height:1.5">{{ pv.how.use }}</div>
+        <sc-if value="{{ pv.hasLater }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px;margin-top:10px">Later</div><ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.5;color:var(--muted)"><sc-for list="{{ pv.how.later }}" as="g" hint-placeholder-count="2"><li>{{ g }}</li></sc-for></ul></sc-if></div>
+    </div></div>
+      </details>
     </div>
     <sc-if value="{{ pv.isLive }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.showRealClose }}" style="background:none;border:none;padding:0;font-size:13.5px;font-weight:600;color:var(--accent-hover);cursor:pointer;margin-top:8px">Sign the close for real…</button></sc-if>
+    <sc-if value="{{ pv.canTally }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.tally }}" style="padding:8px 14px;border:none;border-radius:9px;background:var(--ink);color:var(--on-ink);font-size:14px;font-weight:600;cursor:pointer">Tally and close</button></sc-if>
     <sc-if value="{{ pv.canClose }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.close }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">Close poll</button></sc-if>
   </div>
   <sc-if value="{{ pv.showChooser }}" hint-placeholder-val="{{ false }}">
@@ -188,6 +197,7 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
 
   <sc-if value="{{ pv.isResults }}" hint-placeholder-val="{{ false }}">
   <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;max-width:720px">
+    <sc-if value="{{ pv.resultsPending }}" hint-placeholder-val="{{ false }}"><div style="color:var(--muted);font-size:14.5px">{{ pv.resultsPending }} Until then the ledger shows who voted, but every allocation stays sealed.</div></sc-if>
     <sc-for list="{{ pv.results }}" as="r" hint-placeholder-count="2">
       <div style="display:flex;flex-direction:column;gap:6px">
         <div style="display:flex;justify-content:space-between;font-size:15px"><span>{{ r.label }}</span><span style="font-weight:700;font-variant-numeric:tabular-nums">{{ r.total }}</span></div>
@@ -249,6 +259,17 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
     </div>
   </div>
   <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-right:6px">Kind</span>
+        <sc-for list="{{ ed.kinds }}" as="k" hint-placeholder-count="2"><button onClick="{{ k.pick }}" style="padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:{{ k.bg }};color:{{ k.fg }};font-size:13.5px;font-weight:600;cursor:pointer">{{ k.label }}</button></sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:14px;border-radius:10px;background:var(--raised);border:1px solid var(--line-soft)">
+      <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px">Guarantees</div><ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.5"><sc-for list="{{ ed.how.guarantees }}" as="g" hint-placeholder-count="3"><li>{{ g }}</li></sc-for></ul></div>
+      <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px">Doesn't</div><ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.5"><sc-for list="{{ ed.how.doesnt }}" as="g" hint-placeholder-count="1"><li>{{ g }}</li></sc-for></ul></div>
+      <div><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px">For</div><div style="font-size:13.5px;line-height:1.5">{{ ed.how.use }}</div>
+        <sc-if value="{{ ed.hasLater }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px;margin-top:10px">Later</div><ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.5;color:var(--muted)"><sc-for list="{{ ed.how.later }}" as="g" hint-placeholder-count="2"><li>{{ g }}</li></sc-for></ul></sc-if></div>
+    </div>
+    </div>
     <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Question</span>
       <input value="{{ ed.title }}" onChange="{{ ed.onTitle }}" placeholder="What are we deciding?" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;font-size:16px;font-weight:600"></label>
     <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">Description</span>
@@ -380,7 +401,7 @@ class Component extends DCLogic {
     { value:'warm', label:'Warm ledger', bg:'#f5f0e6', primary:'#7a2e1c', accent:'#c8642b' }
   ];
   // The document is tally:json:v2 (the old v1 format is not read). Demo private keys live apart from it, in tally:keys:v1.
-  static KEYS = { json: 'tally:json:v2', keys: 'tally:keys:v1', theme: 'tally:theme:v1', accounts: 'tally:accounts:v1', as: 'tally:as:v1' };
+  static KEYS = { json: 'tally:json:v2', keys: 'tally:keys:v1', theme: 'tally:theme:v1', accounts: 'tally:accounts:v1', as: 'tally:as:v1', openings: 'tally:openings:v1' };
   // localStorage can be missing or blocked (private mode); the app still works, it just doesn't remember.
   static store(op, key, value) {
     try { return op === 'get' ? localStorage.getItem(key) : localStorage.setItem(key, value); } catch (err) { return null; }
@@ -613,27 +634,70 @@ class Component extends DCLogic {
   // ---- Voting and closing ----
   // Subjects this browser can still vote as in a live poll.
   canVoteAs(pollId) { const p = this.poll(pollId); return p && p.mint && p.verdict.status === 'live' ? this.mine(pollId).filter(x => !(x.id in p.verdict.voted)) : []; }
+  // Signs and appends a vote. Open polls append at once; sealed polls seal and encrypt first (async), keep the opening in
+  // this browser only, and refuse a second cast for the poll while one is in flight.
   castAs(pollId, subject, alloc) {
     const p = this.poll(pollId), s = this.canVoteAs(pollId).find(x => x.id === subject);
     const clean = Object.fromEntries(Object.entries(alloc).filter(([, k]) => k > 0)), spent = this.L.cost(clean, p && p.mint.quadratic);
-    if (!s || spent < 1 || spent > s.weight) return false;
-    const keys = this.keyring(), key = s.keys.find(k => k in keys);
-    this.append(pollId, this.L.makeVote(p.chain, { subject, alloc: clean, key, dt: new Date().toISOString() }, keys[key]));
-    this.setState(st => ({ allocs: { ...st.allocs, [pollId]: {} } }));
-    this.flash('Signed as ' + subject + ' and added to the ledger.');
-    return true;
+    if (!s || spent < 1 || spent > s.weight || this._casting === pollId) return Promise.resolve(false);
+    const keys = this.keyring(), key = s.keys.find(k => k in keys), fields = { subject, alloc: clean, key, dt: new Date().toISOString() };
+    const done = entry => {
+      this.append(pollId, entry);
+      this.setState(st => ({ allocs: { ...st.allocs, [pollId]: {} } }));
+      this.flash('Signed as ' + subject + ' and added to the ledger.');
+      return true;
+    };
+    if (p.mint.kind !== 'sealed') return Promise.resolve(done(this.L.makeVote(p.chain, fields, keys[key])));
+    this._casting = pollId;
+    return this.L.makeSealedVote(p.chain, fields, keys[key]).then(({ entry, opening }) => {
+      const o = this.openings(); o[entry.d] = opening; Component.store('set', Component.KEYS.openings, JSON.stringify(o));
+      return done(entry);
+    }).finally(() => { this._casting = null; });
   }
+  // This browser's own sealed openings, by vote SAID.
+  openings() { try { return JSON.parse(Component.store('get', Component.KEYS.openings)) || {}; } catch (e) { return {}; } }
   organiserSecret(pollId) { const p = this.poll(pollId), keys = this.keyring(), k = p && p.mint && p.mint.organiser.keys.find(x => x in keys); return k ? keys[k] : null; }
   closePoll(pollId) {
     const p = this.poll(pollId), secret = this.organiserSecret(pollId);
-    if (!secret || p.verdict.status !== 'live') return;
+    if (!secret || p.verdict.status !== 'live' || p.mint.kind === 'sealed') return;
     this.append(pollId, this.L.makeClose(p.chain, new Date().toISOString(), secret));
     this.flash('Closed. No more votes can be added.');
+  }
+  canTally(pollId) {
+    const p = this.poll(pollId), keys = this.keyring();
+    return !!(p && p.mint && p.mint.kind === 'sealed' && p.verdict.status === 'live' && this.organiserSecret(pollId) && p.mint.organiser.enc in keys);
+  }
+  // The organiser opens every sealed ballot and publishes the totals; this ends the poll.
+  async tallyPoll(pollId) {
+    if (!this.canTally(pollId) || this._casting === pollId) return;
+    const p = this.poll(pollId), keys = this.keyring();
+    this._casting = pollId;
+    try {
+      const t = await this.L.makeTally(p.chain, { secret: this.organiserSecret(pollId), encSecret: keys[p.mint.organiser.enc] }, new Date().toISOString());
+      this.append(pollId, t);
+      this.flash('Tallied: ' + t.totals.reduce((a, b) => a + b, 0) + ' votes counted' + (t.excluded.length ? ', ' + t.excluded.length + ' excluded' : '') + '. The poll is closed.');
+    } finally { this._casting = null; }
+  }
+  howItWorks(kind) {
+    return kind === 'sealed' ? {
+      title: 'Sealed ballot',
+      guarantees: ['Only minted keys can vote, once each.', 'Any change to any entry breaks a hash or a signature.', 'The published totals provably equal the sum of the sealed ballots counted.'],
+      doesnt: ['Hide votes from the tallier. Anyone can see which ballots were excluded, but must trust the tallier that each exclusion was right.'],
+      use: "Member or community votes where neighbours shouldn't see each other's choices, run by a trusted organiser.",
+      later: ['Trustees instead of one tallier.', 'Proofs that each sealed ballot is within its weight.']
+    } : {
+      title: 'Open ballot',
+      guarantees: ['Only minted keys can vote, once each, within their weight.', 'Any change to any entry breaks a hash or a signature.', 'Anyone can recount the result from the file.'],
+      doesnt: ["Hide how any subject voted. Privacy rests only on nobody knowing who is behind a subject's AID."],
+      use: 'Accountable votes: boards, delegates, roll calls.',
+      later: []
+    };
   }
 
   // ---- "Sign it for real" ----
   // Shows the exact entry Tally would sign (with dt fixed when the window opens) so it can be signed with outside tools.
-  openReal(kind) {
+  // Async only for sealed votes, whose preview needs fresh seals and an encrypted opening.
+  async openReal(kind) {
     const s = this.state, L = this.L, dt = new Date().toISOString();
     let entry, principal;
     if (kind === 'mint') {
@@ -649,7 +713,12 @@ class Component extends DCLogic {
         const offered = this.canVoteAs(s.pollId), who = offered.find(x => x.id === this.currentAs(s.pollId)) || m.subjects.find(x => !(x.id in p.verdict.voted)) || m.subjects[0];
         const a = Object.fromEntries(Object.entries(s.allocs[s.pollId] || {}).filter(([, k]) => k > 0));
         principal = who.id;
-        entry = { v: 'tally/1', t: 'vote', d: '', p: p.chain[p.chain.length - 1].d, subject: who.id, alloc: Object.keys(a).length ? a : { 0: 1 }, dt, key: who.keys[0] };
+        const alloc = Object.keys(a).length ? a : { 0: 1 };
+        if (m.kind === 'sealed') {
+          const values = m.options.map((_, i) => alloc[i] || 0), blinds = values.map(() => L.randomBlind());
+          entry = { v: 'tally/1', t: 'vote', d: '', p: p.chain[p.chain.length - 1].d, subject: who.id, seals: values.map((x, i) => L.seal(x, blinds[i])),
+            opening: await L.encrypt(m.organiser.enc, JSON.stringify({ values, blinds: blinds.map(String) })), dt, key: who.keys[0] };
+        } else entry = { v: 'tally/1', t: 'vote', d: '', p: p.chain[p.chain.length - 1].d, subject: who.id, alloc, dt, key: who.keys[0] };
       }
     }
     entry.d = L.said(entry);
@@ -697,7 +766,8 @@ class Component extends DCLogic {
       entries: p.chain.map((e, i) => {
         const subj = m && e.t === 'vote' ? m.subjects.find(x => x.id === e.subject) : null, bad = badAt(i);
         return { n: i, kind: e.t, subject: e.t === 'vote' ? e.subject : m ? m.organiser.id : '',
-          allocText: e.t === 'vote' ? allocText(e.alloc) : e.t === 'mint' ? e.subjects.length + ' subjects' : 'closed',
+          allocText: e.t === 'vote' ? (e.alloc ? allocText(e.alloc) : 'sealed') : e.t === 'mint' ? e.subjects.length + ' subjects'
+            : e.t === 'tally' ? allocText(Object.assign({}, e.totals)) + (e.excluded.length ? ' · ' + e.excluded.length + ' excluded' : '') : 'closed',
           weight: e.t === 'mint' ? String(e.total) : subj ? String(subj.weight) : '',
           link: (e.p ? this.short(e.p) + ' → ' : '') + this.short(e.d), linkTip: (e.p ? 'p ' + e.p + '\n' : '') + 'd ' + e.d,
           sigText: sigBad(i) ? '✗' : '✓', sigColor: sigBad(i) ? 'var(--danger)' : 'var(--accent)', bad,
@@ -721,7 +791,9 @@ class Component extends DCLogic {
       title: m.title, desc: m.desc, status, stBg, stFg, chips: [v.ok ? 'Verified' : 'Broken', m.quadratic ? 'Quadratic' : ''].filter(Boolean),
       meta: `${Object.keys(v.voted).length} of ${m.subjects.length} subjects voted · minted by ${m.organiser.id}`,
       tabs, isVote: s.tab === 'vote', isLedger: s.tab === 'ledger', isResults: s.tab === 'results',
-      canClose: v.status === 'live' && !!this.organiserSecret(id), close: () => this.closePoll(id),
+      canClose: v.status === 'live' && m.kind !== 'sealed' && !!this.organiserSecret(id), close: () => this.closePoll(id),
+      canTally: this.canTally(id), tally: () => this.tallyPoll(id), how: this.howItWorks(m.kind), hasLater: m.kind === 'sealed',
+      resultsPending: v.sealed && v.status !== 'closed' ? 'Results appear when the organiser tallies.' : '',
       chooser: this.mine(id).map(x => ({ id: x.id, label: x.id + ' · weight ' + x.weight + (x.id in v.voted ? ' · voted' : ''), pick: () => this.setAs(id, x.id) })),
       showChooser: this.needsChooser(id), browse: () => this.setAs(id, ''),
       hasVoter: !!who, voteAsText: who ? 'Voting as ' + who.id : '',
@@ -772,8 +844,9 @@ class Component extends DCLogic {
     if (problem) { this.flash(problem); return null; }
     const fresh = () => { const k = this.L.newKeypair(); this.remember(k.pub, k.secret); return k; }, org = fresh();
     const subjects = d.subjects.map(s => ({ id: s.id.trim(), keys: s.keys.length ? s.keys : [fresh().pub], weight: s.weight }));
+    const enc = d.kind === 'sealed' ? (() => { const k = this.L.newEncKeypair(); this.remember(k.pub, k.secret); return k.pub; })() : undefined;
     const mint = this.L.makeMint({ title: d.title.trim(), desc: d.desc, options: d.options.map(o => o.trim()).filter(Boolean), quadratic: d.quadratic,
-      organiser: { id: d.organiser.trim() || 'Organiser', keys: [org.pub] }, subjects, dt: new Date().toISOString() }, org.secret);
+      kind: d.kind, organiser: { id: d.organiser.trim() || 'Organiser', keys: [org.pub], ...(enc ? { enc } : {}) }, subjects, dt: new Date().toISOString() }, org.secret);
     this.setDoc({ polls: [...doc.polls, [mint]], drafts: doc.drafts.filter(x => x.id !== id) });
     this.openPoll(mint.d);
     this.flash('Minted. The subjects and weights are now fixed.');
@@ -791,6 +864,8 @@ class Component extends DCLogic {
         onChange: e => { const v = val(e); up(x => ({ ...x, options: x.options.map((y, k) => k === i ? v : y) })); },
         onRemove: () => up(x => ({ ...x, options: x.options.length > 2 ? x.options.filter((_, k) => k !== i) : x.options })) })),
       addOption: () => up(x => ({ ...x, options: [...x.options, ''] })),
+      how: this.howItWorks(d.kind), hasLater: d.kind === 'sealed',
+      kinds: [['open', 'Open ballot'], ['sealed', 'Sealed ballot']].map(([k, l]) => { const on = (d.kind || 'open') === k; return { label: l, bg: on ? 'var(--ink)' : 'var(--surface)', fg: on ? 'var(--on-ink)' : C.ink, pick: () => up(x => ({ ...x, kind: k })) }; }),
       quadBg: d.quadratic ? C.accent : 'var(--line-2)', quadJ: d.quadratic ? 'flex-end' : 'flex-start', toggleQuad: () => up(x => ({ ...x, quadratic: !x.quadratic })),
       rows: d.subjects.map((r, i) => {
         const set = patch => up(x => ({ ...x, subjects: x.subjects.map((y, k) => k === i ? { ...y, ...patch } : y) }));
