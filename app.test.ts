@@ -519,3 +519,13 @@ test("only the owner sees their sealed opening", async () => {
   app.setAs(pollId, "bob");
   expect(card(app, 1)).toMatchObject({ hasOpen: false, choice: "" });
 });
+
+test("every template's tags are balanced", async () => {
+  for (const file of ["Tally.dc.html", "BallotCard.dc.html"]) {
+    const src = await Bun.file(join(import.meta.dir, file)).text(), tpl = src.split("<x-dc>")[1].split("</x-dc>")[0];
+    for (const tag of ["div", "sc-if", "sc-for", "button", "span", "label", "form", "details", "table", "svg", "header", "main", "nav"]) {
+      const open = (tpl.match(new RegExp("<" + tag + "[\\s>]", "g")) || []).length, close = (tpl.match(new RegExp("</" + tag + ">", "g")) || []).length;
+      expect(`${file} <${tag}> ${open}`).toBe(`${file} <${tag}> ${close}`);
+    }
+  }
+});
