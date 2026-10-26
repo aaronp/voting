@@ -112,3 +112,50 @@ export function verify(chain) {
   });
   return { ok: failures.length === 0, failures, status: closedAt >= 0 ? 'closed' : 'live', totals, voted, used, total: mint.total };
 }
+
+// ---- The file ----
+// tally.json is { polls: [[mint, vote…, close?], …], drafts: [...] }. Reading checks shapes only (throwing with a path,
+// e.g. "polls[0][2].alloc.1: expected a whole number ≥ 0"); whether a chain verifies is verify()'s job.
+export function parseFile(text) {
+  let d; try { d = JSON.parse(text); } catch (e) { throw new Error('Not valid JSON: ' + e.message); }
+  const fail = (path, msg) => { throw new Error(path + ': ' + msg); };
+  const obj = (v, path) => v !== null && typeof v === 'object' && !Array.isArray(v) ? v : fail(path, 'expected an object');
+  const list = (v, path, each) => (Array.isArray(v) ? v : fail(path, 'expected a list')).map((x, i) => each(x, path + '[' + i + ']'));
+  const str = (v, path) => typeof v === 'string' ? v : fail(path, 'expected text');
+  const bool = (v, path) => typeof v === 'boolean' ? v : fail(path, 'expected true or false');
+  const int = min => (v, path) => Number.isInteger(v) && v >= min ? v : fail(path, 'expected a whole number ≥ ' + min);
+  // Checks o has exactly the given fields (each with its checker) and returns them in that order.
+  const shape = (o, path, spec, defaults = {}) => {
+    obj(o, path);
+    Object.keys(o).forEach(k => { if (!(k in spec)) fail(path + '.' + k, 'unknown field'); });
+    return Object.fromEntries(Object.entries(spec).map(([k, check]) => [k, o[k] === undefined && k in defaults ? defaults[k] : check(o[k], path + '.' + k)]));
+  };
+  const strs = (v, path) => list(v, path, str);
+  const subjects = min => (v, path) => {
+    const out = list(v, path, (s, p) => shape(s, p, { id: str, keys: strs, weight: int(min) }, min ? {} : { keys: [], weight: 1 }));
+    out.forEach((s, i) => { if (out.findIndex(x => x.id === s.id) !== i) fail(path + '[' + i + '].id', 'duplicate subject "' + s.id + '"'); });
+    return out;
+  };
+  const alloc = (v, path) => Object.fromEntries(Object.entries(obj(v, path)).map(([k, n]) => [k, int(0)(n, path + '.' + k)]));
+  const version = (v, path) => v === 'tally/1' ? v : fail(path, 'unsupported version (expected "tally/1")');
+  const ENTRY = {
+    mint: { v: version, t: str, d: str, title: str, desc: str, options: strs, quadratic: bool,
+      organiser: (v, p) => shape(v, p, { id: str, keys: strs }), subjects: subjects(1), total: int(0), dt: str, sig: str },
+    vote: { v: version, t: str, d: str, p: str, subject: str, alloc, dt: str, key: str, sig: str },
+    close: { v: version, t: str, d: str, p: str, dt: str, sig: str }
+  };
+  const entry = (e, path) => { obj(e, path); return ENTRY[e.t] ? shape(e, path, ENTRY[e.t]) : fail(path + '.t', 'expected "mint", "vote" or "close"'); };
+  obj(d, 'file');
+  const polls = list(d.polls, 'polls', (chain, p) => list(chain, p, entry));
+  const drafts = d.drafts === undefined ? [] : list(d.drafts, 'drafts', (x, p) => shape(x, p,
+    { id: str, title: str, desc: str, options: strs, quadratic: bool, organiser: str, subjects: subjects(0) },
+    { desc: '', options: [], quadratic: false, organiser: 'Organiser', subjects: [] }));
+  Object.keys(d).forEach(k => { if (k !== 'polls' && k !== 'drafts') fail(k, 'unknown field'); });
+  return { polls, drafts };
+}
+// Pretty JSON, with short lists and objects (options, keys, allocations) kept on one line.
+export function serializeFile(doc) {
+  let s = JSON.stringify(doc, null, 2);
+  for (let pass = 0; pass < 3; pass++) s = s.replace(/[\[{](?:[^\[\]{}]|\{[^{}\[\]\n]*\}|\[[^{}\[\]\n]*\])*[\]}]/g, m => { const one = m.replace(/\s*\n\s*/g, ' '); return one.length <= 100 ? one : m; });
+  return s + '\n';
+}

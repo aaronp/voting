@@ -93,3 +93,46 @@ test("close ends the poll", () => {
   chain.push(L.makeClose(chain, "2026-10-27T00:00:00.000Z", keys.org.secret));
   expect(L.verify(chain)).toMatchObject({ ok: true, status: "closed" });
 });
+
+const sampleDoc = () => {
+  const { chain, keys } = demo();
+  chain.push(voteAs(chain, keys, "alice", { 0: 3 }));
+  chain.push(L.makeClose(chain, "2026-10-27T00:00:00.000Z", keys.org.secret));
+  return { polls: [chain], drafts: [{ id: "d1", title: "Next?", desc: "", options: ["A", "B"], quadratic: false, organiser: "Organiser", subjects: [{ id: "x", keys: [], weight: 2 }] }] };
+};
+
+test("a file round-trips", () => {
+  const text = L.serializeFile(sampleDoc());
+  expect(L.serializeFile(L.parseFile(text))).toBe(text);
+  expect(text.endsWith("\n")).toBe(true);
+  expect(L.verify(L.parseFile(text).polls[0]).ok).toBe(true);
+});
+
+test("shapes are checked with paths", () => {
+  const bad = (mutate: (d: any) => void) => () => { const d = JSON.parse(L.serializeFile(sampleDoc())); mutate(d); L.parseFile(JSON.stringify(d)); };
+  expect(() => L.parseFile("{")).toThrow(/Not valid JSON/);
+  expect(bad(d => { delete d.polls; })).toThrow("polls: expected a list");
+  expect(bad(d => { d.polls[0][0].t = "ballot"; })).toThrow("polls[0][0].t");
+  for (const w of [0, -1, 1.5, "4"]) expect(bad(d => { d.polls[0][0].subjects[0].weight = w; })).toThrow("polls[0][0].subjects[0].weight");
+  expect(bad(d => { d.polls[0][1].alloc["0"] = -1; })).toThrow("polls[0][1].alloc.0");
+  expect(bad(d => { d.polls[0][1].extra = 1; })).toThrow("polls[0][1].extra: unknown field");
+  expect(bad(d => { delete d.drafts[0].title; })).toThrow("drafts[0].title");
+  expect(bad(d => { d.polls[0][0].subjects[1].id = "alice"; })).toThrow('polls[0][0].subjects[1].id: duplicate subject "alice"');
+});
+
+test("the old format is not read", () => {
+  const old = { title: "Club", voters: [{ name: "Me" }], polls: [{ id: "q", status: "live", title: "Lunch?", options: ["Yes", "No"], ballots: [] }] };
+  expect(() => L.parseFile(JSON.stringify(old))).toThrow(/^polls\[0\]/);
+});
+
+test("a well-formed file that fails verification still parses", () => {
+  const d = sampleDoc(); d.polls[0][0].total = 13;
+  const doc = L.parseFile(L.serializeFile(d));
+  expect(L.verify(doc.polls[0]).failures.map((f: any) => f.rule)).toContain("total");
+});
+
+test("drafts may be empty or incomplete", () => {
+  const doc = L.parseFile(JSON.stringify({ polls: [], drafts: [{ id: "d2", title: "" }] }));
+  expect(doc.drafts[0]).toEqual({ id: "d2", title: "", desc: "", options: [], quadratic: false, organiser: "Organiser", subjects: [] });
+  expect(L.parseFile('{ "polls": [] }')).toEqual({ polls: [], drafts: [] });
+});
