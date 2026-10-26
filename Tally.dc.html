@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F7F6F2;color:#1d1f24;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+input,select,button,textarea{font-family:inherit}
+a{color:oklch(0.52 0.13 160)}a:hover{color:oklch(0.42 0.13 160)}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column">
+<header style="position:sticky;top:0;z-index:20;background:rgba(247,246,242,.92);backdrop-filter:blur(8px);border-bottom:1px solid #e4e2db">
+  <div style="max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px">
+    <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:9px;background:none;border:none;padding:0;cursor:pointer;color:#1d1f24">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3 L21 13 H15.5 V21 H8.5 V13 H3 Z" fill="oklch(0.52 0.13 160)"></path></svg>
+      <span style="font-weight:700;font-size:19px;letter-spacing:-0.02em">Tally</span>
+    </button>
+    <div style="flex:1"></div>
+    <div title="{{ meKey }}" style="display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border:1px solid #e4e2db;border-radius:999px;background:#fff;white-space:nowrap;flex-shrink:0">
+      <svg width="26" height="26" viewBox="0 0 100 100"><path d="{{ me.blobA }}" fill="{{ me.c1 }}"></path><path d="{{ me.blobB }}" fill="{{ me.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4a4d55">{{ me.keyShort }}</span>
+    </div>
+  </div>
+</header>
+
+<main style="max-width:1120px;width:100%;margin:0 auto;padding:32px 24px 96px">
+
+<sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div>
+      <h1 style="margin:0;font-size:32px;letter-spacing:-0.025em;font-weight:700">Polls</h1>
+      <p style="margin:6px 0 0;color:#6b6e76;font-size:15px">Every ballot is a leaf in a public Merkle tree. Your choice stays sealed.</p>
+    </div>
+    <button onClick="{{ newPoll }}" style="display:flex;align-items:center;gap:6px;padding:10px 16px;border:none;border-radius:9px;background:#1d1f24;color:#fff;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#33363d">+ New poll</button>
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <div style="display:flex;gap:3px;padding:3px;background:#ebe9e2;border-radius:10px;flex-wrap:wrap">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+        <button onClick="{{ t.onClick }}" style="border:none;cursor:pointer;padding:7px 12px;border-radius:7px;font-size:14px;font-weight:500;background:{{ t.bg }};color:{{ t.fg }};box-shadow:{{ t.shadow }};display:flex;gap:7px;align-items:center">{{ t.label }}<span style="font-size:11.5px;color:#8a8d94;font-family:'JetBrains Mono',monospace">{{ t.count }}</span></button>
+      </sc-for>
+    </div>
+    <div style="flex:1"></div>
+    <input placeholder="Search polls" value="{{ q }}" onChange="{{ onQ }}" style="padding:9px 12px;border:1px solid #e4e2db;border-radius:9px;background:#fff;font-size:14px;min-width:200px;outline:none;color:#1d1f24" style-focus="border-color:oklch(0.52 0.13 160)">
+    <select value="{{ sort }}" onChange="{{ onSort }}" style="padding:9px 10px;border:1px solid #e4e2db;border-radius:9px;background:#fff;font-size:14px;color:#1d1f24;cursor:pointer">
+      <option value="new">Newest</option>
+      <option value="votes">Most votes</option>
+    </select>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ rows }}" as="p" hint-placeholder-count="5">
+      <div onClick="{{ p.onOpen }}" style="display:grid;grid-template-columns:60px minmax(0,1fr) auto;gap:14px;align-items:center;padding:16px 20px 16px 10px;background:#fff;border:1px solid #e4e2db;border-radius:12px;cursor:pointer;transition:border-color .15s, box-shadow .15s" style-hover="border-color:#cfccc2;box-shadow:0 3px 14px rgba(40,35,20,.06)">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1px;color:{{ p.scoreColor }}">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 4 L20 13.5 H15.5 V20 H8.5 V13.5 H4 Z" fill="currentColor"></path></svg>
+          <span style="font-weight:700;font-size:17px;font-variant-numeric:tabular-nums">{{ p.score }}</span>
+          <span style="font-size:11px;color:#8a8d94">votes</span>
+        </div>
+        <div style="min-width:0;display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:17px;font-weight:600;letter-spacing:-0.01em;text-wrap:pretty">{{ p.title }}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px">
+            <span style="padding:2px 9px;border-radius:999px;font-weight:600;white-space:nowrap;background:{{ p.stBg }};color:{{ p.stFg }}">{{ p.status }}</span>
+            <sc-for list="{{ p.chips }}" as="c"><span style="padding:2px 9px;border-radius:999px;border:1px solid #e4e2db;color:#4a4d55;white-space:nowrap">{{ c }}</span></sc-for>
+            <span style="color:#8a8d94;margin-left:2px">{{ p.meta }}</span>
+          </div>
+        </div>
+        <span style="font-size:14px;font-weight:600;color:{{ p.actionColor }};white-space:nowrap">{{ p.action }} →</span>
+      </div>
+    </sc-for>
+    <sc-if value="{{ noRows }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:48px 20px;text-align:center;color:#6b6e76;border:1.5px dashed #e0ddd4;border-radius:12px;font-size:15px">No polls match this filter.</div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPoll }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:22px">
+  <button onClick="{{ goHome }}" style="align-self:flex-start;background:none;border:none;padding:0;color:#6b6e76;font-size:14px;cursor:pointer" style-hover="color:#1d1f24">← All polls</button>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:12.5px">
+      <span style="padding:2px 9px;border-radius:999px;font-weight:600;white-space:nowrap;background:{{ pv.stBg }};color:{{ pv.stFg }}">{{ pv.status }}</span>
+      <sc-for list="{{ pv.chips }}" as="c"><span style="padding:2px 9px;border-radius:999px;border:1px solid #e4e2db;color:#4a4d55;background:#fff;white-space:nowrap">{{ c }}</span></sc-for>
+    </div>
+    <h1 style="margin:0;font-size:30px;letter-spacing:-0.025em;font-weight:700;text-wrap:pretty;max-width:760px">{{ pv.title }}</h1>
+    <p style="margin:0;color:#4a4d55;font-size:15.5px;line-height:1.5;max-width:680px;text-wrap:pretty">{{ pv.desc }}</p>
+    <div style="font-size:13.5px;color:#6b6e76">{{ pv.meta }}</div>
+  </div>
+  <div style="display:flex;gap:24px;border-bottom:1px solid #e4e2db">
+    <sc-for list="{{ pv.tabs }}" as="t" hint-placeholder-count="3">
+      <button onClick="{{ t.onClick }}" style="background:none;border:none;padding:10px 0;margin-bottom:-1px;font-size:15px;font-weight:600;cursor:pointer;color:{{ t.fg }};border-bottom:2px solid {{ t.line }}">{{ t.label }}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ pv.isVote }}">
+    <div style="display:flex;flex-direction:column;gap:16px;max-width:760px">
+      <sc-if value="{{ pv.canVote }}">
+        <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;overflow:hidden">
+          <div style="padding:18px 20px;border-bottom:1px solid #eeece6;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+              <div style="font-weight:600;font-size:16px">Allocate your tokens</div>
+              <div style="font-size:14px;color:#4a4d55"><span style="font-weight:700;color:#1d1f24;font-variant-numeric:tabular-nums">{{ pv.spent }}</span> of {{ pv.budget }} tokens spent</div>
+            </div>
+            <div style="height:6px;border-radius:3px;background:#efede7;overflow:hidden"><div style="height:100%;border-radius:3px;background:oklch(0.52 0.13 160);transition:width .25s;width:{{ pv.budgetW }}"></div></div>
+            <div style="font-size:13px;color:#6b6e76">{{ pv.ruleNote }}</div>
+          </div>
+          <sc-for list="{{ pv.options }}" as="o" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 20px 12px 12px;border-bottom:1px solid #f1efea">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:0">
+                <button onClick="{{ o.onUp }}" style="width:34px;height:28px;border:none;border-radius:7px;background:transparent;cursor:{{ o.upCursor }};color:{{ o.upColor }};display:flex;align-items:center;justify-content:center;opacity:{{ o.upOpacity }}" style-hover="background:oklch(0.95 0.035 160)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 5 L20 15 H4 Z" fill="currentColor"></path></svg></button>
+                <span style="font-weight:700;font-size:16px;font-variant-numeric:tabular-nums;color:{{ o.countColor }}">{{ o.k }}</span>
+                <button onClick="{{ o.onDown }}" style="width:34px;height:28px;border:none;border-radius:7px;background:transparent;cursor:pointer;color:#a3a5ab;display:flex;align-items:center;justify-content:center;opacity:{{ o.downOpacity }}" style-hover="background:#f1efea"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 19 L20 9 H4 Z" fill="currentColor"></path></svg></button>
+              </div>
+              <div style="font-size:16px;font-weight:500;text-wrap:pretty">{{ o.label }}</div>
+              <div style="font-size:13px;color:#6b6e76;text-align:right;font-variant-numeric:tabular-nums">{{ o.costText }}</div>
+            </div>
+          </sc-for>
+          <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#fbfaf7">
+            <div style="font-size:13px;color:#6b6e76;max-width:420px">{{ pv.sealNote }}</div>
+            <button onClick="{{ pv.cast }}" style="padding:10px 18px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;background:{{ pv.castBg }};color:{{ pv.castFg }}">Sign &amp; cast ballot</button>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ pv.showResults }}">
+        <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+            <div style="font-weight:600;font-size:16px">Results</div>
+            <div style="font-size:13px;color:#6b6e76">{{ pv.resultsMeta }}</div>
+          </div>
+          <sc-for list="{{ pv.results }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;gap:12px;font-size:15px">
+                <span style="font-weight:500">{{ r.label }}</span>
+                <span style="display:flex;gap:10px;align-items:baseline"><span style="font-size:12.5px;color:oklch(0.52 0.13 160);font-weight:600">{{ r.mine }}</span><span style="font-weight:700;font-variant-numeric:tabular-nums">{{ r.total }}</span></span>
+              </div>
+              <div style="height:8px;border-radius:4px;background:#f1efea;overflow:hidden"><div style="height:100%;border-radius:4px;background:{{ r.color }};width:{{ r.w }}"></div></div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ pv.voted }}">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:10px;background:oklch(0.96 0.03 160)">
+              <span style="font-size:14px;color:oklch(0.36 0.1 160)">Your ballot is sealed as leaf #{{ pv.myNum }}. Only you can open it.</span>
+              <button onClick="{{ pv.viewMine }}" style="background:none;border:none;padding:0;font-size:14px;font-weight:600;color:oklch(0.42 0.13 160);cursor:pointer">View in ledger →</button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ pv.isVoters }}">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">
+        <div style="font-size:14px;color:#4a4d55">{{ pv.votersMeta }}</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="font-size:13px;color:#8a8d94">{{ pv.visNote }}</span>
+          <input placeholder="Find a public key" value="{{ pv.voterQ }}" onChange="{{ pv.onVoterQ }}" spellCheck="false" style="padding:8px 11px;border:1px solid #e4e2db;border-radius:8px;background:#fff;font-family:'JetBrains Mono',monospace;font-size:12.5px;min-width:220px;outline:none;color:#1d1f24" style-focus="border-color:oklch(0.52 0.13 160)">
+          <sc-if value="{{ pv.hasMore }}"><button onClick="{{ pv.showMore }}" style="padding:8px 11px;border:1px solid #e4e2db;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:#1d1f24">{{ pv.moreLabel }}</button></sc-if>
+        </div>
+      </div>
+      <div style="overflow-x:auto;background:#fff;border:1px solid #e4e2db;border-radius:14px">
+        <div style="min-width:760px">
+          <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) 110px 100px 96px;gap:14px;padding:10px 18px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94;border-bottom:1px solid #eeece6">
+            <span>Voter</span><span>Public key</span><span>Tokens</span><span>Status</span><span></span>
+          </div>
+          <sc-for list="{{ pv.voters }}" as="v" hint-placeholder-count="8">
+            <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) 110px 100px 96px;gap:14px;padding:12px 18px;align-items:center;border-bottom:1px solid #f3f1ec">
+              <div style="display:flex;align-items:center;gap:10px;min-width:0">
+                <sc-if value="{{ v.anon }}"><svg width="34" height="34" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ v.blobA }}" fill="{{ v.c1 }}"></path><path d="{{ v.blobB }}" fill="{{ v.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg></sc-if>
+                <sc-if value="{{ v.named }}"><span style="width:34px;height:34px;border-radius:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;background:{{ v.avBg }};color:{{ v.avFg }}">{{ v.initials }}</span></sc-if>
+                <div style="display:flex;flex-direction:column;min-width:0">
+                  <span style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.label }}</span>
+                  <span style="font-size:12px;color:#8a8d94">{{ v.reasons }}</span>
+                </div>
+              </div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4a4d55;word-break:break-all;user-select:all">{{ v.pubkey }}</span>
+              <span style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ v.tokColor }}">{{ v.tokens }}</span>
+              <span style="display:flex;align-items:center;gap:6px;font-size:13.5px;color:{{ v.stColor }}"><span style="width:7px;height:7px;border-radius:4px;background:{{ v.stColor }}"></span>{{ v.status }}</span>
+              <sc-if value="{{ v.voted }}"><button onClick="{{ v.onLocate }}" style="background:none;border:1px solid #e4e2db;border-radius:7px;padding:5px 9px;font-size:12.5px;cursor:pointer;color:#1d1f24" style-hover="border-color:oklch(0.52 0.13 160)">Find leaf</button></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ pv.isLedger }}">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;font-size:14px;font-weight:600;background:{{ pv.okBg }};color:{{ pv.okFg }}"><span style="width:8px;height:8px;border-radius:4px;background:{{ pv.okFg }}"></span>{{ pv.okText }}</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <sc-if value="{{ pv.voted }}"><button onClick="{{ pv.toggleProof }}" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;border:1px solid #e4e2db;background:#fff;font-size:13.5px;cursor:pointer;white-space:nowrap;color:#1d1f24"><span style="width:28px;height:16px;border-radius:8px;padding:2px;display:flex;background:{{ pv.proofBg }};justify-content:{{ pv.proofJ }}"><span style="width:12px;height:12px;border-radius:6px;background:#fff"></span></span>My inclusion proof</button></sc-if>
+          <button onClick="{{ pv.toggleTamper }}" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;border:1px solid #e4e2db;background:#fff;font-size:13.5px;cursor:pointer;white-space:nowrap;color:#1d1f24"><span style="width:28px;height:16px;border-radius:8px;padding:2px;display:flex;background:{{ pv.tamperBg }};justify-content:{{ pv.tamperJ }}"><span style="width:12px;height:12px;border-radius:6px;background:#fff"></span></span>Tamper mode</button>
+          <sc-if value="{{ pv.hasTamper }}"><button onClick="{{ pv.resetTamper }}" style="padding:7px 12px;border-radius:9px;border:none;background:#1d1f24;white-space:nowrap;color:#fff;font-size:13.5px;font-weight:600;cursor:pointer">Reset edits</button></sc-if>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:13px;color:#6b6e76">
+        <div style="display:flex;align-items:center;gap:8px;white-space:nowrap">Layout<div style="display:flex;gap:2px;padding:2px;background:#ebe9e2;border-radius:8px"><sc-for list="{{ pv.layouts }}" as="g"><button onClick="{{ g.onClick }}" style="border:none;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.shadow }}">{{ g.label }}</button></sc-for></div></div>
+        <div style="display:flex;align-items:center;gap:8px;white-space:nowrap">Group size<div style="display:flex;gap:2px;padding:2px;background:#ebe9e2;border-radius:8px"><sc-for list="{{ pv.groups }}" as="g"><button onClick="{{ g.onClick }}" style="border:none;padding:5px 10px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;background:{{ g.bg }};color:{{ g.fg }};box-shadow:{{ g.shadow }}">{{ g.label }}</button></sc-for></div></div>
+        <span style="font-variant-numeric:tabular-nums">{{ pv.shape }}</span>
+        <div style="flex:1"></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-if value="{{ pv.voted }}"><button onClick="{{ pv.goMine }}" style="padding:6px 11px;border:1px solid #e4e2db;white-space:nowrap;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:#1d1f24">Go to my ballot</button></sc-if>
+          <sc-if value="{{ pv.hasChanged }}"><button onClick="{{ pv.goTampered }}" style="padding:6px 11px;border:1px solid oklch(0.55 0.19 27);white-space:nowrap;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:oklch(0.55 0.19 27)">Go to tampered</button></sc-if>
+          <sc-if value="{{ pv.canCollapse }}"><button onClick="{{ pv.goRoot }}" style="padding:6px 11px;border:1px solid #e4e2db;white-space:nowrap;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:#1d1f24">Collapse all</button></sc-if>
+        </div>
+      </div>
+      <div style="font-size:14px;color:#4a4d55;line-height:1.5;max-width:760px;text-wrap:pretty">{{ pv.ledgerNote }}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+        <div style="background:#fff;border:1px solid #e4e2db;border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Published root</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;color:#1d1f24">{{ pv.published }}</span>
+        </div>
+        <div style="background:#fff;border:1.5px solid {{ pv.rootBorder }};border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Computed from the leaves below</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;color:{{ pv.okFg }}">{{ pv.computed }}</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <nav style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ pv.crumbs }}" as="cr" hint-placeholder-count="1">
+            <span style="display:flex;align-items:center;gap:6px">
+              <span style="color:#b8b5ab;font-size:16px">{{ cr.sep }}</span>
+              <button onClick="{{ cr.onClick }}" title="{{ cr.full }}" style="display:flex;align-items:center;gap:7px;padding:3px 11px 3px 4px;border-radius:999px;cursor:pointer;font-size:13px;white-space:nowrap;background:{{ cr.bg }};color:{{ cr.fg }};border:1.5px solid {{ cr.border }}">
+                <svg width="22" height="22" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ cr.blobA }}" fill="{{ cr.c1 }}"></path><path d="{{ cr.blobB }}" fill="{{ cr.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                <span style="font-weight:600;font-variant-numeric:tabular-nums">{{ cr.label }}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ cr.hashFg }}">{{ cr.short }}</span>
+              </button>
+            </span>
+          </sc-for>
+        </nav>
+
+        <sc-if value="{{ pv.isGrid }}">
+        <div ref="{{ pv.scrollRef }}" data-tree-box="1" style="overflow-x:auto;overflow-y:hidden;border:1px solid #e4e2db;border-radius:14px;background:#fff;padding:24px 16px 20px">
+          <div style="min-width:{{ pv.treeMin }};display:flex;flex-direction:column">
+            <sc-for list="{{ pv.rows }}" as="row" hint-placeholder-count="1">
+              <div style="display:grid;transition:grid-template-columns .45s cubic-bezier(.2,.8,.2,1);grid-template-columns:{{ pv.cols }}">
+                <sc-for list="{{ row.nodes }}" as="n">
+                  <div style="grid-column:{{ n.span }};display:flex;flex-direction:column;align-items:center;min-width:0">
+                    <sc-if value="{{ n.hasStub }}"><div style="width:1.5px;height:12px;background:{{ n.stub }}"></div></sc-if>
+                    <div onClick="{{ n.onZoom }}" data-sel="{{ n.selAttr }}" title="{{ n.tip }}" style="display:flex;align-items:center;gap:8px;max-width:calc(100% - 4px);border-radius:10px;transition:background .2s, border-color .2s, box-shadow .2s, padding .3s;padding:{{ n.pad }};background:{{ n.bg }};border:{{ n.border }};color:{{ n.fg }};cursor:pointer;box-shadow:{{ n.selRing }}">
+                      <svg width="{{ n.bs }}" height="{{ n.bs }}" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ n.blobA }}" fill="{{ n.c1 }}"></path><path d="{{ n.blobB }}" fill="{{ n.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                      <sc-if value="{{ n.showText }}">
+                      <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                        <span style="font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:11.5px;color:{{ n.sub }}">{{ n.lbl }} <span style="color:oklch(0.55 0.19 27)">{{ n.note }}</span></span>
+                        <sc-if value="{{ n.showRo }}"><span style="font-family:'JetBrains Mono',monospace;white-space:nowrap;font-size:{{ n.fs }}">{{ n.short }}</span></sc-if>
+                        <sc-if value="{{ n.showEdit }}"><input value="{{ n.full }}" onChange="{{ n.onEdit }}" onClick="{{ n.stop }}" spellCheck="false" style="width:120px;font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 5px;border-radius:5px;outline:none;border:1px dashed #a3a5ab;background:#fff;color:#1d1f24"></sc-if>
+                      </div>
+                      </sc-if>
+                    </div>
+                    <sc-if value="{{ n.hasKids }}"><div style="width:1.5px;height:12px;background:{{ n.line }}"></div>
+                    <div style="align-self:stretch;height:0;border-top:1.5px solid {{ n.line }};margin-left:{{ n.busL }};margin-right:{{ n.busR }}"></div></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <sc-if value="{{ pv.hasCards }}">
+              <div style="display:grid;transition:grid-template-columns .45s cubic-bezier(.2,.8,.2,1);grid-template-columns:{{ pv.cols }}">
+                <sc-for list="{{ pv.cards2 }}" as="c">
+                  <div onClick="{{ c.onSelect }}" data-sel="{{ c.selAttr }}" style="grid-column:{{ c.col }};padding:0 {{ c.gutter }};display:flex;flex-direction:column;align-items:center;min-width:0">
+                    <div style="width:1.5px;height:12px;background:{{ c.stub }}"></div>
+                    <sc-if value="{{ c.full }}"><dc-import name="BallotCard" c="{{ c }}" hint-size="100%,290px" style="width:100%"></dc-import></sc-if>
+                    <sc-if value="{{ c.mini }}">
+                      <div title="{{ c.tip }}" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:4px;padding:{{ c.mpad }};border-radius:8px;cursor:pointer;background:#fff;border:{{ c.border }};box-shadow:{{ c.ring }}">
+                        <svg width="{{ c.ms }}" height="{{ c.ms }}" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ c.blobA }}" fill="{{ c.c1 }}"></path><path d="{{ c.blobB }}" fill="{{ c.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                        <sc-if value="{{ c.showNum }}"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8a8d94">#{{ c.num }}</span></sc-if>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ pv.noBallots }}"><div style="padding:28px;text-align:center;color:#8a8d94;font-size:14px">No ballots yet.</div></sc-if>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ pv.isCarousel }}">
+        <div style="border:1px solid #e4e2db;border-radius:14px;background:#fff;padding:18px 0 22px;display:flex;flex-direction:column">
+          <sc-for list="{{ pv.crows }}" as="row" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:10px;padding:0 18px">
+                <span style="font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#4a4d55">{{ row.title }}</span>
+                <span style="font-size:12.5px;color:#8a8d94;font-variant-numeric:tabular-nums">{{ row.sub }}</span>
+                <div style="flex:1"></div>
+                <button onClick="{{ row.prev }}" style="width:28px;height:28px;border-radius:14px;border:1px solid #e4e2db;background:#fff;cursor:pointer;color:#1d1f24;font-size:14px;opacity:{{ row.prevOp }}">‹</button>
+                <button onClick="{{ row.next }}" style="width:28px;height:28px;border-radius:14px;border:1px solid #e4e2db;background:#fff;cursor:pointer;color:#1d1f24;font-size:14px;opacity:{{ row.nextOp }}">›</button>
+              </div>
+              <div style="overflow:hidden;padding:8px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)">
+                <div style="position:relative;left:50%;display:flex;align-items:center;gap:14px;width:max-content;transition:transform .5s cubic-bezier(.2,.8,.2,1);transform:{{ row.tx }}">
+                  <sc-for list="{{ row.items }}" as="it">
+                    <div onClick="{{ it.pick }}" style="flex-shrink:0;cursor:pointer;transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .5s;width:{{ it.w }};transform:{{ it.tf }};opacity:{{ it.op }}">
+                      <sc-if value="{{ it.isCard }}"><dc-import name="BallotCard" c="{{ it }}" hint-size="100%,290px" style="width:100%"></dc-import></sc-if>
+                      <sc-if value="{{ it.isNode }}">
+                        <div title="{{ it.full }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px 10px 10px;border-radius:12px;background:{{ it.bg }};border:{{ it.border }};color:{{ it.fg }};box-shadow:{{ it.selRing }}">
+                          <svg width="36" height="36" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ it.blobA }}" fill="{{ it.c1 }}"></path><path d="{{ it.blobB }}" fill="{{ it.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                            <span style="font-weight:600;font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums;color:{{ it.sub }}">{{ it.rangeText }}</span>
+                            <sc-if value="{{ it.ro }}"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">{{ it.short }}</span></sc-if>
+                            <sc-if value="{{ it.editable }}"><input value="{{ it.full }}" onChange="{{ it.onEdit }}" onClick="{{ it.stop }}" spellCheck="false" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:3px 5px;border-radius:5px;outline:none;border:1px dashed #a3a5ab;background:#fff;color:#1d1f24"></sc-if>
+                            <span style="font-size:11px;white-space:nowrap;color:{{ it.sub }}">{{ it.countText }} <span style="color:oklch(0.55 0.19 27);font-weight:600">{{ it.note }}</span></span>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <sc-if value="{{ row.hasLine }}"><div style="align-self:center;width:1.5px;height:22px;background:{{ row.line }}"></div></sc-if>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ pv.isRadial }}">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+          <div style="flex:1 1 460px;max-width:760px;position:relative;aspect-ratio:1;background:#fff;border:1px solid #e4e2db;border-radius:14px;overflow:hidden">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">
+              <sc-for list="{{ pv.rings }}" as="rg"><circle cx="50" cy="50" r="{{ rg.r }}" fill="none" stroke="#ebe9e2" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke"></circle></sc-for>
+              <sc-for list="{{ pv.links }}" as="ln"><line x1="{{ ln.x1 }}" y1="{{ ln.y1 }}" x2="{{ ln.x2 }}" y2="{{ ln.y2 }}" stroke="{{ ln.color }}" strokeWidth="{{ ln.w }}" vectorEffect="non-scaling-stroke"></line></sc-for>
+            </svg>
+            <sc-for list="{{ pv.rnodes }}" as="rn">
+              <button onClick="{{ rn.onClick }}" title="{{ rn.tip }}" style="position:absolute;transform:translate(-50%,-50%);border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:left .45s cubic-bezier(.2,.8,.2,1), top .45s cubic-bezier(.2,.8,.2,1), box-shadow .2s;left:{{ rn.x }};top:{{ rn.y }};width:{{ rn.size }};height:{{ rn.size }};background:{{ rn.bg }};border:{{ rn.border }};box-shadow:{{ rn.selRing }}">
+                <svg width="{{ rn.bs }}" height="{{ rn.bs }}" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ rn.blobA }}" fill="{{ rn.c1 }}"></path><path d="{{ rn.blobB }}" fill="{{ rn.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+              </button>
+            </sc-for>
+            <sc-for list="{{ pv.rlabels }}" as="rl">
+              <span style="position:absolute;transform:translateX(-50%);pointer-events:none;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.92);font-size:11.5px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;color:{{ rl.fg }};left:{{ rl.x }};top:{{ rl.y }}">{{ rl.text }}</span>
+            </sc-for>
+          </div>
+          <div style="flex:1 1 240px;max-width:320px;display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ pv.panelCards }}" as="c"><div style="width:220px"><dc-import name="BallotCard" c="{{ c }}" hint-size="220px,290px" style="width:100%"></dc-import></div></sc-for>
+            <sc-for list="{{ pv.panelNodes }}" as="pn">
+              <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <svg width="56" height="56" viewBox="0 0 100 100" style="flex-shrink:0"><path d="{{ pn.blobA }}" fill="{{ pn.c1 }}"></path><path d="{{ pn.blobB }}" fill="{{ pn.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#4a4d55">{{ pn.pTitle }}</span>
+                    <span style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ pn.rangeText }}</span>
+                    <span style="font-size:12.5px;color:#6b6e76">{{ pn.countText }} · {{ pn.kidsText }}</span>
+                  </div>
+                </div>
+                <sc-if value="{{ pn.ro }}"><span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;word-break:break-all;padding:8px 10px;border-radius:8px;background:#f5f4ef;color:{{ pn.hashColor }}">{{ pn.full }}</span></sc-if>
+                <sc-if value="{{ pn.editable }}"><textarea value="{{ pn.full }}" onChange="{{ pn.onEdit }}" spellCheck="false" rows="3" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:8px 10px;border-radius:8px;outline:none;border:1px dashed #a3a5ab;resize:none;color:#1d1f24"></textarea></sc-if>
+                <sc-if value="{{ pn.hasNote }}"><span style="font-size:12.5px;font-weight:600;color:oklch(0.55 0.19 27)">{{ pn.noteText }}</span></sc-if>
+                <button onClick="{{ pn.onZoom }}" style="align-self:flex-start;padding:7px 12px;border-radius:8px;border:1px solid #e4e2db;background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:#1d1f24">{{ pn.actLabel }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:#6b6e76">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:oklch(0.52 0.13 160)"></span>Your path to the root</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;border:1.5px dashed oklch(0.52 0.13 160);background:oklch(0.95 0.035 160)"></span>Proof sibling</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:oklch(0.96 0.03 27);border:1.5px solid oklch(0.55 0.19 27)"></span>Hash changed by tampering</span>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isEditor }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:22px">
+  <button onClick="{{ goHome }}" style="align-self:flex-start;background:none;border:none;padding:0;color:#6b6e76;font-size:14px;cursor:pointer" style-hover="color:#1d1f24">← All polls</button>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px"><h1 style="margin:0;font-size:28px;letter-spacing:-0.025em;font-weight:700">Draft poll</h1><span style="padding:2px 9px;border-radius:999px;font-weight:600;font-size:12.5px;background:#f4eedd;color:oklch(0.48 0.09 75)">Draft</span></div>
+    <div style="display:flex;gap:8px">
+      <button onClick="{{ ed.del }}" style="padding:9px 14px;border-radius:9px;border:1px solid #e4e2db;background:#fff;font-size:14px;cursor:pointer;color:oklch(0.55 0.19 27)">Delete</button>
+      <button onClick="{{ ed.save }}" style="padding:9px 14px;border-radius:9px;border:1px solid #e4e2db;background:#fff;font-size:14px;font-weight:600;cursor:pointer;color:#1d1f24">Save draft</button>
+      <button onClick="{{ ed.publish }}" style="padding:9px 16px;border-radius:9px;border:none;background:oklch(0.52 0.13 160);color:#fff;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:oklch(0.46 0.13 160)">Publish</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+    <div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:16px">
+      <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <input value="{{ ed.title }}" onChange="{{ ed.onTitle }}" placeholder="What are you asking?" style="border:none;outline:none;font-size:22px;font-weight:600;letter-spacing:-0.015em;padding:0;color:#1d1f24;background:transparent">
+        <textarea value="{{ ed.desc }}" onChange="{{ ed.onDesc }}" placeholder="Context voters should know (optional)" rows="2" style="border:none;outline:none;font-size:15px;line-height:1.5;padding:0;color:#4a4d55;resize:vertical;background:transparent"></textarea>
+        <div style="height:1px;background:#eeece6"></div>
+        <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Options</div>
+        <sc-for list="{{ ed.options }}" as="o" hint-placeholder-count="3">
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="width:22px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#a3a5ab">{{ o.n }}</span>
+            <input value="{{ o.value }}" onChange="{{ o.onChange }}" placeholder="Option" style="flex:1;min-width:0;padding:9px 12px;border:1px solid #e4e2db;border-radius:8px;font-size:15px;outline:none;color:#1d1f24" style-focus="border-color:oklch(0.52 0.13 160)">
+            <button onClick="{{ o.onRemove }}" style="width:32px;height:32px;border:none;background:none;border-radius:7px;color:#a3a5ab;font-size:18px;cursor:pointer" style-hover="background:#f1efea;color:#1d1f24">×</button>
+          </div>
+        </sc-for>
+        <button onClick="{{ ed.addOption }}" style="align-self:flex-start;margin-left:30px;background:none;border:none;padding:4px 0;font-size:14px;font-weight:600;color:oklch(0.47 0.13 160);cursor:pointer">+ Add option</button>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:6px 20px">
+        <div style="display:flex;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid #f1efea">
+          <div style="flex:1"><div style="font-weight:600;font-size:15px">Anonymous ballots</div><div style="font-size:13.5px;color:#6b6e76;margin-top:2px">Voters appear as a generated blob instead of their name and avatar. Public keys stay visible.</div></div>
+          <button onClick="{{ ed.toggleAnon }}" style="width:42px;height:24px;flex-shrink:0;border-radius:12px;border:none;padding:2px;display:flex;cursor:pointer;background:{{ ed.anonBg }};justify-content:{{ ed.anonJ }}"><span style="width:20px;height:20px;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+        </div>
+        <div style="display:flex;gap:16px;align-items:center;padding:14px 0">
+          <div style="flex:1"><div style="font-weight:600;font-size:15px">Show vote weights</div><div style="font-size:13.5px;color:#6b6e76;margin-top:2px">Everyone can see how many tokens each public key holds and why.</div></div>
+          <button onClick="{{ ed.toggleWeights }}" style="width:42px;height:24px;flex-shrink:0;border-radius:12px;border:none;padding:2px;display:flex;cursor:pointer;background:{{ ed.weightsBg }};justify-content:{{ ed.weightsJ }}"><span style="width:20px;height:20px;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e4e2db;border-radius:14px;overflow:hidden">
+        <button onClick="{{ ed.toggleAdv }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:none;border:none;cursor:pointer;text-align:left;color:#1d1f24">
+          <span><span style="font-weight:600;font-size:15px">Advanced</span><span style="font-size:13.5px;color:#6b6e76;margin-left:8px">Weights and quadratic voting</span></span>
+          <span style="font-size:13px;color:#6b6e76">{{ ed.advLabel }}</span>
+        </button>
+        <sc-if value="{{ ed.advOpen }}">
+          <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;gap:16px;align-items:center;padding-top:14px;border-top:1px solid #f1efea">
+              <div style="flex:1"><div style="font-weight:600;font-size:15px">Quadratic voting</div><div style="font-size:13.5px;color:#6b6e76;margin-top:2px">Casting n votes on one option costs n² tokens, so strong preferences cost more.</div></div>
+              <button onClick="{{ ed.toggleQuad }}" style="width:42px;height:24px;flex-shrink:0;border-radius:12px;border:none;padding:2px;display:flex;cursor:pointer;background:{{ ed.quadBg }};justify-content:{{ ed.quadJ }}"><span style="width:20px;height:20px;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Token allocation</div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:#fbfaf7;border:1px solid #eeece6;font-size:14.5px">
+                <span style="flex:1;min-width:180px">Every eligible key gets</span>
+                <div style="display:flex;align-items:center;border:1px solid #e4e2db;border-radius:8px;background:#fff">
+                  <button onClick="{{ ed.decBase }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:#4a4d55">−</button>
+                  <span style="min-width:28px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums">{{ ed.base }}</span>
+                  <button onClick="{{ ed.incBase }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:#4a4d55">+</button>
+                </div>
+                <span style="color:#6b6e76">tokens</span>
+              </div>
+              <sc-for list="{{ ed.rules }}" as="r" hint-placeholder-count="1">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:#fbfaf7;border:1px solid #eeece6;font-size:14.5px">
+                  <span style="color:#6b6e76">If voter</span>
+                  <select value="{{ r.attr }}" onChange="{{ r.onAttr }}" style="flex:1;min-width:180px;padding:7px 9px;border:1px solid #e4e2db;border-radius:8px;background:#fff;font-size:14.5px;color:#1d1f24">
+                    <sc-for list="{{ r.attrs }}" as="a"><option value="{{ a.key }}">{{ a.label }}</option></sc-for>
+                  </select>
+                  <div style="display:flex;align-items:center;border:1px solid #e4e2db;border-radius:8px;background:#fff">
+                    <button onClick="{{ r.dec }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:#4a4d55">−</button>
+                    <span style="min-width:34px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums">+{{ r.tokens }}</span>
+                    <button onClick="{{ r.inc }}" style="width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:16px;color:#4a4d55">+</button>
+                  </div>
+                  <span style="color:#6b6e76">tokens</span>
+                  <button onClick="{{ r.remove }}" style="width:30px;height:30px;border:none;background:none;border-radius:7px;color:#a3a5ab;font-size:18px;cursor:pointer" style-hover="background:#f1efea;color:#1d1f24">×</button>
+                </div>
+              </sc-for>
+              <button onClick="{{ ed.addRule }}" style="align-self:flex-start;background:none;border:none;padding:4px 0;font-size:14px;font-weight:600;color:oklch(0.47 0.13 160);cursor:pointer">+ Add weight rule</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+                <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Resulting allocation per public key</div>
+                <div style="font-size:13px;color:#6b6e76">{{ ed.totalText }}</div>
+              </div>
+              <sc-for list="{{ ed.preview }}" as="v" hint-placeholder-count="6">
+                <div style="display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr) 44px;gap:12px;align-items:center;padding:5px 0">
+                  <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                    <span style="width:24px;height:24px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;background:{{ v.avBg }};color:{{ v.avFg }}">{{ v.initials }}</span>
+                    <div style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#a3a5ab">{{ v.keyShort }}</span></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                    <div style="height:7px;border-radius:4px;background:#f1efea;overflow:hidden"><div style="height:100%;border-radius:4px;background:oklch(0.52 0.13 160);transition:width .25s;width:{{ v.w }}"></div></div>
+                    <span style="font-size:11.5px;color:#8a8d94;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.reasons }}</span>
+                  </div>
+                  <span style="text-align:right;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">{{ v.tokens }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="flex:1 1 260px;max-width:360px;position:sticky;top:84px;background:#fff;border:1px solid #e4e2db;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-weight:600;font-size:15px">Summary</div>
+      <sc-for list="{{ ed.summary }}" as="s" hint-placeholder-count="5">
+        <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px"><span style="color:#6b6e76">{{ s.k }}</span><span style="font-weight:600;text-align:right">{{ s.v }}</span></div>
+      </sc-for>
+      <div style="height:1px;background:#eeece6"></div>
+      <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a8d94">Voters will appear as</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <sc-if value="{{ ed.sample.anon }}"><svg width="36" height="36" viewBox="0 0 100 100"><path d="{{ ed.sample.blobA }}" fill="{{ ed.sample.c1 }}"></path><path d="{{ ed.sample.blobB }}" fill="{{ ed.sample.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg></sc-if>
+        <sc-if value="{{ ed.sample.named }}"><span style="width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:{{ ed.sample.avBg }};color:{{ ed.sample.avFg }}">{{ ed.sample.initials }}</span></sc-if>
+        <div style="display:flex;flex-direction:column"><span style="font-size:14px;font-weight:600">{{ ed.sampleLabel }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8a8d94">{{ ed.sample.keyShort }}</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+</main>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:30;background:#1d1f24;color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.2);max-width:calc(100vw - 48px)">{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startOn&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dashboard&quot;,&quot;Ledger demo&quot;],&quot;default&quot;:&quot;Dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tree&quot;,&quot;Fisheye&quot;,&quot;Carousel&quot;,&quot;Radial&quot;],&quot;default&quot;:&quot;Tree&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;groupSize&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[2,4,10,16],&quot;default&quot;:10,&quot;tsType&quot;:&quot;number&quot;},&quot;hashChars&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:4,&quot;max&quot;:12,&quot;step&quot;:1,&quot;default&quot;:6,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  C = { accent:'oklch(0.52 0.13 160)', accentSoft:'oklch(0.95 0.035 160)', danger:'oklch(0.55 0.19 27)', dangerSoft:'oklch(0.96 0.03 27)', line:'#e4e2db', ink:'#1d1f24', muted:'#6b6e76' };
+  ATTRS = [
+    { key:'near', label:'Lives within 1 mile' },
+    { key:'stake', label:'Has a stake in the company' },
+    { key:'member', label:'Verified member' },
+    { key:'resident', label:'Resident 2+ years' }
+  ];
+  FIELDS = [['pubkey','Public key'],['nullifier','Vote token'],['spent','Tokens spent'],['commitment','Commitment'],['sig','Signature']];
+  _cache = new Map();
+  _blobs = new Map();
+  state = this.init();
+
+  componentDidMount() {
+    this._onResize = () => { const el = document.querySelector('[data-tree-box]'); if (el) this.measureTree(el); };
+    window.addEventListener('resize', this._onResize);
+    if (this.props.startOn === 'Ledger demo') this.setState({ view:'poll', pollId:'p5', tab:'ledger' });
+  }
+
+  sha(input) {
+    const key = String(input);
+    if (this._cache.has(key)) return this._cache.get(key);
+    const src = unescape(encodeURIComponent(key));
+    const rr = (v, a) => (v >>> a) | (v << (32 - a));
+    const maxWord = Math.pow(2, 32);
+    if (!this._k) {
+      const h = [], k = [], comp = {}; let pc = 0;
+      for (let c = 2; pc < 64; c++) {
+        if (!comp[c]) { for (let i = 0; i < 313; i += c) comp[i] = c; h[pc] = (Math.pow(c, .5) * maxWord) | 0; k[pc++] = (Math.pow(c, 1 / 3) * maxWord) | 0; }
+      }
+      this._h0 = h.slice(0, 8); this._k = k;
+    }
+    const k = this._k; let hash = this._h0.slice();
+    let s = src + '\x80'; const bitLen = src.length * 8;
+    while (s.length % 64 - 56) s += '\x00';
+    const words = [];
+    for (let i = 0; i < s.length; i++) words[i >> 2] |= s.charCodeAt(i) << ((3 - i) % 4) * 8;
+    words[words.length] = (bitLen / maxWord) | 0; words[words.length] = bitLen;
+    for (let j = 0; j < words.length;) {
+      const w = words.slice(j, j += 16); const old = hash; hash = hash.slice(0, 8);
+      for (let i = 0; i < 64; i++) {
+        const w15 = w[i - 15], w2 = w[i - 2], a = hash[0], e = hash[4];
+        const t1 = hash[7] + (rr(e, 6) ^ rr(e, 11) ^ rr(e, 25)) + ((e & hash[5]) ^ ((~e) & hash[6])) + k[i]
+          + (w[i] = (i < 16) ? w[i] : (w[i - 16] + (rr(w15, 7) ^ rr(w15, 18) ^ (w15 >>> 3)) + w[i - 7] + (rr(w2, 17) ^ rr(w2, 19) ^ (w2 >>> 10))) | 0);
+        const t2 = (rr(a, 2) ^ rr(a, 13) ^ rr(a, 22)) + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+        hash = [(t1 + t2) | 0].concat(hash); hash[4] = (hash[4] + t1) | 0;
+      }
+      for (let i = 0; i < 8; i++) hash[i] = (hash[i] + old[i]) | 0;
+    }
+    let r = '';
+    for (let i = 0; i < 8; i++) for (let j = 3; j + 1; j--) { const b = (hash[i] >> (j * 8)) & 255; r += (b < 16 ? '0' : '') + b.toString(16); }
+    this._cache.set(key, r);
+    return r;
+  }
+
+  short(h) { const n = this.props.hashChars ?? 6; if (!h) return ''; const x = h.startsWith('0x') ? h.slice(2) : h; return (h.startsWith('0x') ? '0x' : '') + x.slice(0, n) + '…' + x.slice(-4); }
+
+  blob(hex) {
+    if (this._blobs.has(hex)) return this._blobs.get(hex);
+    const n = 7, pts = [], rot = (parseInt(hex[20] || '0', 16) / 16) * 0.9;
+    for (let i = 0; i < n; i++) {
+      const b = parseInt(hex.substr(2 + i * 2, 2), 16) / 255, r = 27 + b * 17, a = (i / n) * Math.PI * 2 + rot;
+      pts.push([50 + r * Math.cos(a), 50 + r * Math.sin(a)]);
+    }
+    const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2], f = v => v.toFixed(1);
+    const m0 = mid(pts[n - 1], pts[0]); let d = `M${f(m0[0])} ${f(m0[1])}`;
+    for (let i = 0; i < n; i++) { const p = pts[i], m = mid(p, pts[(i + 1) % n]); d += ` Q${f(p[0])} ${f(p[1])} ${f(m[0])} ${f(m[1])}`; }
+    d += 'Z'; this._blobs.set(hex, d); return d;
+  }
+
+  ident(v, anon) {
+    const h = v.hue;
+    return {
+      anon: !!anon, named: !anon,
+      blobA: this.blob(v.pubkey), blobB: this.blob('0x' + this.sha(v.pubkey)),
+      c1: `oklch(0.82 0.1 ${h})`, c2: `oklch(0.52 0.15 ${(h + 80) % 360})`,
+      initials: v.name.split(' ').map(x => x[0]).join(''),
+      avBg: `oklch(0.91 0.05 ${h})`, avFg: `oklch(0.38 0.1 ${h})`,
+      name: v.i === 0 ? v.name + ' (you)' : v.name, keyShort: this.short(v.pubkey)
+    };
+  }
+
+  tokensFor(p, v) { return p.base + p.rules.reduce((s, r) => s + (v.attrs.includes(r.attr) ? r.tokens : 0), 0); }
+  cost(p, alloc) { return Object.values(alloc).reduce((s, k) => s + (p.quadratic ? k * k : k), 0); }
+  allocStr(alloc) { return Object.keys(alloc).filter(k => alloc[k] > 0).sort().map(k => k + ':' + alloc[k]).join(','); }
+  total(p) { return (p.ballots || []).reduce((s, b) => s + Object.values(b.alloc).reduce((a, k) => a + k, 0), 0); }
+
+  mkBallot(p, vi, alloc) {
+    const v = this.pool[vi], budget = this.tokensFor(p, v), n = p.options.length;
+    if (!alloc) {
+      const h = this.sha(p.id + ':' + vi); const o1 = parseInt(h[0], 16) % n; alloc = {};
+      if (p.quadratic) {
+        const k1 = Math.floor(Math.sqrt(budget)); alloc[o1] = k1;
+        const rest = budget - k1 * k1, k2 = Math.floor(Math.sqrt(rest));
+        if (k2 > 0 && n > 1) alloc[(o1 + 1 + parseInt(h[1], 16) % (n - 1)) % n] = k2;
+      } else alloc[o1] = budget;
+    }
+    const salt = this.sha('salt:' + p.id + vi).slice(0, 16);
+    const commitment = this.sha(this.allocStr(alloc) + '|' + salt);
+    const nullifier = this.sha('null:' + p.id + ':' + v.pubkey).slice(0, 24);
+    const sig = this.sha('sig:' + v.pubkey + commitment + nullifier);
+    return { vi, alloc, salt, leaf: { pubkey: v.pubkey, nullifier, spent: String(this.cost(p, alloc)), commitment, sig } };
+  }
+
+  leafHash(l) { return this.sha([l.pubkey, l.nullifier, l.spent, l.commitment, l.sig].join('|')); }
+  tree(leaves) {
+    let lvl = leaves.map(l => this.leafHash(l)); let n = 1;
+    while (n < Math.max(2, lvl.length)) n *= 2;
+    const empty = this.sha('∅'); while (lvl.length < n) lvl.push(empty);
+    const levels = [lvl];
+    while (lvl.length > 1) { const nx = []; for (let i = 0; i < lvl.length; i += 2) nx.push(this.sha(lvl[i] + lvl[i + 1])); levels.push(nx); lvl = nx; }
+    return levels;
+  }
+  rootOf(ballots) { const t = this.tree(ballots.map(b => b.leaf)); return t[t.length - 1][0]; }
+
+  init() {
+    const people = [['Sam Rivera','near member'],['Maya Chen','near stake member'],['Jonas Albers','stake'],['Priya Raman','near resident'],['Theo Brandt','member resident'],['Ada Okoro','near stake resident'],['Luis Ferreira','member'],['Hana Sato','near'],['Omar Haddad','stake member resident'],['Ines Duarte','resident']];
+    const mk = (name, attrs, i) => { const pk = '0x' + this.sha('pk:' + name).slice(0, 40); return { i, name, attrs, pubkey: pk, hue: parseInt(pk.slice(2, 6), 16) % 360 }; };
+    this.pool = people.map(([name, a], i) => mk(name, a.split(' '), i));
+    for (let i = people.length; i < 1300; i++) { const h = this.sha('attr:' + i); this.pool.push(mk('Voter ' + String(i + 1).padStart(4, '0'), this.ATTRS.map(x => x.key).filter((_, q) => parseInt(h[q], 16) < 6), i)); }
+    this.voters = this.pool.slice(0, people.length);
+    const raw = [
+      { id:'p1', status:'live', title:'Convert the Elm St. lot into a community garden?', desc:'The city has offered the vacant lot on a 10-year lease. A yes vote commits the association to seasonal upkeep.', options:['Yes, build the garden','No, keep it as parking','Defer to the spring meeting'], anonymous:true, showWeights:false, quadratic:true, base:1, rules:[{attr:'near',tokens:8},{attr:'resident',tokens:3}], closes:'Closes in 2 days', created:6, prior:[1,3,4,5,7,9] },
+      { id:'p2', status:'live', title:'Which Q4 project gets the discretionary budget?', desc:'One project will be funded from the remaining $18,000.', options:['Protected bike lanes on 5th','Extended library hours','Street lighting on Harbor Rd','Quarterly park cleanup'], anonymous:false, showWeights:true, quadratic:true, base:4, rules:[{attr:'member',tokens:5}], closes:'Closes in 5 days', created:5, prior:[1,2,4,6,8] },
+      { id:'p3', status:'live', title:'Pilot a four-day work week in Q1', desc:'A 12-week pilot for all full-time staff, reviewed at the end of March.', options:['Yes, run the pilot','No'], anonymous:true, showWeights:true, quadratic:false, base:1, rules:[{attr:'stake',tokens:4}], closes:'Closes in 9 hours', created:4, prior:[1,2,5,8], mine:true },
+      { id:'p4', status:'live', title:'Name the new co-op café', desc:'Shortlisted from 40 member suggestions.', options:['Common Grounds','The Pour House','Elm & Ember'], anonymous:false, showWeights:false, quadratic:true, base:9, rules:[], closes:'Closes in 3 days', created:3, prior:[2,3,6,7,9], mine:true },
+      { id:'p5', status:'closed', title:'Move the monthly all-hands to Thursdays', desc:'Tuesdays conflict with the regional ops call for half the team.', options:['Thursdays','Keep Tuesdays'], anonymous:true, showWeights:false, quadratic:false, base:1, rules:[{attr:'stake',tokens:2}], closes:'Closed Sep 12', created:2, prior:[1,2,3,4,5,6,8], mine:true },
+      { id:'p6', status:'draft', title:'Allocate the $50k neighborhood fund', desc:'', options:['Playground repairs','Tree planting','Small business grants'], anonymous:true, showWeights:false, quadratic:true, base:1, rules:[{attr:'near',tokens:8}], created:7 },
+      { id:'p7', status:'draft', title:'Rooftop solar for Building B', desc:'', options:['Approve','Reject'], anonymous:false, showWeights:true, quadratic:false, base:1, rules:[{attr:'stake',tokens:9}], created:1 },
+      { id:'p8', status:'closed', title:'Regional transit levy: fund the Line 4 extension?', desc:'A 0.25% levy over 10 years to extend Line 4 to the harbor district. Open to every registered resident key in the region.', options:['Approve the levy','Reject the levy'], anonymous:true, showWeights:false, quadratic:false, base:1, rules:[{attr:'resident',tokens:1}], closes:'Closed Sep 20', created:8, eligible:1300, bulk:1237, mineAt:842 }
+    ];
+    const polls = raw.map(p => {
+      let ballots;
+      if (p.bulk) { ballots = []; for (let vi = 1; ballots.length < p.bulk; vi++) ballots.push(this.mkBallot(p, vi)); ballots.splice(p.mineAt, 0, this.mkBallot(p, 0)); }
+      else { ballots = (p.prior || []).map(vi => this.mkBallot(p, vi)); if (p.mine) ballots.splice(2, 0, this.mkBallot(p, 0)); }
+      return { ...p, eligible: p.eligible || 10, ballots, published: p.bulk ? '' : this.rootOf(ballots) };
+    });
+    return { view:'dashboard', pollId:null, tab:'vote', filter:'all', q:'', sort:'new', polls, allocs:{}, tamperMode:false, showProof:true, flipped:{}, tamper:{}, highlight:null, toast:null, editId:null, advOpen:true, groupSize: (this.props && this.props.groupSize) || 10, expanded:{}, sel:{}, ntamper:{}, layout:(this.props && this.props.layout ? String(this.props.layout).toLowerCase() : 'tree'), treeW:0, voterQ:'', voterLimit:40 };
+  }
+
+  flash(msg) { this.setState({ toast: msg }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: null }), 3400); }
+  openPoll(id, tab) { this.setState({ view:'poll', pollId:id, tab: tab || 'vote', highlight:null }); window.scrollTo(0, 0); }
+  openEditor(id) { this.setState({ view:'editor', editId:id }); window.scrollTo(0, 0); }
+  newPoll() {
+    const id = 'p' + Date.now(), created = Math.max(...this.state.polls.map(p => p.created)) + 1;
+    const p = { id, status:'draft', title:'', desc:'', options:['',''], anonymous:true, showWeights:false, quadratic:false, base:1, rules:[], created, eligible:10, ballots:[], published:this.rootOf([]) };
+    this.setState(s => ({ polls:[p, ...s.polls] })); this.openEditor(id);
+  }
+  setPoll(id, fn) { this.setState(s => ({ polls: s.polls.map(p => p.id === id ? fn(p) : p) })); }
+
+  cast() {
+    const s = this.state, pid = s.pollId, p = s.polls.find(x => x.id === pid);
+    const alloc = {}; Object.entries(s.allocs[pid] || {}).forEach(([k, v]) => { if (v > 0) alloc[k] = v; });
+    const spent = this.cost(p, alloc);
+    if (!spent || spent > this.tokensFor(p, this.voters[0])) return;
+    this.setState(st => ({
+      polls: st.polls.map(x => { if (x.id !== pid) return x; const ballots = [...x.ballots, this.mkBallot(x, 0, alloc)]; return { ...x, ballots, published: this.rootOf(ballots) }; }),
+      tamper: { ...st.tamper, [pid]: {} }
+    }));
+    this.flash('Ballot signed. It is now a leaf in the tree and the published root was updated.');
+  }
+
+  statusOf(p, voted) {
+    const C = this.C;
+    if (p.status === 'draft') return ['Draft', '#f4eedd', 'oklch(0.48 0.09 75)'];
+    if (p.status === 'closed') return [voted ? 'Closed · you voted' : 'Closed', '#ecebe6', C.muted];
+    return voted ? ['You voted', '#e9ece9', 'oklch(0.36 0.06 160)'] : ['Live', C.accentSoft, C.accent];
+  }
+  chipsOf(p) { return [p.anonymous ? 'Anonymous' : 'Named voters', p.quadratic ? 'Quadratic' : '', p.rules.length ? 'Weighted' : '', p.showWeights ? 'Weights visible' : 'Weights hidden'].filter(Boolean); }
+
+  dashVals() {
+    const s = this.state, C = this.C;
+    const info = s.polls.map(p => { const voted = p.ballots.some(b => b.vi === 0); const cat = p.status === 'draft' ? 'drafts' : voted ? 'voted' : p.status === 'live' ? 'todo' : 'closed'; return { p, voted, cat }; });
+    const defs = [['all','All'],['todo','Needs your vote'],['voted','Voted'],['drafts','Drafts']];
+    const tabs = defs.map(([k, l]) => { const on = s.filter === k; return { label:l, count: k === 'all' ? info.length : info.filter(x => x.cat === k).length, bg: on ? '#fff' : 'transparent', fg: on ? C.ink : C.muted, shadow: on ? '0 1px 2px rgba(0,0,0,.08)' : 'none', onClick: () => this.setState({ filter:k }) }; });
+    const q = s.q.trim().toLowerCase();
+    const list = info.filter(x => s.filter === 'all' || x.cat === s.filter).filter(x => !q || x.p.title.toLowerCase().includes(q));
+    list.sort(s.sort === 'votes' ? (a, b) => this.total(b.p) - this.total(a.p) : (a, b) => b.p.created - a.p.created);
+    const rows = list.map(({ p, voted, cat }) => {
+      const [status, stBg, stFg] = this.statusOf(p, voted);
+      return {
+        title: p.title || 'Untitled draft', status, stBg, stFg, chips: this.chipsOf(p),
+        meta: cat === 'drafts' ? `${p.options.filter(Boolean).length} options · not published` : `${p.ballots.length.toLocaleString()} of ${p.eligible.toLocaleString()} voted · ${p.closes}`,
+        score: cat === 'drafts' ? '–' : this.total(p), scoreColor: cat === 'todo' ? C.accent : voted ? C.ink : '#a3a5ab',
+        action: { todo:'Vote', voted:'View', closed:'Results', drafts:'Edit' }[cat], actionColor: cat === 'todo' ? C.accent : C.ink,
+        onOpen: () => cat === 'drafts' ? this.openEditor(p.id) : this.openPoll(p.id)
+      };
+    });
+    return { tabs, rows, noRows: rows.length === 0, q: s.q, sort: s.sort, onQ: e => this.setState({ q: e.target.value }), onSort: e => this.setState({ sort: e.target.value }), newPoll: () => this.newPoll() };
+  }
+
+  pollVals() {
+    const s = this.state, C = this.C, me = this.voters[0];
+    const p = s.polls.find(x => x.id === s.pollId); if (!p) return {};
+    const myIdx = p.ballots.findIndex(b => b.vi === 0), voted = myIdx >= 0;
+    const budget = this.tokensFor(p, me), canVote = p.status === 'live' && !voted;
+    const [status, stBg, stFg] = this.statusOf(p, voted);
+    const tabs = [['vote', voted || p.status === 'closed' ? 'Results' : 'Vote'], ['voters', 'Voters'], ['ledger', 'Ledger']].map(([k, l]) => ({ label:l, fg: s.tab === k ? C.ink : C.muted, line: s.tab === k ? C.ink : 'transparent', onClick: () => this.setState({ tab:k, highlight:null }) }));
+    const out = { title:p.title, desc:p.desc, status, stBg, stFg, chips:this.chipsOf(p), tabs, voted, canVote, myNum: myIdx + 1,
+      meta: `${p.closes} · ${p.ballots.length.toLocaleString()} of ${p.eligible.toLocaleString()} keys have voted · You hold ${budget} token${budget === 1 ? '' : 's'}`,
+      isVote: s.tab === 'vote', isVoters: s.tab === 'voters', isLedger: s.tab === 'ledger',
+      viewMine: () => this.locate(p, myIdx) };
+
+    if (s.tab === 'vote') {
+      const alloc = s.allocs[p.id] || {}, spent = this.cost(p, alloc);
+      const setK = (i, k) => this.setState(st => ({ allocs: { ...st.allocs, [p.id]: { ...(st.allocs[p.id] || {}), [i]: k } } }));
+      Object.assign(out, {
+        spent, budget, budgetW: Math.min(100, spent / budget * 100) + '%',
+        ruleNote: p.quadratic ? `Quadratic: n votes on one option cost n² tokens. With ${budget} tokens you can put at most ${Math.floor(Math.sqrt(budget))} votes on a single option.` : 'Each vote costs one token.',
+        sealNote: p.anonymous ? 'Your choice is sealed in a commitment. The ledger only shows that your token was spent.' : 'Your name is shown on your leaf. Your choice is still sealed in a commitment.',
+        options: p.options.map((label, i) => {
+          const k = alloc[i] || 0, next = p.quadratic ? (k + 1) ** 2 - k * k : 1, canUp = spent + next <= budget, c = p.quadratic ? k * k : k;
+          return { label, k, countColor: k ? C.accent : '#a3a5ab', upColor: canUp ? C.accent : '#c9c7c0', upCursor: canUp ? 'pointer' : 'not-allowed', upOpacity: canUp ? 1 : .5, downOpacity: k ? 1 : .35,
+            costText: k ? `${k} vote${k > 1 ? 's' : ''} · ${c} token${c > 1 ? 's' : ''}` : (canUp ? `+1 costs ${next}` : 'Not enough tokens'),
+            onUp: () => canUp && setK(i, k + 1), onDown: () => k > 0 && setK(i, k - 1) };
+        }),
+        castBg: spent > 0 ? C.accent : '#e4e2db', castFg: spent > 0 ? '#fff' : '#8a8d94', cast: () => this.cast()
+      });
+      out.showResults = voted || p.status === 'closed';
+      if (out.showResults) {
+        const totals = p.options.map((_, i) => p.ballots.reduce((a, b) => a + (b.alloc[i] || 0), 0)), max = Math.max(1, ...totals);
+        const mine = voted ? p.ballots[myIdx].alloc : {};
+        out.results = p.options.map((label, i) => ({ label, total: totals[i], w: (totals[i] / max * 100) + '%', color: totals[i] === max ? C.accent : 'oklch(0.8 0.06 160)', mine: mine[i] ? `You: ${mine[i]}` : '' }));
+        out.resultsMeta = `${totals.reduce((a, b) => a + b, 0)} votes from ${p.ballots.length} keys`;
+      }
+    }
+
+    if (s.tab === 'voters') {
+      const vq = s.voterQ.trim().toLowerCase(), elig = this.pool.slice(0, p.eligible);
+      const matched = vq ? elig.filter(v => v.pubkey.includes(vq) || (!p.anonymous && v.name.toLowerCase().includes(vq))) : elig, shown = matched.slice(0, s.voterLimit);
+      const vb = {}; p.ballots.forEach((b, i) => { vb[b.vi] = i; });
+      const voters = shown.map(v => {
+        const bi = v.i in vb ? vb[v.i] : -1, id = this.ident(v, p.anonymous), t = this.tokensFor(p, v);
+        const reasons = p.rules.filter(r => v.attrs.includes(r.attr)).map(r => this.ATTRS.find(a => a.key === r.attr).label);
+        return { ...id, pubkey: v.pubkey, voted: bi >= 0,
+          label: p.anonymous ? (v.i === 0 ? 'You' : 'Anonymous voter') : id.name,
+          reasons: p.showWeights ? (reasons.join(' · ') || 'Base allocation') : (v.i === 0 ? 'Only you see your weight' : ''),
+          tokens: p.showWeights || v.i === 0 ? `${t} token${t === 1 ? '' : 's'}` : 'Hidden', tokColor: p.showWeights || v.i === 0 ? C.ink : '#a3a5ab',
+          status: bi >= 0 ? 'Voted' : 'Not yet', stColor: bi >= 0 ? C.accent : '#a3a5ab',
+          onLocate: () => this.locate(p, bi) };
+      });
+      Object.assign(out, { voters, voterQ: s.voterQ, onVoterQ: e => this.setState({ voterQ: e.target.value, voterLimit: 40 }),
+        hasMore: matched.length > shown.length, moreLabel: `Show more (${(matched.length - shown.length).toLocaleString()} left)`, showMore: () => this.setState(st => ({ voterLimit: st.voterLimit + 200 })),
+        votersMeta: `${p.ballots.length.toLocaleString()} of ${p.eligible.toLocaleString()} eligible public keys have spent their token.`,
+        visNote: (p.anonymous ? 'Identities hidden' : 'Identities shown') + ' · ' + (p.showWeights ? 'weights visible' : 'weights hidden') });
+    }
+
+    if (s.tab === 'ledger') Object.assign(out, this.ledgerCommon(p, myIdx, voted));
+    return out;
+  }
+
+  ktree(leaves, k, ov) {
+    ov = ov || {};
+    let lvl = leaves.map((l, j) => ov['0:' + j] || this.leafHash(l)); const levels = [lvl];
+    if (!lvl.length) { levels.push([ov['1:0'] || this.sha('∅')]); return levels; }
+    do { const L = levels.length, nx = []; for (let i = 0; i < lvl.length; i += k) nx.push(ov[L + ':' + (i / k)] || this.sha(lvl.slice(i, i + k).join(''))); levels.push(nx); lvl = nx; } while (lvl.length > 1);
+    return levels;
+  }
+  levelsFor(n, k) { let len = n, H = 0; do { len = Math.ceil(len / k); H++; } while (len > 1); return H; }
+  expOf(tkey, H, n, k, st) {
+    st = st || this.state; if (st.expanded[tkey]) return st.expanded[tkey];
+    const e = { [H + ':0']: true };
+    if (n <= 16) for (let d = 1; d <= H; d++) { const L = Math.ceil(n / Math.pow(k, d)); for (let i = 0; i < L; i++) e[d + ':' + i] = true; }
+    return e;
+  }
+  reveal(tkey, H, n, k, d, i, extra) {
+    this.scrollToSel();
+    this.setState(st => { const e = { ...this.expOf(tkey, H, n, k, st) }; for (let dd = d + 1; dd <= H; dd++) e[dd + ':' + Math.floor(i / Math.pow(k, dd - d))] = true;
+      return { ...(extra || {}), expanded: { ...st.expanded, [tkey]: e }, sel: { ...st.sel, [tkey]: { d, i } } }; });
+  }
+  locate(p, j) { const k = this.state.groupSize, n = p.ballots.length; this.reveal(p.id + ':' + k, this.levelsFor(n, k), n, k, 0, j, { tab: 'ledger', highlight: j }); }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+  measureTree(el) { const w = el.clientWidth; if (w && Math.abs(w - (this.state.treeW || 0)) > 8) window.setTimeout(() => this.setState({ treeW: w }), 0); }
+  scrollToSel() {
+    const deep = (root) => { const hit = root.querySelector('[data-sel="1"]'); if (hit) return hit; for (const n of root.querySelectorAll('*')) if (n.shadowRoot) { const x = deep(n.shadowRoot); if (x) return x; } return null; };
+    const run = () => {
+      const el = deep(document); if (!el || !el.isConnected) return;
+      let sc = el.parentElement; while (sc && getComputedStyle(sc).overflowX !== 'auto') sc = sc.parentElement;
+      if (sc) { const r = el.getBoundingClientRect(), sr = sc.getBoundingClientRect(); sc.scrollLeft = Math.max(0, r.left - sr.left + sc.scrollLeft - sc.clientWidth / 2 + r.width / 2); }
+      const r = el.getBoundingClientRect();
+      if (r.top < 80 || r.bottom > window.innerHeight) { let w = el.parentElement; while (w && !(w.scrollHeight > w.clientHeight && /auto|scroll/.test(getComputedStyle(w).overflowY))) w = w.parentElement;
+        const top = r.top - window.innerHeight / 2 + r.height / 2; if (w) w.scrollTop += top; else window.scrollBy(0, top); }
+    };
+    window.setTimeout(run, 80); window.setTimeout(run, 350);
+  }
+  nodeAv(h) { const hue = parseInt(h.slice(0, 4), 16) % 360; return { blobA: this.blob('0x' + h), blobB: this.blob('0x' + h.slice(32) + h.slice(0, 32)), c1: `oklch(0.82 0.1 ${hue})`, c2: `oklch(0.52 0.15 ${(hue + 80) % 360})` }; }
+
+
+  kcard(p, j, h, h0, l, myIdx, proof, k) {
+    const s = this.state, C = this.C, b = p.ballots[j], v = this.pool[b.vi], mine = b.vi === 0, changed = h !== h0;
+    const fk = p.id + ':' + j, flippable = mine || s.tamperMode, flipped = !!s.flipped[fk] && flippable;
+    const sigOk = this.sha('sig:' + l.pubkey + l.commitment + l.nullifier) === l.sig;
+    const opens = this.sha(this.allocStr(b.alloc) + '|' + b.salt) === l.commitment && String(this.cost(p, b.alloc)) === l.spent;
+    const sib = proof && !mine && Math.floor(j / k) === Math.floor(myIdx / k), hl = s.highlight === j, id = this.ident(v, p.anonymous);
+    const setT = (key, val) => this.setState(st => { const pt = { ...(st.tamper[p.id] || {}) }; pt[j] = { ...(pt[j] || {}), [key]: val }; return { tamper: { ...st.tamper, [p.id]: pt } }; });
+    return { ...id, num: (j + 1).toLocaleString(), mine, stub: changed ? C.danger : (mine && proof) ? C.accent : '#d6d3ca',
+      label: p.anonymous ? (mine ? 'You' : id.keyShort) : id.name.replace(' (you)', ''),
+      rot: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+      border: changed ? `1.5px solid ${C.danger}` : mine && proof ? `1.5px solid ${C.accent}` : sib ? `1.5px dashed ${C.accent}` : '1.5px solid #e4e2db',
+      backBorder: changed ? `1.5px solid ${C.danger}` : '1.5px solid #1f2227',
+      ring: hl ? `0 0 0 4px ${C.accentSoft}, 0 6px 20px rgba(0,0,0,.08)` : '0 1px 2px rgba(0,0,0,.03)',
+      spentText: `${l.spent} spent`, spentColor: changed ? C.danger : C.accent,
+      sigText: sigOk ? '✓ Valid' : '✗ Invalid', sigColor: sigOk ? C.accent : C.danger,
+      leafShort: this.short(h), leafColor: changed ? C.danger : '#4a4d55',
+      flipLabel: flippable ? (s.tamperMode ? 'Flip to edit' : 'Flip to inspect') : 'Sealed', flipCursor: flippable ? 'pointer' : 'default', flipColor: flippable ? C.ink : '#a3a5ab',
+      flip: () => flippable && this.setState(st => ({ flipped: { ...st.flipped, [fk]: !st.flipped[fk] } })),
+      fields: this.FIELDS.map(([key, label]) => { const ch = l[key] !== b.leaf[key]; return { label, value: l[key], ro: !s.tamperMode,
+        onChange: e => setT(key, e.target.value), labelColor: ch ? '#ff9a85' : '#8a8d94', bg: ch ? '#3a2522' : '#2b2f35', fg: ch ? '#ffb4a4' : '#e8e6e0',
+        border: ch ? `1px solid ${C.danger}` : s.tamperMode ? '1px dashed #5b6068' : '1px solid transparent' }; }),
+      choice: p.options.map((o, i) => b.alloc[i] ? `${o} ×${b.alloc[i]}` : '').filter(Boolean).join(', '),
+      openText: opens ? '✓ Commitment opens to this choice' : '✗ Commitment no longer matches', openColor: opens ? '#7fd6ae' : '#ff9a85' };
+  }
+
+  ledgerCommon(p, myIdx, voted) {
+    const s = this.state, C = this.C, k = s.groupSize, fmt = x => x.toLocaleString(), tkey = p.id + ':' + k;
+    const tam = s.tamper[p.id] || {}, ov = s.ntamper[tkey] || {};
+    const base = p.ballots.map(b => b.leaf), leaves = base.map((l, j) => tam[j] ? { ...l, ...tam[j] } : l);
+    const T0 = this.ktree(base, k), T1 = this.ktree(leaves, k, ov), H = T1.length - 1, n = leaves.length;
+    const published = T0[H][0], computed = T1[H][0], ok = published === computed, proof = s.showProof && voted;
+    const pw = d => Math.pow(k, d);
+    const cnt = (d, i) => Math.max(0, Math.min((i + 1) * pw(d), n) - i * pw(d));
+    const rng = (d, i) => { const a = i * pw(d) + 1, b = a + cnt(d, i) - 1; return a >= b ? '#' + fmt(a) : '#' + fmt(a) + '–' + fmt(b); };
+    const anc = (d, i) => proof && Math.floor(myIdx / pw(d)) === i;
+    const forged = (d, i) => ov[d + ':' + i] !== undefined && ov[d + ':' + i] !== T0[d][i];
+    const setOv = (d, i, v) => this.setState(st => ({ ntamper: { ...st.ntamper, [tkey]: { ...(st.ntamper[tkey] || {}), [d + ':' + i]: v } } }));
+    const stop = e => e.stopPropagation();
+    const look = (ch, a, sib) => ({ bg: ch ? C.dangerSoft : a ? C.accent : sib ? C.accentSoft : '#fff', fg: ch ? C.danger : a ? '#fff' : C.ink, sub: ch ? C.danger : a ? '#fff' : '#6b6e76',
+      border: ch ? '1.5px solid ' + C.danger : a ? '1.5px solid ' + C.accent : sib ? '1.5px dashed ' + C.accent : '1.5px solid #e4e2db', line: ch ? C.danger : a ? C.accent : '#d6d3ca' });
+    const exp = this.expOf(tkey, H, n, k), isExp = (d, i) => d > 0 && !!exp[d + ':' + i];
+    let sel = s.sel[tkey] || { d: H, i: 0 }; if (sel.d > H || sel.i >= T1[sel.d].length) sel = { d: H, i: 0 };
+    const onPath = (d, i) => d >= sel.d && Math.floor(sel.i / pw(d - sel.d)) === i;
+    const select = (d, i) => this.setState(st => ({ sel: { ...st.sel, [tkey]: { d, i } } }));
+    const toggle = (d, i) => this.setState(st => { const e = { ...this.expOf(tkey, H, n, k, st) }, key = d + ':' + i; if (e[key]) delete e[key]; else e[key] = true; return { expanded: { ...st.expanded, [tkey]: e }, sel: { ...st.sel, [tkey]: { d, i } } }; });
+    const reveal = (d, i) => this.reveal(tkey, H, n, k, d, i, d === 0 ? { highlight: i } : null);
+    const kids = (d, i) => [i * k, Math.min(i * k + k, T1[d - 1].length)];
+    const units = (d, i) => { if (!isExp(d, i)) return 1; const [c0, c1] = kids(d, i); let u = 0; for (let c = c0; c < c1; c++) u += units(d - 1, c); return Math.max(1, u); };
+    const ring = '0 0 0 3px ' + C.ink, layout = s.layout || 'tree';
+    const nodeView = (d, i) => {
+      const h = T1[d][i], ch = h !== T0[d][i], a = anc(d, i), sib = proof && !a && d < H && anc(d + 1, Math.floor(i / k)), lk = look(ch, a, sib);
+      const e = isExp(d, i), root = d === H, isSel = sel.d === d && sel.i === i, c = cnt(d, i);
+      return { ...lk, ...this.nodeAv(h), d, i, e, root, isSel, short: this.short(h), full: h, tip: (n ? rng(d, i) : 'empty') + ' · ' + h,
+        rangeText: n ? rng(d, i) : 'empty', countText: fmt(c) + ' ballot' + (c === 1 ? '' : 's'),
+        label: (e ? '▾ ' : '▸ ') + (root ? 'Root · ' : '') + (n ? rng(d, i) : 'empty'), note: forged(d, i) ? 'forged' : '',
+        stub: lk.line, selRing: isSel ? ring : onPath(d, i) ? '0 0 0 2px #b8b5ab' : 'none', selAttr: isSel ? '1' : '0',
+        onZoom: () => toggle(d, i), ro: !s.tamperMode, editable: s.tamperMode, onEdit: ev => setOv(d, i, ev.target.value), stop };
+    };
+    const cardView = j => { const c = this.kcard(p, j, T1[0][j], T0[0][j], leaves[j], myIdx, proof, k), isSel = sel.d === 0 && sel.i === j;
+      return { ...c, isSel, selAttr: isSel ? '1' : '0', ring: isSel ? ring : c.ring, onSelect: () => select(0, j), tip: 'Ballot #' + fmt(j + 1) }; };
+    const out = { layout };
+
+    if (layout === 'tree' || layout === 'fisheye') {
+      const fish = layout === 'fisheye', rows = Array.from({ length: H }, () => ({ nodes: [] })), cards = [];
+      let selSpan = null;
+      const place = (d, i, start) => {
+        if (d === 0) { const c = cardView(i); if (c.isSel) selSpan = [start, 1]; cards.push({ ...c, start }); return 1; }
+        const sp = units(d, i), [c0, c1] = kids(d, i), nv = nodeView(d, i), node = { ...nv, start, sp, hasStub: !nv.root, hasKids: nv.e && c1 > c0 };
+        if (nv.isSel) selSpan = [start, sp];
+        rows[H - d].nodes.push(node);
+        if (node.hasKids) { let cur = start; for (let c = c0; c < c1; c++) { const u = units(d - 1, c); if (c === c0) node.fc = [cur, u]; if (c === c1 - 1) node.lc = [cur, u]; cur += place(d - 1, c, cur); } }
+        return sp;
+      };
+      place(H, 0, 1);
+      const totalCols = units(H, 0), avail = Math.max(320, (s.treeW || 1000) - 34);
+      let wts = Array(totalCols).fill(1);
+      if (fish && totalCols * 150 > avail) {
+        const [ss, sp] = selSpan || [1, totalCols], center = ss + (sp - 1) / 2, sig = 1.25;
+        const g = wts.map((_, ci) => Math.exp(-Math.pow(ci + 1 - center, 2) / (2 * sig * sig))), G = g.reduce((x, y) => x + y, 0);
+        const floor = Math.max(0.035, Math.min(1, (avail / 175 - G) / totalCols));
+        wts = g.map(x => floor + (1 - floor) * x);
+      }
+      const pref = [0]; wts.forEach(w => pref.push(pref[pref.length - 1] + w));
+      const wsum = (st, sp) => pref[st - 1 + sp] - pref[st - 1], Wt = pref[totalCols];
+      const pxOf = (st, sp) => fish ? wsum(st, sp) / Wt * avail : sp * 150;
+      rows.forEach(r => r.nodes.forEach(nd => {
+        const px = pxOf(nd.start, nd.sp), full = px >= 150, mid = px >= 70, ws = wsum(nd.start, nd.sp);
+        Object.assign(nd, { span: nd.start + ' / span ' + nd.sp, lbl: full ? nd.label : nd.rangeText, showText: mid, showRo: full && nd.ro, showEdit: full && nd.editable,
+          bs: nd.root && full ? 34 : mid ? 24 : Math.max(6, Math.min(22, Math.round(px - 10))),
+          pad: nd.root && full ? '8px 14px 8px 8px' : mid ? '6px 10px 6px 7px' : px < 20 ? '1px' : '3px', fs: nd.root ? '12.5px' : '11px' });
+        if (nd.hasKids) { nd.busL = (wsum(nd.fc[0], nd.fc[1]) / 2 / ws * 100) + '%'; nd.busR = (wsum(nd.lc[0], nd.lc[1]) / 2 / ws * 100) + '%'; }
+      }));
+      cards.forEach(c => { const px = pxOf(c.start, 1), full = !fish || px >= 150;
+        Object.assign(c, { col: c.start + ' / span 1', full, mini: !full, ms: Math.max(6, Math.min(40, Math.round(px - 12))), showNum: px >= 44, mpad: px >= 30 ? '8px 2px' : '2px 0', gutter: px >= 30 ? '5px' : '1px' }); });
+      Object.assign(out, { isGrid: true, rows, cards2: cards, hasCards: cards.length > 0,
+        cols: fish ? wts.map(w => 'minmax(0, ' + w.toFixed(4) + 'fr)').join(' ') : 'repeat(' + totalCols + ', minmax(150px, 1fr))',
+        treeMin: fish ? '0px' : totalCols * 150 + 'px' });
+    }
+
+    if (layout === 'carousel' && n) {
+      const crows = [], path = [];
+      for (let d = H; d >= sel.d; d--) path.push({ d, i: Math.floor(sel.i / pw(d - sel.d)) });
+      const mkRow = (d, a, b, activeI) => {
+        let idx; if (activeI != null) idx = activeI - a;
+        else { const m = proof ? Math.floor(myIdx / pw(d)) : -1; idx = m >= a && m < b ? m - a : Math.floor((b - a - 1) / 2); }
+        const W = d === 0 ? 180 : 170, G = 14, items = [];
+        for (let i = a; i < b; i++) {
+          const dist = Math.abs(i - a - idx), sc = dist === 0 ? 1 : dist === 1 ? .86 : .72, op = dist === 0 ? 1 : dist === 1 ? .92 : dist === 2 ? .6 : .35;
+          const base = d === 0 ? { ...cardView(i), isCard: true, isNode: false } : { ...nodeView(d, i), isCard: false, isNode: true };
+          items.push({ ...base, w: W + 'px', tf: 'scale(' + sc + ')', op, pick: () => select(d, i) });
+        }
+        const act = items[idx];
+        return { items, tx: 'translateX(-' + (idx * (W + G) + W / 2) + 'px)',
+          title: d === H ? 'Root' : d === 0 ? 'Ballots' : 'Level ' + d,
+          sub: d === H ? fmt(n) + ' ballots' : (idx + 1) + ' of ' + (b - a) + (activeI == null ? ' · choose one' : ''),
+          prev: () => idx > 0 && select(d, a + idx - 1), next: () => idx < b - a - 1 && select(d, a + idx + 1),
+          prevOp: idx > 0 ? 1 : .3, nextOp: idx < b - a - 1 ? 1 : .3, line: act ? act.stub : '#d6d3ca', hasLine: true };
+      };
+      path.forEach(({ d, i }) => { const [a, b] = d === H ? [0, 1] : kids(d + 1, Math.floor(i / k)); crows.push(mkRow(d, a, b, i)); });
+      if (sel.d > 0) { const [a, b] = kids(sel.d, sel.i); crows.push(mkRow(sel.d - 1, a, b, null)); }
+      crows[crows.length - 1].hasLine = false;
+      Object.assign(out, { isCarousel: true, crows });
+    }
+
+    if (layout === 'radial') {
+      const vis = []; let maxR = 0;
+      const walk = (d, i, a0, a1, r, par) => {
+        const me = vis.length; vis.push({ d, i, ang: (a0 + a1) / 2, r, par }); maxR = Math.max(maxR, r);
+        if (d > 0 && isExp(d, i)) { const [c0, c1] = kids(d, i), tot = units(d, i); let acc = a0; for (let c = c0; c < c1; c++) { const span = (a1 - a0) * units(d - 1, c) / tot; walk(d - 1, c, acc, acc + span, r + 1, me); acc += span; } }
+      };
+      walk(H, 0, -Math.PI / 2, Math.PI * 1.5, 0, -1);
+      const R = r => maxR ? r / maxR * 43 : 0;
+      vis.forEach(v => { v.x = 50 + R(v.r) * Math.cos(v.ang); v.y = 50 + R(v.r) * Math.sin(v.ang); });
+      const rnodes = [], links = [], rlabels = [];
+      vis.forEach(v => {
+        const { d, i } = v, h = T1[d][i], ch = h !== T0[d][i], a = anc(d, i), sib = proof && !a && d < H && anc(d + 1, Math.floor(i / k)), lk = look(ch, a, sib);
+        const isSel = sel.d === d && sel.i === i, size = d === H ? 60 : d === 0 ? 24 : Math.max(24, 46 - v.r * 7), av = this.nodeAv(h);
+        rnodes.push({ ...av, x: v.x + '%', y: v.y + '%', size: size + 'px', bs: Math.round(size * .68), bg: lk.bg, border: lk.border,
+          selRing: isSel ? '0 0 0 3px ' + C.ink : onPath(d, i) ? '0 0 0 2px #b8b5ab' : 'none',
+          tip: (d === 0 ? 'Ballot #' + fmt(i + 1) : (n ? rng(d, i) : 'empty')) + ' · ' + h,
+          onClick: d === 0 ? () => select(0, i) : () => toggle(d, i) });
+        if (v.par >= 0) { const pp = vis[v.par]; links.push({ x1: pp.x, y1: pp.y, x2: v.x, y2: v.y, color: lk.line, w: a || ch ? 2 : 1.25 }); }
+        if (isSel || d === H) rlabels.push({ x: v.x + '%', y: 'calc(' + v.y + '% + ' + (size / 2 + 5) + 'px)', text: d === H ? 'Root' : d === 0 ? 'Ballot #' + fmt(i + 1) : rng(d, i), fg: ch ? C.danger : C.ink });
+      });
+      links.reverse();
+      const rings = []; for (let r = 1; r <= maxR; r++) rings.push({ r: R(r) });
+      let panelCards = [], panelNodes = [];
+      if (sel.d === 0 && n) panelCards = [cardView(sel.i)];
+      else { const nv = nodeView(sel.d, sel.i), [c0, c1] = kids(sel.d, sel.i), nk = c1 - c0;
+        panelNodes = [{ ...nv, pTitle: nv.root ? 'Root' : 'Level ' + sel.d + ' group', kidsText: nk + ' ' + (sel.d === 1 ? 'ballot' : 'group') + (nk === 1 ? '' : 's') + ' below',
+          hashColor: T1[sel.d][sel.i] !== T0[sel.d][sel.i] ? C.danger : C.ink, hasNote: T1[sel.d][sel.i] !== T0[sel.d][sel.i], noteText: forged(sel.d, sel.i) ? 'This hash was overwritten.' : 'Something below this group was changed.',
+          actLabel: nv.e ? 'Collapse' : 'Expand' }]; }
+      Object.assign(out, { isRadial: true, rnodes, links, rings, rlabels, panelCards, panelNodes });
+    }
+    const crumbs = [];
+    for (let d = H; d >= sel.d; d--) {
+      const i = Math.floor(sel.i / pw(d - sel.d)), h = T1[d][i], cur = d === sel.d, ch = h !== T0[d][i];
+      crumbs.push({ ...this.nodeAv(h), sep: d === H ? '' : '›', label: d === H ? 'Root' : d === 0 ? 'Ballot #' + fmt(i + 1) : rng(d, i), short: this.short(h), full: h, onClick: () => reveal(d, i),
+        bg: cur ? '#1d1f24' : '#fff', fg: cur ? '#fff' : C.ink, border: ch ? C.danger : cur ? '#1d1f24' : '#e4e2db', hashFg: cur ? '#c9c7c0' : '#8a8d94' });
+    }
+    if (!this._setScroller) this._setScroller = el => { this._scroller = el; if (el) this.measureTree(el); };
+    const changedLeaves = Object.keys(tam).map(Number).filter(j => T1[0][j] !== T0[0][j]);
+    const forgedKeys = Object.keys(ov).filter(key => { const [d, i] = key.split(':').map(Number); return forged(d, i); });
+    const seg = on => ({ bg: on ? '#fff' : 'transparent', fg: on ? C.ink : C.muted, shadow: on ? '0 1px 2px rgba(0,0,0,.08)' : 'none' });
+    const nBad = changedLeaves.length + forgedKeys.length;
+    return {
+      ...out, noBallots: n === 0, crumbs, scrollRef: this._setScroller,
+      layouts: [['tree', 'Tree'], ['fisheye', 'Fisheye'], ['carousel', 'Carousel'], ['radial', 'Radial']].map(([key, label]) => ({ label, ...seg(key === layout), onClick: () => this.setState({ layout: key }) })),
+      shape: fmt(n) + ' ballots · ' + H + ' level' + (H > 1 ? 's' : '') + ' of roll-ups',
+      canCollapse: n > 0, goRoot: () => { this.scrollToSel(); this.setState(st => ({ expanded: { ...st.expanded, [tkey]: { [H + ':0']: true } }, sel: { ...st.sel, [tkey]: { d: H, i: 0 } } })); },
+      goMine: () => reveal(0, myIdx),
+      goTampered: () => { if (changedLeaves.length) reveal(0, changedLeaves[0]); else if (forgedKeys.length) { const [d, i] = forgedKeys[0].split(':').map(Number); reveal(d, i); } },
+      hasChanged: nBad > 0,
+      published, computed, rootBorder: ok ? '#e4e2db' : C.danger, okBg: ok ? C.accentSoft : C.dangerSoft, okFg: ok ? C.accent : C.danger,
+      okText: ok ? 'Tree valid · computed root matches the published root' : `Tampered · ${nBad} edit${nBad === 1 ? '' : 's'} in the tree, root no longer matches`,
+      ledgerNote: s.tamperMode ? 'Tamper mode: flip a ballot card and edit its data, or overwrite any group hash. Every hash above it is recomputed and the change shows up at the root.'
+        : `Every ${k} ballots roll up into one hash, and every ${k} hashes into the next level, up to the root. ` + ({ tree: 'Click a group to expand or collapse it; the breadcrumb shows the path to your selection.', fisheye: 'The selected node is magnified and the rest of the tree shrinks around it, so the whole tree fits. Click any node to move the focus and expand it.', carousel: 'Each row is one level. The centred item is on your selected path; pick a sibling to switch branches, and the row below shows its children.', radial: 'The root sits in the centre and each ring is one level down. Click a group to expand or collapse it; click a ballot to open its card.' })[layout] + (proof ? ' Your path is highlighted; dashed hashes are the siblings that prove your ballot is counted without revealing it.' : ''),
+      groups: [2, 4, 10, 16].map(g => ({ label: String(g), ...seg(g === k), onClick: () => this.setState({ groupSize: g }) })),
+      proofBg: s.showProof ? C.accent : '#cfccc2', proofJ: s.showProof ? 'flex-end' : 'flex-start',
+      tamperBg: s.tamperMode ? C.danger : '#cfccc2', tamperJ: s.tamperMode ? 'flex-end' : 'flex-start',
+      toggleProof: () => this.setState(st => ({ showProof: !st.showProof })), toggleTamper: () => this.setState(st => ({ tamperMode: !st.tamperMode })),
+      hasTamper: Object.keys(tam).length > 0 || Object.keys(ov).length > 0,
+      resetTamper: () => this.setState(st => { const nt = { ...st.ntamper }; Object.keys(nt).forEach(x => { if (x.startsWith(p.id + ':')) delete nt[x]; }); return { tamper: { ...st.tamper, [p.id]: {} }, ntamper: nt }; })
+    };
+  }
+
+
+  editorVals() {
+    const s = this.state, C = this.C, p = s.polls.find(x => x.id === s.editId); if (!p) return {};
+    const up = fn => this.setPoll(p.id, fn), tog = on => ({ bg: on ? C.accent : '#cfccc2', j: on ? 'flex-end' : 'flex-start' });
+    const a = tog(p.anonymous), w = tog(p.showWeights), q = tog(p.quadratic);
+    const toks = this.voters.map(v => this.tokensFor(p, v)), maxT = Math.max(1, ...toks), total = toks.reduce((x, y) => x + y, 0);
+    const bigIdx = toks.indexOf(Math.max(...toks));
+    return {
+      title: p.title, desc: p.desc,
+      onTitle: e => { const v = e.target.value; up(x => ({ ...x, title: v })); },
+      onDesc: e => { const v = e.target.value; up(x => ({ ...x, desc: v })); },
+      options: p.options.map((o, i) => ({ n: String.fromCharCode(65 + i), value: o,
+        onChange: e => { const v = e.target.value; up(x => ({ ...x, options: x.options.map((y, k) => k === i ? v : y) })); },
+        onRemove: () => up(x => ({ ...x, options: x.options.length > 2 ? x.options.filter((_, k) => k !== i) : x.options })) })),
+      addOption: () => up(x => ({ ...x, options: [...x.options, ''] })),
+      anonBg: a.bg, anonJ: a.j, weightsBg: w.bg, weightsJ: w.j, quadBg: q.bg, quadJ: q.j,
+      toggleAnon: () => up(x => ({ ...x, anonymous: !x.anonymous })),
+      toggleWeights: () => up(x => ({ ...x, showWeights: !x.showWeights })),
+      toggleQuad: () => up(x => ({ ...x, quadratic: !x.quadratic })),
+      advOpen: s.advOpen, advLabel: s.advOpen ? 'Hide ▴' : 'Show ▾', toggleAdv: () => this.setState(st => ({ advOpen: !st.advOpen })),
+      base: p.base, incBase: () => up(x => ({ ...x, base: x.base + 1 })), decBase: () => up(x => ({ ...x, base: Math.max(1, x.base - 1) })),
+      rules: p.rules.map((r, i) => ({ attr: r.attr, tokens: r.tokens, attrs: this.ATTRS,
+        onAttr: e => { const v = e.target.value; up(x => ({ ...x, rules: x.rules.map((y, k) => k === i ? { ...y, attr: v } : y) })); },
+        inc: () => up(x => ({ ...x, rules: x.rules.map((y, k) => k === i ? { ...y, tokens: y.tokens + 1 } : y) })),
+        dec: () => up(x => ({ ...x, rules: x.rules.map((y, k) => k === i ? { ...y, tokens: Math.max(1, y.tokens - 1) } : y) })),
+        remove: () => up(x => ({ ...x, rules: x.rules.filter((_, k) => k !== i) })) })),
+      addRule: () => up(x => ({ ...x, rules: [...x.rules, { attr: this.ATTRS.find(t => !x.rules.some(r => r.attr === t.key))?.key || 'near', tokens: 4 }] })),
+      preview: this.voters.map((v, i) => { const id = this.ident(v, false), t = toks[i];
+        const rs = p.rules.filter(r => v.attrs.includes(r.attr)).map(r => this.ATTRS.find(x => x.key === r.attr).label);
+        return { ...id, tokens: t, w: (t / maxT * 100) + '%', reasons: (rs.length ? rs.join(' · ') : 'Base only') + (p.quadratic ? ` · max ${Math.floor(Math.sqrt(t))} votes on one option` : '') }; }),
+      totalText: `${total} tokens across ${this.voters.length} keys`,
+      summary: [
+        { k:'Eligible public keys', v: this.voters.length },
+        { k:'Total tokens', v: total },
+        { k:'Largest allocation', v: `${toks[bigIdx]} (${this.voters[bigIdx].name.split(' ')[0]})` },
+        { k:'Voting', v: p.quadratic ? 'Quadratic' : 'One token per vote' },
+        { k:'Weights', v: p.showWeights ? 'Visible to all' : 'Hidden' }
+      ],
+      sample: this.ident(this.voters[3], p.anonymous), sampleLabel: p.anonymous ? 'Anonymous voter' : this.voters[3].name,
+      save: () => { this.setState({ view:'dashboard', filter:'drafts' }); this.flash('Draft saved.'); },
+      del: () => { this.setState(st => ({ polls: st.polls.filter(x => x.id !== p.id), view:'dashboard' })); this.flash('Draft deleted.'); },
+      publish: () => {
+        const opts = p.options.map(o => o.trim()).filter(Boolean);
+        if (!p.title.trim() || opts.length < 2) { this.flash('Add a title and at least two options before publishing.'); return; }
+        up(x => ({ ...x, options: opts, status:'live', closes:'Closes in 7 days', ballots:[], published: this.rootOf([]) }));
+        this.openPoll(p.id); this.flash('Published. Eligible keys can now vote.');
+      }
+    };
+  }
+
+  renderVals() {
+    const s = this.state, me = this.voters[0];
+    return {
+      isDash: s.view === 'dashboard', isPoll: s.view === 'poll', isEditor: s.view === 'editor',
+      goHome: () => { this.setState({ view:'dashboard', highlight:null }); window.scrollTo(0, 0); },
+      me: this.ident(me, true), meKey: me.pubkey,
+      toast: s.toast, hasToast: !!s.toast,
+      ...this.dashVals(),
+      pv: s.view === 'poll' ? this.pollVals() : {},
+      ed: s.view === 'editor' ? this.editorVals() : {}
+    };
+  }
+}
+</script>
+</body>
+</html>
