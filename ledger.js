@@ -95,6 +95,7 @@ export async function decrypt(secret, payload) {
 export const ROOT_GROUP = 10;
 export const nodeHash = children => cesrEncode('E', blake3(utf8(children.join(''))));
 export function merkle(leaves, k) {
+  if (!Number.isInteger(k) || k < 2) throw new Error('group must be a whole number ≥ 2');
   const levels = [leaves];
   do {
     const lvl = levels[levels.length - 1], up = [];
@@ -104,6 +105,8 @@ export function merkle(leaves, k) {
   return levels;
 }
 const top = levels => levels[levels.length - 1][0];
+// Whether a hex string decodes to a ristretto255 point (a valid seal).
+export const isSeal = h => { try { ristretto255.Point.fromBytes(fromHex(h)); return /^[0-9a-f]{64}$/.test(h); } catch (e) { return false; } };
 export const rootOf = (chain, k = ROOT_GROUP) => top(merkle(chain.map(e => e.d), k));
 
 // ---- Entries ----
@@ -158,37 +161,50 @@ export async function makeTally(chain, { secret, encSecret }, dt) {
 export function verify(chain) {
   const failures = [], fail = (index, rule, message) => failures.push({ index, rule, message });
   const mint = chain[0] && chain[0].t === 'mint' ? chain[0] : null, sealedPoll = !!mint && mint.kind === 'sealed';
-  let totals = mint ? mint.options.map(() => 0) : [], used = 0, endedAt = -1;
-  const voted = {}, valid = [];
+  let totals = mint && Array.isArray(mint.options) ? mint.options.map(() => 0) : [], used = 0, endedAt = -1;
+  const voted = {}, valid = [], clean = i => !failures.some(f => f.index === i);
+  // Entries edited in memory (tamper mode) can hold any value; a field of the wrong type is a failure, never an exception.
+  const guard = (i, fn) => { try { fn(); } catch (err) { fail(i, 'shape', 'malformed: ' + err.message); } };
   chain.forEach((e, i) => {
-    if (e.d !== said(e)) fail(i, 'said', 'its hash (d) does not match its contents');
+    let h = null; try { h = said(e); } catch (err) { /* reported as said */ }
+    if (e.d !== h) fail(i, 'said', 'its hash (d) does not match its contents');
     if (i > 0 && e.p !== chain[i - 1].d) fail(i, 'link', 'it does not point at the entry before it (p)');
   });
   if (!mint) { fail(0, 'first', 'a poll must start with a mint'); return { ok: false, failures, status: 'live', totals, voted, used, total: 0, sealed: false }; }
-  const signedBy = (e, keys) => keys.some(k => verifySig(e, k, e.sig));
-  if (!signedBy(mint, mint.organiser.keys)) fail(0, 'mint-sig', 'not signed by an organiser key');
-  const sum = mint.subjects.reduce((s, x) => s + x.weight, 0);
-  if (sum !== mint.total) fail(0, 'total', 'total is ' + mint.total + ' but the weights add up to ' + sum);
-  if (sealedPoll && !mint.organiser.enc) fail(0, 'mint-sig', 'a sealed poll needs an organiser encryption key (enc)');
-  chain.forEach((e, i) => {
-    if (i === 0) return;
+  const signedBy = (e, keys) => { try { return keys.some(k => verifySig(e, k, e.sig)); } catch (err) { return false; } };
+  let mintOk = true;
+  guard(0, () => {
+    if (!Array.isArray(mint.options) || !Array.isArray(mint.subjects) || !mint.organiser || !Array.isArray(mint.organiser.keys)) throw new Error('options, subjects and organiser.keys must be lists');
+    if (!signedBy(mint, mint.organiser.keys)) fail(0, 'mint-sig', 'not signed by an organiser key');
+    const sum = mint.subjects.reduce((s, x) => s + x.weight, 0);
+    if (sum !== mint.total) fail(0, 'total', 'total is ' + mint.total + ' but the weights add up to ' + sum);
+    if (sealedPoll && !mint.organiser.enc) fail(0, 'mint-sig', 'a sealed poll needs an organiser encryption key (enc)');
+  });
+  if (failures.some(f => f.rule === 'shape')) mintOk = false;
+  if (!mintOk) return { ok: false, failures, status: 'live', totals, voted, used, total: 0, sealed: sealedPoll };
+  chain.forEach((e, i) => { if (i > 0) guard(i, () => {
     if (e.t === 'mint') { fail(i, 'first', 'only the first entry can be a mint'); return; }
     if (endedAt >= 0) fail(i, 'close', 'comes after the poll ended (entry #' + endedAt + ')');
-    if (e.root !== undefined && e.root !== rootOf(chain.slice(0, i), e.group)) fail(i, 'root', 'its signed root does not match the tree of the entries before it');
+    if (e.root !== undefined) {
+      if (!Number.isInteger(e.group) || e.group < 2) fail(i, 'root', 'its group must be a whole number ≥ 2');
+      else if (e.root !== rootOf(chain.slice(0, i), e.group)) fail(i, 'root', 'its signed root does not match the tree of the entries before it');
+    }
     if (e.t === 'close' || e.t === 'tally') {
       if (!signedBy(e, mint.organiser.keys)) fail(i, 'mint-sig', e.t + ' not signed by an organiser key');
       if (e.t === 'close' && sealedPoll) fail(i, 'close', 'a sealed poll ends with its tally, not a close');
       if (e.t === 'tally' && !sealedPoll) fail(i, 'close', 'only a sealed poll has a tally');
       if (e.t === 'tally' && sealedPoll) {
         const out = new Set(e.excluded.map(x => x.index)), counted = valid.filter(j => !out.has(j));
-        const bad = mint.options.map((_, k) => k).filter(k => e.totals[k] === undefined || e.blinds[k] === undefined || !/^\d+$/.test(e.blinds[k])
+        const bad = mint.options.map((_, k) => k).filter(k => !Number.isSafeInteger(e.totals[k]) || e.totals[k] < 0 || typeof e.blinds[k] !== 'string' || !/^\d+$/.test(e.blinds[k])
           || addSeals(counted.map(j => chain[j].seals[k])) !== seal(e.totals[k], BigInt(e.blinds[k])));
+        const sum = e.totals.reduce((a, b) => a + b, 0);
         if (e.totals.length !== mint.options.length || bad.length) fail(i, 'tally', 'its totals do not match the sealed ballots it counted' + (bad.length ? ' (option ' + bad.join(', ') + ')' : ''));
+        else if (!mint.quadratic && e.used !== sum) fail(i, 'tally', 'used is ' + e.used + ' but the totals add up to ' + sum);
         else { totals = e.totals.slice(); used = e.used; }
       }
       endedAt = i; return;
     }
-    const before = failures.length, s = mint.subjects.find(x => x.id === e.subject);
+    const s = mint.subjects.find(x => x.id === e.subject);
     if (!s) fail(i, 'subject', '"' + e.subject + '" is not a minted subject');
     else if (!s.keys.includes(e.key) || !verifySig(e, e.key, e.sig)) fail(i, 'vote-sig', 'not signed by one of ' + e.subject + "'s keys");
     if (Object.prototype.hasOwnProperty.call(voted, e.subject)) fail(i, 'double', e.subject + ' already voted (entry #' + voted[e.subject] + ')');
@@ -196,8 +212,8 @@ export function verify(chain) {
     if (sealedPoll) {
       if (e.alloc !== undefined || !Array.isArray(e.seals) || e.seals.length !== mint.options.length || typeof e.opening !== 'string')
         fail(i, 'options', 'a sealed vote needs one seal per option and an encrypted opening, and no plain allocation');
-      else if (!e.seals.every(x => /^[0-9a-f]{64}$/.test(x))) fail(i, 'options', 'a seal is not a valid point');
-      if (failures.length === before) valid.push(i);
+      else if (!e.seals.every(isSeal)) fail(i, 'options', 'a seal is not a valid point');
+      if (clean(i)) valid.push(i);
       return;
     }
     if (e.alloc === undefined || e.seals !== undefined) { fail(i, 'options', 'an open vote needs a plain allocation'); return; }
@@ -205,8 +221,8 @@ export function verify(chain) {
     if (badOpt.length) fail(i, 'options', 'no option ' + badOpt.join(', '));
     const c = cost(e.alloc, mint.quadratic);
     if (s && (c < 1 || c > s.weight)) fail(i, 'cost', 'costs ' + c + ' but ' + e.subject + ' holds ' + s.weight);
-    if (failures.length === before) { Object.entries(e.alloc).forEach(([o, k]) => { totals[o] += k; }); used += c; }
-  });
+    if (clean(i)) { Object.entries(e.alloc).forEach(([o, k]) => { totals[o] += k; }); used += c; }
+  }); });
   return { ok: failures.length === 0, failures, status: endedAt >= 0 ? 'closed' : 'live', totals, voted, used, total: mint.total, sealed: sealedPoll };
 }
 

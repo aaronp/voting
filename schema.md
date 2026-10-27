@@ -151,7 +151,8 @@ before it, so changing any entry changes the root and breaks that signature.
 | `cost` | An allocation costs less than 1 or more than the subject's weight |
 | `close` | An entry comes after the close or tally; a sealed poll has a close, or an open poll has a tally |
 | `root` | A close or tally's `root` isn't the Merkle root of the entries before it |
-| `tally` | For some option, the sum of the counted ballots' seals isn't `seal(totals[i], blinds[i])` |
+| `tally` | For some option, the sum of the counted ballots' seals isn't `seal(totals[i], blinds[i])`; or, in a non-quadratic poll, `used` isn't the sum of `totals` (in a quadratic poll `used` is as reported by the tallier) |
+| `shape` | A field holds the wrong type of value (possible only for entries edited in memory, since reading a file checks shapes) |
 
 Results count only votes that pass every rule. A failed vote still uses up its subject's one vote. In a sealed poll,
 `options` also requires one seal per option and an opening (and no `alloc`), `cost` is checked by the tallier instead

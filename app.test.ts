@@ -529,3 +529,22 @@ test("every template's tags are balanced", async () => {
     }
   }
 });
+
+test("final review: half-typed tamper edits don't break rendering", async () => {
+  const s = sealedDraft(); const sid = s.app.mintDraft(s.id);
+  s.app.setAs(sid, "alice"); await s.app.castAs(sid, "alice", { 0: 2 }); await s.app.tallyPoll(sid);
+  const app = s.app; app.setState({ tab: "tree", tamperMode: true, groupSize: 10 });
+  for (const [n, field, value] of [[2, "totals", "[1,"], [2, "excluded", "["], [2, "group", "1"], [0, "subjects", "[{"], [0, "organiser", "{"]] as [number, string, string][]) {
+    card(app, n).fields.find((f: any) => f.label === field).onChange({ target: { value } });
+    expect(() => app.renderVals()).not.toThrow();
+    expect(app.ledgerVals(sid).badgeOk).toBe(false);
+    app.renderVals().pv.resetTamper();
+  }
+});
+
+test("final review: a quadratic sealed tally's weight used is labelled as reported", async () => {
+  const env = withDraft(); fill(env.app, env.id, { ...READY, kind: "sealed", quadratic: true });
+  const pid = env.app.mintDraft(env.id);
+  env.app.setAs(pid, "alice"); await env.app.castAs(pid, "alice", { 0: 2 }); await env.app.tallyPoll(pid);
+  expect(env.app.renderVals().pv.usedText).toBe("4 of 12 weight used (as reported by the organiser)");
+});

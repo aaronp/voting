@@ -1024,7 +1024,9 @@ class Component extends DCLogic {
     const as = this.currentAs(pollId), myIdx = as ? p.chain.findIndex(e => e.t === 'vote' && e.subject === as) : -1, voted = myIdx >= 0;
     const leaves = this.tampered(pollId), tv = s.tamperMode || Object.keys(tam).length ? this.L.verify(leaves) : p.verdict;
     const failsAt = j => tv.failures.filter(f => f.index === j);
-    const leafOf = (e, j) => tam[j] ? (tam[j].d !== undefined ? e.d : this.L.said(e)) : e.d;
+    // A half-typed edit may not even hash; it then shows as a leaf that matches nothing.
+    const hashOf = e => { try { return this.L.said(e); } catch (err) { return 'E(cannot be hashed: ' + err.message + ')'; } };
+    const leafOf = (e, j) => tam[j] ? (tam[j].d !== undefined ? e.d : hashOf(e)) : e.d;
     const T0 = this.ktree(p.chain.map(e => e.d), k), T1 = this.ktree(leaves.map(leafOf), k, ov), H = T1.length - 1, n = leaves.length;
     const published = T0[H][0], computed = T1[H][0], ok = published === computed, proof = s.showProof && voted;
     const pw = d => Math.pow(k, d);
@@ -1262,7 +1264,7 @@ class Component extends DCLogic {
       }),
       canCast: !!who && spent > 0, castDisabled: !(who && spent > 0), castOpacity: who && spent > 0 ? 1 : .4, cast: () => who && this.castAs(id, who.id, alloc),
       results: m.options.map((label, i) => ({ label, total: v.totals[i], w: (v.totals[i] / max * 100) + '%', color: v.totals[i] === max && v.totals[i] > 0 ? C.accent : 'var(--accent-mid)' })),
-      usedText: `${v.used} of ${v.total} weight used`,
+      usedText: `${v.used} of ${v.total} weight used` + (v.sealed && m.quadratic ? ' (as reported by the organiser)' : ''),
       lv: s.tab === 'ledger' ? this.ledgerVals(id) : {},
       showReal: () => this.openReal('vote'), showRealClose: () => this.openReal('close'), isLive: v.status === 'live'
     };

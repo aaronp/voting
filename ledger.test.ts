@@ -304,3 +304,56 @@ test("the example has a tallied sealed poll and signed roots", async () => {
   for (const c of doc.polls) { expect(L.verify(c).ok).toBe(true); for (const e of c) if (e.t === "close" || e.t === "tally") expect(e.root).toBe(L.rootOf(c.slice(0, c.indexOf(e)))); }
   for (const c of sealed) for (const e of c) if (e.t === "vote") expect(e.alloc).toBeUndefined();
 });
+
+test("final review: a bad group fails rule root instead of hanging", () => {
+  const { chain, keys } = demo();
+  for (const g of [1, 0, -2]) {
+    const c: any = L.makeClose(chain, "t", keys.org.secret);
+    c.group = g; c.d = L.said(c); c.sig = L.sign(c, keys.org.secret);
+    expect(rules([...chain, c])).toEqual(["root"]);
+  }
+  expect(() => L.merkle(["Ex"], 1)).toThrow();
+});
+
+test("final review: malformed fields become failures, not exceptions", () => {
+  const { chain, keys } = demo();
+  chain.push(L.makeClose(chain, "t", keys.org.secret));
+  const bad = [...chain]; bad[0] = { ...bad[0], subjects: "[{" }; bad[1] = { ...bad[1], group: "" };
+  const v = L.verify(bad);
+  expect(v.ok).toBe(false);
+  expect(v.failures.map((f: any) => f.index)).toContain(0);
+});
+
+test("final review: entries with failures are never counted", async () => {
+  const { chain, keys } = demo();
+  chain.push(L.makeClose(chain, "t", keys.org.secret));
+  chain.push(voteAs(chain, keys, "alice", { 0: 1 }));
+  expect(L.verify(chain).totals).toEqual([0, 0]);
+  const s = sealedDemo();
+  s.chain.push(await sealedVote(s.chain, s.keys, "alice", { 0: 1 }));
+  const broken = await sealedVote(s.chain, s.keys, "bob", { 1: 2 });
+  broken.p = s.chain[0].d; broken.d = L.said(broken); broken.sig = L.sign(broken, s.keys.bob.secret);
+  s.chain.push(broken);
+  s.chain.push(await L.makeTally(s.chain, { secret: s.keys.org.secret, encSecret: s.keys.enc.secret }, "t"));
+  expect(rules(s.chain)).toEqual(["link"]);
+  expect(L.verify(s.chain).totals).toEqual([1, 0]);
+});
+
+test("final review: a seal that is not a curve point is a failure, not a crash", async () => {
+  const s = sealedDemo();
+  const v = await sealedVote(s.chain, s.keys, "alice", { 0: 1 });
+  v.seals[0] = "ff".repeat(32); v.d = L.said(v); v.sig = L.sign(v, s.keys.alice.secret);
+  s.chain.push(v);
+  s.chain.push(await L.makeTally(s.chain, { secret: s.keys.org.secret, encSecret: s.keys.enc.secret }, "t"));
+  expect(() => L.verify(s.chain)).not.toThrow();
+  expect(rules(s.chain)).toContain("options");
+});
+
+test("final review: a plain sealed tally's used must match its totals", async () => {
+  const s = sealedDemo();
+  s.chain.push(await sealedVote(s.chain, s.keys, "alice", { 0: 3 }));
+  const t = await L.makeTally(s.chain, { secret: s.keys.org.secret, encSecret: s.keys.enc.secret }, "t");
+  t.used = 999; t.d = L.said(t); t.sig = L.sign(t, s.keys.org.secret);
+  s.chain.push(t);
+  expect(rules(s.chain)).toEqual(["tally"]);
+});
