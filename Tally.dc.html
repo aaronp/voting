@@ -70,7 +70,7 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
         <span class="tl-link tl-mono" style="cursor:default;font-size:12.5px;color:var(--on-chrome)">{{ asText }}</span>
         <button class="tl-link" onClick="{{ switchAs }}" style="color:var(--chrome-muted)">Switch</button>
       </sc-if>
-      <button class="tl-link" onClick="{{ goAccounts }}" title="{{ keysHeld }} in this browser (never in tally.json)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"></path></svg> Test accounts</button>
+      <button class="tl-link" onClick="{{ goAccounts }}" title="{{ keysHeld }} in this browser (never in tally.json)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="M10.8 12.2 20 3M16 7l3 3M14 9l2 2"></path></svg> Contacts</button>
       <button class="tl-link" onClick="{{ goHome }}">All polls</button>
       <button class="tl-link" onClick="{{ showOpen }}" title="Open a tally.json from a file or URL"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"></path></svg> Open</button>
       <button class="tl-link" onClick="{{ download }}" title="Download the polls as tally.json"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg> Download</button>
@@ -149,6 +149,7 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
       </details>
     </div>
     <sc-if value="{{ pv.isLive }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.showRealClose }}" style="background:none;border:none;padding:0;font-size:13.5px;font-weight:600;color:var(--accent-hover);cursor:pointer;margin-top:8px">Sign the close for real…</button></sc-if>
+    <sc-if value="{{ pv.canRandom }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.randomVotes }}" title="Test data: every voter whose key this browser holds casts a random vote" style="padding:8px 14px;border:1px dashed var(--line-2);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">{{ pv.randomText }}</button></sc-if>
     <sc-if value="{{ pv.canTally }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.tally }}" style="padding:8px 14px;border:none;border-radius:9px;background:var(--ink);color:var(--on-ink);font-size:14px;font-weight:600;cursor:pointer">Tally and close</button></sc-if>
     <sc-if value="{{ pv.canClose }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pv.close }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">Close poll</button></sc-if>
   </div>
@@ -435,7 +436,7 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
     <div style="display:flex;gap:8px">
       <button onClick="{{ ed.del }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;color:var(--danger)">Delete draft</button>
       <button onClick="{{ ed.showReal }}" style="background:none;border:none;padding:0;font-size:13.5px;font-weight:600;color:var(--accent-hover);cursor:pointer;margin-right:6px">Sign it for real…</button>
-      <button onClick="{{ ed.mint }}" title="{{ ed.problem }}" style="padding:8px 16px;border:none;border-radius:9px;background:var(--accent);color:var(--on-ink);font-size:14px;font-weight:600;cursor:pointer;opacity:{{ ed.mintOpacity }}">Mint</button>
+      <button onClick="{{ ed.mint }}" title="{{ ed.problem }}" style="padding:8px 16px;border:none;border-radius:9px;background:var(--accent);color:var(--on-ink);font-size:14px;font-weight:600;cursor:pointer;opacity:{{ ed.mintOpacity }}">Create</button>
     </div>
   </div>
   <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
@@ -469,13 +470,11 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
         <span style="width:38px;height:22px;border-radius:11px;padding:2px;display:flex;justify-content:{{ ed.quadJ }};background:{{ ed.quadBg }}"><span style="width:18px;height:18px;border-radius:9px;background:var(--surface)"></span></span>
         Quadratic voting: each subject's weight is a budget of tokens, and n votes on one option cost n² of them
       </button>
-      <label style="display:flex;align-items:center;gap:8px;font-size:14px;margin-left:auto"><span style="color:var(--muted)">Organiser</span>
-        <input value="{{ ed.organiser }}" onChange="{{ ed.onOrganiser }}" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;width:160px"></label>
     </div>
   </div>
   <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
-    <div><div style="font-weight:700;font-size:16px">Mint subjects</div>
-      <div style="font-size:13.5px;color:var(--muted);margin-top:4px">Each subject (an AID in real use, a name in this demo) gets a fixed weight. Paste the subject's Ed25519 public keys (D…), or generate a demo key in this browser with the key button. Rows still without a key get one when you mint. Once minted, subjects and weights can't change.</div></div>
+    <div><div style="font-weight:700;font-size:16px">Eligible voters</div>
+      <div style="font-size:13.5px;color:var(--muted);margin-top:4px">Each subject (an AID in real use, a name in this demo) gets a fixed weight. Paste the subject's Ed25519 public keys (D…), or generate a demo key in this browser with the key button. Rows still without a key get one when you create the poll. Once the poll is created, voters and weights can't change.</div></div>
     <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1.6fr) 36px 36px;gap:8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)"><span>Subject</span><span>Weight</span><span>Public keys</span><span></span><span></span></div>
     <sc-for list="{{ ed.rows }}" as="r" hint-placeholder-count="3">
       <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1.6fr) 36px 36px;gap:8px;align-items:center">
@@ -487,7 +486,7 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
       </div>
     </sc-for>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <sc-if value="{{ ed.hasAccounts }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ed.fromAccounts }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">+ Add test accounts</button></sc-if>
+      <sc-if value="{{ ed.hasAccounts }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ed.fromAccounts }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">+ Add contacts</button></sc-if>
       <button onClick="{{ ed.addRow }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">+ Add row</button>
       <span style="margin-left:auto;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ ed.totalText }}</span>
     </div>
@@ -498,8 +497,8 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
 <sc-if value="{{ isAccounts }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-direction:column;gap:20px;max-width:820px">
   <div>
-    <h1 style="margin:0;font-size:28px;letter-spacing:-0.02em">Test accounts</h1>
-    <p style="margin:8px 0 0;color:var(--muted);font-size:14.5px;line-height:1.5">This page stands in for real sign-in. Each account is a name and an Ed25519 key kept in this browser, never in tally.json. Add them to a draft's mint table, then choose one when you open a poll. In real use, each subject is a single-use AID created for one poll, with its key in the voter's own wallet.</p>
+    <h1 style="margin:0;font-size:28px;letter-spacing:-0.02em">Contacts</h1>
+    <p style="margin:8px 0 0;color:var(--muted);font-size:14.5px;line-height:1.5">This page stands in for real sign-in. Each contact is a name and an Ed25519 key kept in this browser, never in tally.json. Add them to a draft's eligible voters, then choose one when you open a poll. In real use, each subject is a single-use AID created for one poll, with its key in the voter's own wallet.</p>
   </div>
   <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px">
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
@@ -507,7 +506,7 @@ a{color:var(--accent)}a:hover{color:var(--accent-hover)}
       <div style="display:flex;gap:8px;align-items:center"><span style="font-size:14px;color:var(--muted)">Generate</span><input type="number" min="1" max="1000" value="{{ av.genN }}" onChange="{{ av.onGenN }}" aria-label="How many to generate" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;outline:none;min-width:0;width:80px"><button onClick="{{ av.generate }}" style="padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">Generate</button></div>
     </div>
     <span style="font-size:13.5px;color:var(--faint)">{{ av.count }}</span>
-    <sc-if value="{{ av.none }}" hint-placeholder-val="{{ false }}"><div style="color:var(--muted);font-size:14px">No test accounts yet.</div></sc-if>
+    <sc-if value="{{ av.none }}" hint-placeholder-val="{{ false }}"><div style="color:var(--muted);font-size:14px">No contacts yet.</div></sc-if>
     <sc-for list="{{ av.list }}" as="a" hint-placeholder-count="3">
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line-soft)">
         <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><path d="{{ a.blobA }}" fill="{{ a.c1 }}"></path><path d="{{ a.blobB }}" fill="{{ a.c2 }}" transform="translate(50 50) scale(0.5) translate(-50 -50)"></path></svg>
@@ -618,7 +617,7 @@ class Component extends DCLogic {
   fromQuery(search) {
     const q = new URLSearchParams(search), pick = (k, ok, def) => ok.includes(q.get(k)) ? q.get(k) : def, theme = q.get('theme');
     return {
-      view: q.get('edit') ? 'editor' : q.get('poll') ? 'poll' : q.get('page') === 'accounts' ? 'accounts' : 'dashboard', pollId: q.get('poll'), editId: q.get('edit'),
+      view: q.get('edit') ? 'editor' : q.get('poll') ? 'poll' : q.get('page') === 'contacts' ? 'accounts' : 'dashboard', pollId: q.get('poll'), editId: q.get('edit'),
       tab: pick('tab', ['vote', 'tree', 'ledger', 'results'], 'vote'),
       layout: pick('layout', ['tree', 'fisheye', 'carousel', 'radial'], 'tree'), groupSize: Number(pick('group', ['2', '4', '10', '16'], '10')),
       filter: pick('filter', ['all', 'todo', 'voted', 'drafts', 'closed'], 'all'), q: q.get('q') ?? '', sort: pick('sort', ['new', 'votes'], 'new'),
@@ -635,7 +634,7 @@ class Component extends DCLogic {
       if (s.tab === 'tree' && s.groupSize !== 10) q.set('group', s.groupSize);
     }
     else if (s.view === 'editor') q.set('edit', s.editId);
-    else if (s.view === 'accounts') q.set('page', 'accounts');
+    else if (s.view === 'accounts') q.set('page', 'contacts');
     else {
       if (s.filter !== 'all') q.set('filter', s.filter);
       if (s.q !== '') q.set('q', s.q);
@@ -772,7 +771,7 @@ class Component extends DCLogic {
       return {
         title: x.title, status, stBg, stFg,
         chips: draft ? [] : [x.v.ok ? 'Verified' : 'Broken', x.m && x.m.quadratic ? 'Quadratic' : ''].filter(Boolean),
-        meta: draft ? `${x.d.options.filter(Boolean).length} options · ${x.d.subjects.length} subjects · not minted`
+        meta: draft ? `${x.d.options.filter(Boolean).length} options · ${x.d.subjects.length} subjects · not created yet`
           : `${Object.keys(x.v.voted).length} of ${x.m ? x.m.subjects.length : 0} subjects voted · ${x.v.used}/${x.v.total} weight`,
         score: draft ? '–' : x.v.used, scoreColor: x.todo ? C.accent : 'var(--ink)',
         action: draft ? 'Edit' : x.todo ? 'Vote' : 'View', actionColor: x.todo ? C.accent : C.ink,
@@ -783,7 +782,7 @@ class Component extends DCLogic {
       q: s.q, sort: s.sort, onQ: e => this.setState({ q: e.target.value }), onSort: e => this.setState({ sort: e.target.value }), newPoll: () => this.newDraft() };
   }
 
-  // ---- Test accounts: the demo's stand-in for signing in ----
+  // ---- Contacts (test accounts): the demo's stand-in for signing in ----
   accounts() { try { return JSON.parse(Component.store('get', Component.KEYS.accounts)) || []; } catch (e) { return []; } }
   saveAccounts(list) { Component.store('set', Component.KEYS.accounts, JSON.stringify(list)); this.setState(st => ({ tick: st.tick + 1 })); }
   addAccount(name) {
@@ -813,7 +812,7 @@ class Component extends DCLogic {
     const s = this.state, list = this.accounts();
     return {
       list: list.map(a => ({ name: a.name, key: this.short(a.pub), keyFull: a.pub, ...this.avatar(a.pub), remove: () => this.removeAccount(a.pub) })),
-      count: list.length + ' test account' + (list.length === 1 ? '' : 's'), none: !list.length,
+      count: list.length + ' contact' + (list.length === 1 ? '' : 's'), none: !list.length,
       newName: s.newAccount, onNewName: e => this.setState({ newAccount: e.target.value }),
       add: e => { if (e && e.preventDefault) e.preventDefault(); this.addAccount(s.newAccount); this.setState({ newAccount: '' }); },
       genN: s.genN, onGenN: e => this.setState({ genN: e.target.value }), generate: () => this.generateAccounts(parseInt(s.genN, 10) || 0)
@@ -855,6 +854,26 @@ class Component extends DCLogic {
   canTally(pollId) {
     const p = this.poll(pollId), keys = this.keyring();
     return !!(p && p.mint && p.mint.kind === 'sealed' && p.verdict.status === 'live' && this.organiserSecret(pollId) && p.mint.organiser.enc in keys);
+  }
+  // A random valid allocation of a voter's whole weight: votes go one at a time to random options they can still afford.
+  randomAlloc(options, weight, quadratic) {
+    const alloc = {};
+    let left = weight;
+    for (let guard = 0; left > 0 && guard < 1000; guard++) {
+      const o = Math.floor(Math.random() * options), k = alloc[o] || 0, step = quadratic ? 2 * k + 1 : 1;
+      if (step <= left) { alloc[o] = k + 1; left -= step; }
+    }
+    return alloc;
+  }
+  // Test data: every voter whose key this browser holds and who hasn't voted casts a random vote, one after another.
+  async randomVotes(pollId) {
+    let n = 0;
+    for (const s of this.canVoteAs(pollId)) {
+      const m = this.poll(pollId).mint;
+      if (await this.castAs(pollId, s.id, this.randomAlloc(m.options.length, s.weight, m.quadratic))) n++;
+    }
+    if (n) this.flash('Cast ' + n + ' random vote' + (n === 1 ? '' : 's') + '.');
+    return n;
   }
   // The organiser opens every sealed ballot and publishes the totals; this ends the poll.
   async tallyPoll(pollId) {
@@ -911,7 +930,7 @@ class Component extends DCLogic {
       }
     }
     entry.d = L.said(entry);
-    this.setState({ realOpen: { title: kind === 'mint' ? 'Sign the mint for real' : kind === 'close' ? 'Sign the close for real' : 'Sign this vote for real', bytes: L.canonical(entry), said: entry.d, principal } });
+    this.setState({ realOpen: { title: kind === 'mint' ? "Sign the poll's creation for real" : kind === 'close' ? 'Sign the close for real' : 'Sign this vote for real', bytes: L.canonical(entry), said: entry.d, principal } });
   }
   realVals() {
     const r = this.state.realOpen;
@@ -1243,7 +1262,8 @@ class Component extends DCLogic {
       tabs, isVote: s.tab === 'vote', isTree: s.tab === 'tree', isLedger: s.tab === 'ledger', isResults: s.tab === 'results',
       ...(s.tab === 'tree' ? this.treeVals(id) : {}),
       canClose: v.status === 'live' && m.kind !== 'sealed' && !!this.organiserSecret(id), close: () => this.closePoll(id),
-      canTally: this.canTally(id), tally: () => this.tallyPoll(id), how: this.howItWorks(m.kind), hasLater: m.kind === 'sealed',
+      canTally: this.canTally(id), tally: () => this.tallyPoll(id),
+      canRandom: this.canVoteAs(id).length > 0, randomVotes: () => this.randomVotes(id), randomText: 'Random votes (' + this.canVoteAs(id).length + ')', how: this.howItWorks(m.kind), hasLater: m.kind === 'sealed',
       resultsPending: v.sealed && v.status !== 'closed' ? 'Results appear when the organiser tallies.' : '',
       chooser: this.mine(id).map(x => ({ id: x.id, label: x.id + ' · weight ' + x.weight + (x.id in v.voted ? ' · voted' : ''), pick: () => this.setAs(id, x.id) })),
       showChooser: this.needsChooser(id), browse: () => this.setAs(id, ''),
@@ -1300,7 +1320,7 @@ class Component extends DCLogic {
       kind: d.kind, organiser: { id: d.organiser.trim() || 'Organiser', keys: [org.pub], ...(enc ? { enc } : {}) }, subjects, dt: new Date().toISOString() }, org.secret);
     this.setDoc({ polls: [...doc.polls, [mint]], drafts: doc.drafts.filter(x => x.id !== id) });
     this.openPoll(mint.d);
-    this.flash('Minted. The subjects and weights are now fixed.');
+    this.flash('Created. The voters and weights are now fixed.');
     return mint.d;
   }
   editorVals() {

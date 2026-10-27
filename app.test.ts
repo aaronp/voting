@@ -343,10 +343,10 @@ test("browsing without an account is read-only", () => {
 });
 
 test("the accounts page has an address", () => {
-  const { app, g } = mount("?page=accounts");
+  const { app, g } = mount("?page=contacts");
   expect(app.state.view).toBe("accounts");
   app.setState({ view: "dashboard" }); app.setState({ view: "accounts" });
-  expect(g.location.search).toBe("?page=accounts");
+  expect(g.location.search).toBe("?page=contacts");
 });
 
 const sealedDraft = () => { const env = withDraft(); fill(env.app, env.id, { ...READY, kind: "sealed" }); return env; };
@@ -547,4 +547,17 @@ test("final review: a quadratic sealed tally's weight used is labelled as report
   const pid = env.app.mintDraft(env.id);
   env.app.setAs(pid, "alice"); await env.app.castAs(pid, "alice", { 0: 2 }); await env.app.tallyPoll(pid);
   expect(env.app.renderVals().pv.usedText).toBe("4 of 12 weight used (as reported by the organiser)");
+});
+
+test("random votes casts a valid vote for every held voter who hasn't voted", async () => {
+  const f = fixture(), { app } = pollApp(f, f.keys.alice, f.keys.bob);
+  expect(app.renderVals().pv.canRandom).toBe(true);
+  expect(await app.randomVotes(f.pollId)).toBe(2);
+  const v = L.verify(app.state.doc.polls[0]);
+  expect(v.ok).toBe(true); expect(Object.keys(v.voted).sort()).toEqual(["alice", "bob"]); expect(v.used).toBe(12);
+  expect(app.renderVals().pv.canRandom).toBe(false);
+  const s = sealedDraft(); const sid = s.app.mintDraft(s.id);
+  expect(await s.app.randomVotes(sid)).toBe(2);
+  await s.app.tallyPoll(sid);
+  expect(L.verify(s.app.state.doc.polls[0])).toMatchObject({ ok: true, used: 12 });
 });

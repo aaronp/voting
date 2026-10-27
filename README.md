@@ -15,17 +15,18 @@ it. This repo is the app. Your polls can live in their own repo and be loaded wi
     shows who voted but not how; the organiser's tally publishes totals that anyone can check against the seals.
     Private from the public, not from the tallier.
 - **Dashboard**: every poll and draft, with whether it verifies, filtered by what needs your vote.
-- **Editor**: draft a poll, choose its kind, and fill in the mint table (subject, weight, public keys, or **+ Add test
-  accounts**), then **Mint** to fix it.
+- **Editor**: draft a poll, choose its kind, and list its **eligible voters** (name, weight, public keys, or **+ Add
+  contacts**), then **Create** it; voters and weights are then fixed.
 - **Poll**: choose **who you are** (a subject whose key this browser holds), then:
-  - **Vote** within your weight (plain or quadratic);
+  - **Vote** within your weight (plain or quadratic), or **Random votes** to cast test votes for every voter whose key
+    this browser holds;
   - **Tree**: every entry as a leaf of a Merkle tree (tree, fisheye, carousel or radial; groups of 2, 4, 10 or 16), with
     **Find my vote** (your path to the root and the sibling hashes that prove it's counted), the signed root, and
     **tamper mode**: edit any entry or hash in memory and watch exactly what breaks (nothing is saved);
   - **Ledger**: the subjects and every entry with its hash link and signature check, and a **Verified** badge or a list
     of what's broken;
   - **Results**, counted from verified votes (sealed polls: after the organiser's **Tally and close**).
-- **Test accounts**: create subjects by name or **Generate N**, with keys kept in this browser. This stands in for real
+- **Contacts**: create voters by name or **Generate N**, with keys kept in this browser. This stands in for real
   sign-in, where each subject is a single-use AID with its key in the voter's wallet.
 - **Sign it for real…**: shows the exact bytes an entry signs and how to sign them with `ssh-keygen`, outside Tally.
 - **Open…**: drop a `.json` file, choose one, or open one from a URL (GitHub file links work). **Download** saves `tally.json`.
@@ -46,7 +47,7 @@ The address bar always shows where you are, so any view can be bookmarked or sha
 | `?filter=closed` | Also: closed polls |
 | `?poll=<id>` | A poll, by its mint's SAID. Add `&tab=tree`, `&tab=ledger` or `&tab=results` |
 | `?poll=<id>&tab=tree&layout=fisheye&group=4` | The tree as `tree` (default), `fisheye`, `carousel` or `radial`, in groups of `2`, `4`, `10` (default) or `16` |
-| `?page=accounts` | The test accounts page |
+| `?page=contacts` | The contacts page |
 | `?edit=<id>` | The editor for a draft |
 | `?src=<url>` | That JSON file (absolute, or relative to the page). It isn't autosaved, so it never overwrites your saved polls. |
 | `?theme=` | `paper` (default), `night`, `blueprint` or `warm`. This wins over the theme saved in the browser. |
